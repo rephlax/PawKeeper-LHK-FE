@@ -52,3 +52,25 @@ npm run dev
 ```
 
 By default, the application will be available at http://localhost:5173. Open this URL in your web browser to explore and interact with the app.
+
+## Project Structure
+
+This project is organized into several key directories, making it modular and easy to navigate:
+
+- **`src/`**: Contains the main source code.
+  - **`components/`**: Reusable components used throughout the application.
+    - **`Navbar.js`**: The navigation bar, accessible on all pages.
+    - **`Footer.js`**: The footer component, featuring links and additional information.
+  - **`pages/`**: Top-level pages managed by React Router for different pathways in the app.
+    - **`HomePage.js`**: The homepage, serving as the landing page.
+    - **`SignUpPage.js`**: The registration page for new users.
+    - **`LogInPage.js`**: Allows existing users to log in.
+    - **`UserPage.js`**: Displays user profiles and settings options.
+    - **`NotFoundPage.js`**: The 404 error page for unavailable routes.
+  - **`App.js`**: Main app component that integrates all pages and sets up routing.
+  - **`index.js`**: Entry point to the app, responsible for bootstrapping the React application.
+- **`public/`**: Contains static files which are served directly, including the main HTML file.
+- **`assets/`**: Houses static assets like images and fonts.
+- **`styles/`**: Includes CSS or SCSS files for application-wide styling.
+
+This structured approach enables efficient navigation, making development and enhancements more manageable.
