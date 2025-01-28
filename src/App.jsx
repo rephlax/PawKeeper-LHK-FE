@@ -10,17 +10,20 @@ import { Routes, Route } from "react-router-dom";
 
 function App() {
   return (
+    // Debug with different background colors
     <div className="h-screen w-full grid grid-cols-5 grid-rows-5">
-      {/* Navbar - spans all 5 columns in first row */}
-      <Navbar className="col-span-5 bg-gray-100" />
+      {/* Navbar */}
+      <nav className="col-span-5 bg-red-200">
+        <Navbar />
+      </nav>
       
-      {/* Sidebar - spans 2 columns in rows 2-4 */}
-      <aside className="col-span-2 row-span-3 bg-gray-50">
-        {/* Sidebar content here*/}
+      {/* Sidebar */}
+      <aside className="col-span-2 row-span-3 bg-blue-200">
+        Sidebar area
       </aside>
 
-      {/* Main content - spans 3 columns in rows 2-4 */}
-      <main className="col-span-3 row-span-3 p-4 overflow-auto">
+      {/* Main content */}
+      <main className="col-span-3 row-span-3 bg-green-200">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/user" element={<UserPage />} />
@@ -30,8 +33,10 @@ function App() {
         </Routes>
       </main>
 
-      {/* Footer - spans all 5 columns in last row */}
-      <Footer className="col-span-5 bg-gray-800" />
+      {/* Footer */}
+      <footer className="col-span-5 bg-yellow-200">
+        <Footer />
+      </footer>
     </div>
   );
 }
