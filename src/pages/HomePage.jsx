@@ -1,7 +1,8 @@
 const HomePage = () => {
   return (
     <div>
-      <h1>Homepage</h1>
+      <h1>Welcome to PawKeeper</h1>
+      <img src="" alt="Pawkeeper logo" />
     </div>
   );
 };
