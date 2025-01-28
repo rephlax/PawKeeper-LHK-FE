@@ -10,9 +10,20 @@ import { Routes, Route } from "react-router-dom";
 
 function App() {
   return (
-    <>
-      <main>
+    // Debug with different background colors
+    <div className="h-screen w-full grid grid-cols-5 grid-rows-5">
+      {/* Navbar */}
+      <nav className="col-span-5 bg-red-200">
         <Navbar />
+      </nav>
+      
+      {/* Sidebar */}
+      <aside className="col-span-2 row-span-3 bg-blue-200">
+        Sidebar area
+      </aside>
+
+      {/* Main content */}
+      <main className="col-span-3 row-span-3 bg-green-200">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/user" element={<UserPage />} />
@@ -21,8 +32,12 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
-      <Footer />
-    </>
+
+      {/* Footer */}
+      <footer className="col-span-5 bg-yellow-200">
+        <Footer />
+      </footer>
+    </div>
   );
 }
 
