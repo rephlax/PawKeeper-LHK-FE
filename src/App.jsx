@@ -10,9 +10,16 @@ import { Routes, Route } from "react-router-dom";
 
 function App() {
   return (
-    <>
+    // Main grid container
+    <div className="min-h-screen grid grid-cols-[240px_1fr] grid-rows-[auto_1fr_auto]">
+      <Navbar className="col-span-2" />
+      
+      {/* Sidebar */}
+      <aside className="bg-gray-100">
+
+      </aside>
+
       <main>
-        <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/user" element={<UserPage />} />
@@ -21,8 +28,9 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
-      <Footer />
-    </>
+
+      <Footer className="col-span-2" />
+    </div>
   );
 }
 
