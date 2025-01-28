@@ -1,4 +1,6 @@
+import axios from "axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const SignUpPage = () => {
   const [username, setUsername] = useState("");
@@ -6,9 +8,9 @@ const SignUpPage = () => {
   const [password, setPassword] = useState("");
   const [profilePicture, setProfilePicture] = useState("");
 
+  const nav = useNavigate()
 
-
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
     const newUser = {
@@ -17,22 +19,32 @@ const SignUpPage = () => {
       password: password,
     };
 
-    axios.get("http://localhost:5005/").then((response) => {
-      const userExists = response.data.some(
-        (user) => user.username === newUser.username
-      );
-      const emailExists = response.data.some(
-        (user) => user.email === newUser.email
-      );
+    try {
+      await axios.get("http://localhost:5005/users/").then((response) => {
+        const userExists = response.data.some(
+          (user) => user.username === newUser.username
+        );
+        const emailExists = response.data.some(
+          (user) => user.email === newUser.email
+        );
 
-      if (userExists) {
-        alert("User already exists");
-      } else if (emailExists) {
-        alert("Email already exists");
-      } else {
-        axios.post("http://localhost:5005/signup", newUser);
-      }
-    });
+        if (userExists) {
+          alert("User already exists");
+        } else if (emailExists) {
+          alert("Email already exists");
+        } else {
+          axios.post("http://localhost:5005/users/signup", newUser);
+          alert("User created successfully");
+          setUsername("");
+          setEmail("");
+          setPassword("");
+          setProfilePicture("");
+          nav("/log-in");
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
   return (
     <div>
@@ -40,19 +52,35 @@ const SignUpPage = () => {
       <form onSubmit={handleSubmit}>
         <label>
           Username:
-          <input type="text" value={username} onChange={(e) => setUsername()} />
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
         </label>
         <label>
           Email:
-          <input type="text" value={email} onChange={handleChange} />
+          <input
+            type="text"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
         </label>
         <label>
           Password:
-          <input type="password" value={password} onChange={handleChange} />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </label>
         <label>
           Profile Picture:
-          <input type="file" value={profilePicture} onChange={handleChange} />
+          <input
+            type="file"
+            value={profilePicture}
+            onChange={(e) => setProfilePicture(e.target.value)}
+          />
         </label>
         <button>Signup</button>
       </form>
