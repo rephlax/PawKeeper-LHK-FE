@@ -10,16 +10,16 @@ import { Routes, Route } from "react-router-dom";
 
 function App() {
   return (
-    // Main grid container
-    <div className="min-h-screen grid grid-cols-[240px_1fr] grid-rows-[auto_1fr_auto]">
-      <Navbar className="col-span-2" />
+    <div className="h-screen w-full grid grid-cols-[200px_1fr] grid-rows-[60px_1fr_auto]">
+      {/* Navbar */}
+      <Navbar className="col-span-2 h-full bg-gray-100" />
       
       {/* Sidebar */}
-      <aside className="bg-gray-100">
-
+      <aside className="h-full bg-gray-50">
       </aside>
 
-      <main>
+      {/* Main content */}
+      <main className="h-full p-4 overflow-auto">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/user" element={<UserPage />} />
@@ -29,7 +29,8 @@ function App() {
         </Routes>
       </main>
 
-      <Footer className="col-span-2" />
+      {/* Footer */}
+      <Footer className="col-span-2 bg-gray-800" />
     </div>
   );
 }
