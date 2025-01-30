@@ -7,6 +7,7 @@ import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import { Routes, Route } from "react-router-dom";
 import ChatWidget from "./components/ChatWidget";
+import PrivateRoute from "./context/PrivateRoute";
 
 function App() {
     return (
@@ -25,7 +26,7 @@ function App() {
           <main className="flex-1 bg-green-200">
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/user" element={<UserPage />} />
+              <Route path="/user" element={<PrivateRoute><UserPage /></PrivateRoute>} />
               <Route path="/sign-up" element={<SignUpPage />} />
               <Route path="/log-in" element={<LogInPage />} />
               <Route path="*" element={<NotFoundPage />} />
