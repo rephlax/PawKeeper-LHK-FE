@@ -8,3 +8,28 @@ html, body, #root {
   height: 100%;
   width: 100%;
 }
+
+.form {
+  display: flex;
+  flex-direction: column;
+  margin: 15px;
+  justify-content: center;
+  align-items: center;
+  background-color: antiquewhite;
+  border-radius: 25px;
+  opacity: 0.8;
+}
+
+.form input{
+  margin: 10px;
+  background-color: aliceblue;
+  border-radius: 10px;
+}
+
+.form button {
+  margin: 10px;
+  background-color: aqua;
+  padding: 25px;
+  border-radius: 50px;
+  font-weight: bold;
+}
