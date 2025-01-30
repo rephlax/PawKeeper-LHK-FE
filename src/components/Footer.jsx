@@ -1,10 +1,9 @@
 import { Link } from "react-router-dom"
-import ChatWidget from "./ChatWidget"
 
 const Footer = () => {
   return (
-    <footer className="h-full bg-gray-800 text-white relative">
-      {/* Main footer container with proper spacing */}
+    <footer className="h-full text-white relative">
+      {/* Main footer container */}
       <div className="h-full flex items-center justify-between px-8">
         {/* Contact Section */}
         <div className="flex items-center gap-4">
