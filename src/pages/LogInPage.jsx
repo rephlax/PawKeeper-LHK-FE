@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useContext, useState } from "react";
+import { useContext, useState} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/auth.context";
 
@@ -7,10 +7,34 @@ const LogInPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const { authenticateUser } = useContext(AuthContext);
+  const nav = useNavigate();
+  async function handleLogin(e) {
+    e.preventDefault();
+
+    const userToLogin = {
+      email,
+      password,
+    };
+
+    try {
+      const {data} = await axios.post("http://localhost:5005/users/login", userToLogin);
+
+      alert("Login Sucessfull", data)
+
+      localStorage.setItem("authToken", data.authToken);
+
+      await authenticateUser()
+      nav("/user")
+    } catch (error) {
+      console.log("here is the error", error)
+      setError(error.response.data.message)
+    }
+  }
   return (
     <div>
       <h1>Log in page</h1>
-      <form className="form">
+      <form className="form" onSubmit={handleLogin}>
         <label>
           Email:
           <input
@@ -24,7 +48,7 @@ const LogInPage = () => {
           <input
             type="password"
             value={password}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </label>
         <button>Login</button>

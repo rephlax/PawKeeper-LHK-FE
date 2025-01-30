@@ -18,7 +18,7 @@ const AuthWrapper = ({ children }) => {
           "http://localhost:5005/users/verify",
           { headers: { authorization: `Bearer ${webToken}` } }
         );
-        console.log(responseToVerify);
+        // console.log(responseToVerify);
         if (responseToVerify) {
           setUser(responseToVerify.data.currentUser);
           setIsSignedIn(true);
