@@ -49,7 +49,7 @@ const SignUpPage = () => {
   return (
     <div>
       <h1>Become a PawKeeper</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="form">
         <label>
           Username:
           <input
