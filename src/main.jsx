@@ -4,7 +4,7 @@ import "./styles/index.css";
 import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import "./styles/App.css";
-import { AuthWrapper } from "./contexts/auth.context.jsx";
+import { AuthWrapper } from "./context/AuthContext.jsx";
 import { SocketProvider } from "./context/SocketContext.jsx";
 
 createRoot(document.getElementById("root")).render(

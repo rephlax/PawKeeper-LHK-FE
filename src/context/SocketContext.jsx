@@ -1,19 +1,24 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
+import { useAuth } from '../context/AuthContext'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005'
 const SocketContext = createContext(null)
 
 export const SocketProvider = ({ children }) => {
     const [socket, setSocket] = useState(null)
-    const [username, setUsername] = useState(() => 
-        `User_${Math.floor(Math.random() * 1000)}`
-    )
+    const { isAuthenticated, user, authToken } = useAuth()
 
     useEffect(() => {
+        // Only connect if user is authenticated
+        if (!isAuthenticated || !authToken) return;
+
         console.log("Initiating socket connection to:", BACKEND_URL);
         
         const newSocket = io(BACKEND_URL, {
+            auth: {
+                token: authToken
+            },
             transports: ['websocket', 'polling'],
             reconnection: true,
             reconnectionAttempts: 5,
@@ -22,8 +27,6 @@ export const SocketProvider = ({ children }) => {
 
         newSocket.on('connect', () => {
             console.log('Socket connected!', newSocket.id);
-            // Register temporary username
-            newSocket.emit('register_user', username);
         });
 
         newSocket.on('connect_error', (error) => {
@@ -38,10 +41,10 @@ export const SocketProvider = ({ children }) => {
         return () => {
             if (newSocket) newSocket.close();
         }
-    }, [username])
+    }, [isAuthenticated, authToken]) // Reconnect if auth state changes
 
     return (
-        <SocketContext.Provider value={{ socket, username }}>
+        <SocketContext.Provider value={{ socket, user }}>
             {children}
         </SocketContext.Provider>
     )
