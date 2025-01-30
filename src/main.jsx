@@ -12,9 +12,9 @@ createRoot(document.getElementById("root")).render(
     <BrowserRouter>
       <AuthWrapper>
         <SocketProvider>
-        <App />
-      </SocketProvider>      
-      </AuthWrapper>
+          <App />    
+        </SocketProvider>
+      </AuthWrapper>  
     </BrowserRouter>
   </StrictMode>
 );
