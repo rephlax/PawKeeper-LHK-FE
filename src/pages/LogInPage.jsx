@@ -26,10 +26,10 @@ const LogInPage = () => {
       );
 
       alert("Login Sucessfull", data);
-      console.log(data)
+      console.log(data._id)
 
       localStorage.setItem("authToken", data.authToken);
-      localStorage.setItem("userId", data._id);
+      localStorage.setItem("userId", userId);
       console.log(userId);
 
       await authenticateUser();

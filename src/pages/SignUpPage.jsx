@@ -82,7 +82,7 @@ const SignUpPage = () => {
             onChange={(e) => setProfilePicture(e.target.value)}
           />
         </label>
-        <button>Signup</button>
+        <button>Sign up</button>
       </form>
     </div>
   );

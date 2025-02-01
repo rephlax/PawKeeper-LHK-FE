@@ -28,7 +28,7 @@ const AuthWrapper = ({ children }) => {
           "http://localhost:5005/users/verify",
           { headers: { authorization: `Bearer ${webToken}` } }
         );
-        // console.log(responseToVerify);
+        console.log(responseToVerify);
         if (responseToVerify) {
           setUserId(responseToVerify.data.currentUser._id);
           setUser(responseToVerify.data.currentUser);
@@ -54,7 +54,7 @@ const AuthWrapper = ({ children }) => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userId");
     setUserId(null); // Clear userId from context
-    nav("/login");
+    nav("/log-in");
   }
 
   useEffect(() => {
