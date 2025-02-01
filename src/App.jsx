@@ -12,18 +12,24 @@ import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
 
 function App() {
- const {userId} = useContext(AuthContext) 
-    return (
-      <div className="h-screen flex flex-col">
-        {/* Navbar */}
-        <nav className="h-[60px] bg-red-200 shrink-0">
+  const {userId} = useContext(AuthContext) 
+  return (
+    <div className="h-screen flex flex-col relative bg-gradient-to-b from-cream-50 via-cream-100 to-cream-200 overflow-hidden">
+      {/* Background effects - kept as is */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-cream-300/30 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cream-400/20 rounded-full blur-3xl"></div>
+  
+      {/* Navbar - removed bottom border radius */}
+      <nav className="h-[80px] backdrop-blur-md bg-cream-background shrink-0 border-b border-cream-accent sticky top-0 z-50">
           <Navbar />
-        </nav>
-        
-        {/* Middle section */}
-        <div className="flex flex-1">
-          <aside className="w-64 bg-blue-200">
-            Sidebar area
+      </nav>
+      
+      {/* Middle section - adjusted padding and gap */}
+      <div className="flex flex-1 relative z-10">
+          {/* Sidebar - removed left border radius */}
+          <aside className="w-64 backdrop-blur-md bg-cream-50/50  
+                          border-r border-cream-accent text-cream-text">
+              Sidebar area
           </aside>
 
           <main className="flex-1 bg-green-200">
@@ -35,19 +41,19 @@ function App() {
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </main>
-        </div>
-
-        {/* Footer */}
-        <footer className="h-[60px] bg-yellow-200 shrink-0">
-          <Footer />
-        </footer>
-
-        {/* Chat Widget */}
-        <div className="fixed bottom-16 right-4 z-50">
-          <ChatWidget />
-        </div>
       </div>
-    );
+
+      {/* Footer - removed top border radius */}
+      <footer className="h-[40px] backdrop-blur-md bg-cream-50/70 shrink-0 
+                        border-t border-cream-accent relative z-10">
+          <Footer />
+      </footer>
+
+      <div className="relative z-50">
+          <ChatWidget />
+      </div>
+    </div>
+  );
 }
 
 export default App;

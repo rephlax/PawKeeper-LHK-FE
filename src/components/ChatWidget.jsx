@@ -24,36 +24,38 @@ const ChatWidget = () => {
     }, [socket]);
 
     return (
-        <div className="fixed bottom-16 right-4 z-50" style={{ maxHeight: '600px' }}>
+        <div className="fixed bottom-14 right-4 z-50" style={{ maxHeight: '600px' }}>
             {!isOpen ? (
                 <button 
                     onClick={() => setIsOpen(true)} 
-                    className="bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 shadow-lg"
+                    className="cursor-pointer bg-cream-background text-cream-text p-4 rounded-full hover:bg-cream-surface shadow-lg w-15 h-15 flex items-center justify-center"
                 >
-                    <MessageSquare className="h-6 w-6" />
+                    <MessageSquare className="h-10 w-10" />
                 </button>
             ) : (
-                <div className="bg-white rounded-lg shadow-xl flex flex-col" 
+                <div className="bg-cream-background rounded-lg shadow-xl flex flex-col border-2 border-cream-accent/50 p-4" 
                      style={{ width: '320px', height: '480px' }}>
-                    <div className="p-4 bg-blue-600 text-white flex justify-between items-center rounded-t-lg">
-                        <h3 className="font-medium">Chat</h3>
+                    <div className=" bg-cream-background text-cream-text flex justify-between items-center rounded-t-lg">
+                        <h3 className="font-medium text-lg cursor-default" style={{ paddingLeft: '6px' }}>Chat</h3>
                         <div className="flex gap-2">
                             <button 
                                 onClick={() => setShowUserList(!showUserList)}
-                                className="hover:bg-blue-700 p-1 rounded"
+                                className="cursor-pointer hover:bg-cream-surface p-1 rounded"
                             >
                                 <Users className="h-5 w-5" />
                             </button>
                             <button 
                                 onClick={() => setIsOpen(false)}
-                                className="hover:bg-blue-700 p-1 rounded"
+                                className="cursor-pointer hover:bg-cream-surface p-1 rounded"
                             >
                                 <X className="h-5 w-5" />
                             </button>
                         </div>
                     </div>
 
-                    <div className="border-b">
+                    <div className="border-b border-cream-accent relative">
+                        <div className="absolute top-full left-0 right-0 h-2 bg-gradient-to-b from-cream-800/20 to-transparent">
+                        </div>
                         <ChatInvitations />
                     </div>
 
@@ -71,7 +73,7 @@ const ChatWidget = () => {
                             </div>
                         ) : (
                             <div className="flex items-center justify-center h-full p-4">
-                                <p className="text-gray-500 text-center">
+                                <p className="text-cream-text text-center">
                                     Click the users icon to start a chat
                                 </p>
                             </div>

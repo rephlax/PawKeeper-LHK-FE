@@ -24,12 +24,12 @@ const MessageInput = ({ roomId }) => {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Type a message..."
-                className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cream-500"
             />
             <button
                 type="submit"
                 disabled={!message.trim()}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                className="bg-cream-background text-cream-text px-4 py-2 rounded-lg hover:bg-cream-surface transition-colors disabled:opacity-50"
             >
                 Send
             </button>

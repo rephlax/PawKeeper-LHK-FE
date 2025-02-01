@@ -8,7 +8,6 @@ const ChatInvitations = () => {
     useEffect(() => {
         if (!socket) return;
 
-        // Listen for chat invitations
         socket.on('chat_invitation', (invitation) => {
             setInvitations(prev => [...prev, invitation]);
         });
