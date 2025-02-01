@@ -24,14 +24,28 @@ export const SocketProvider = ({ children }) => {
             auth: {
                 token: authToken
             },
+            path: '/socket.io',
             transports: ['websocket', 'polling'],
             reconnection: true,
             reconnectionAttempts: 5,
             reconnectionDelay: 1000,
-            timeout: 10000 // 10 second timeout
+            timeout: 10000,
+            secure: true,
+            rejectUnauthorized: false
         })
 
-        // Connection event handlers
+        newSocket.on('connect_error', (error) => {
+            console.log('Connection error details:', {
+                message: error.message,
+                description: error,
+                url: BACKEND_URL,
+                transport: error.transport,
+                data: error.data
+            })
+            setIsConnected(false)
+        })
+
+        // Rest of your code remains the same...
         newSocket.on('connect', () => {
             console.log('Socket connected!', newSocket.id)
             setIsConnected(true)
@@ -39,14 +53,6 @@ export const SocketProvider = ({ children }) => {
 
         newSocket.on('disconnect', () => {
             console.log('Socket disconnected')
-            setIsConnected(false)
-        })
-
-        newSocket.on('connect_error', (error) => {
-            console.log('Connection error:', {
-                message: error.message,
-                description: error,
-            })
             setIsConnected(false)
         })
 
