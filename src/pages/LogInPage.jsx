@@ -9,6 +9,9 @@ const LogInPage = () => {
   const [error, setError] = useState("");
   const { authenticateUser } = useContext(AuthContext);
   const nav = useNavigate();
+  const{userId} = useContext(AuthContext)
+
+  
   async function handleLogin(e) {
     e.preventDefault();
 
@@ -23,9 +26,11 @@ const LogInPage = () => {
       alert("Login Sucessfull", data)
 
       localStorage.setItem("authToken", data.authToken);
+      
 
       await authenticateUser()
-      nav("/user")
+      
+      nav(`/users/user/${userId}`)
     } catch (error) {
       console.log("here is the error", error)
       setError(error.response.data.message)

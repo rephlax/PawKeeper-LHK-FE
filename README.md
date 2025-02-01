@@ -51,7 +51,7 @@ Start the development server to interact with the application locally:
 npm run dev
 ```
 
-By default, the application will be available at http://localhost:5173. Open this URL in your web browser to explore and interact with the app.
+By default, the application will be available at <http://localhost:5173>. Open this URL in your web browser to explore and interact with the app.
 
 ## Project Structure
 

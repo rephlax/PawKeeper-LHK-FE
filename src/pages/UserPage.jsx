@@ -1,21 +1,27 @@
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useNavigate, useParams } from "react-router-dom";
+import { AuthContext, useAuth } from "../context/AuthContext";
+import defaultUser from "../assets/defaultUser.png"
+import { useContext, useEffect } from "react";
 
 const UserPage = () => {
-
-  const {user } = useAuth();
+  // const {userId} = 
+  const {user, userId} = useContext(AuthContext);
   
-
+  // console.log(userId)
+  
+    
+   //TODO: finish implementing the displayed details
+  
   return (
     <div>
       <h1>User Page</h1>
       {user ? (
         <div>
-          <img src={user.profilePicture}/>
+          {user.profilePicture? <img src={user.profilePicture}/>: <img src={defaultUser}/>}
           <h2>Welcome, {user.username}!</h2>
           <p>Email: {user.email}</p>
-          {/* Add more user information as needed */}
+          
         </div>
       ) : (
         <p>Loading user information...</p>

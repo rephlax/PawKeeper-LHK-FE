@@ -8,8 +8,11 @@ import Navbar from "./components/Navbar";
 import { Routes, Route } from "react-router-dom";
 import ChatWidget from "./components/ChatWidget";
 import PrivateRoute from "./context/PrivateRoute";
+import { useContext } from "react";
+import { AuthContext } from "./context/AuthContext";
 
 function App() {
+ const {userId} = useContext(AuthContext) 
     return (
       <div className="h-screen flex flex-col">
         {/* Navbar */}
@@ -26,7 +29,7 @@ function App() {
           <main className="flex-1 bg-green-200">
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/user" element={<PrivateRoute><UserPage /></PrivateRoute>} />
+              <Route path={`/users/user/${userId}`} element={<PrivateRoute><UserPage /></PrivateRoute>} />
               <Route path="/sign-up" element={<SignUpPage />} />
               <Route path="/log-in" element={<LogInPage />} />
               <Route path="*" element={<NotFoundPage />} />
