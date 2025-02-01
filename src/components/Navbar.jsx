@@ -3,14 +3,14 @@ import logo from "../assets/logo.png"
 
 const Navbar = () => {
   return (
-    <nav className="navbar">
+    <nav className="flex items-center justify-between h-full px-8">
       <div className="navbar-logo">
         <Link to="/">
-          <img src={logo} alt="PawKeeper Logo" className="logo" />
+          <img className="w-20 h-20" src={logo} alt="PawKeeper Logo" />
         </Link>
       </div>
 
-      <div className="navbar-links">
+      <div className="flex gap-4 justify-evenly items-center text-lg" style={{ paddingRight: '10px' }}>
         <Link to="/sign-up" className="navbar-link">
           Sign up
         </Link>
