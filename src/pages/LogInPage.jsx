@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useContext, useState} from "react";
+import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
@@ -9,9 +9,8 @@ const LogInPage = () => {
   const [error, setError] = useState("");
   const { authenticateUser } = useContext(AuthContext);
   const nav = useNavigate();
-  const{userId} = useContext(AuthContext)
+  const { userId } = useContext(AuthContext);
 
-  
   async function handleLogin(e) {
     e.preventDefault();
 
@@ -21,19 +20,24 @@ const LogInPage = () => {
     };
 
     try {
-      const {data} = await axios.post("http://localhost:5005/users/login", userToLogin);
+      const { data } = await axios.post(
+        "http://localhost:5005/users/login",
+        userToLogin
+      );
 
-      alert("Login Sucessfull", data)
+      alert("Login Sucessfull", data);
+      console.log(data)
 
       localStorage.setItem("authToken", data.authToken);
-      
+      localStorage.setItem("userId", data._id);
+      console.log(userId);
 
-      await authenticateUser()
-      
-      nav(`/users/user/${userId}`)
+      await authenticateUser();
+
+      nav(`/users/user/${userId}`);
     } catch (error) {
-      console.log("here is the error", error)
-      setError(error.response.data.message)
+      console.log("here is the error", error);
+      setError(error.response.data.message);
     }
   }
   return (

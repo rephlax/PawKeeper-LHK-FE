@@ -32,16 +32,14 @@ function App() {
               Sidebar area
           </aside>
 
-          {/* Main content */}
-          <main className="flex-1 backdrop-blur-md bg-cream-50/50  
-                          p-6">
-              <Routes>
-                  <Route path="/" element={<HomePage />} />
-                  <Route path={`/users/user/${userId}`} element={<PrivateRoute><UserPage /></PrivateRoute>} />
-                  <Route path="/sign-up" element={<SignUpPage />} />
-                  <Route path="/log-in" element={<LogInPage />} />
-                  <Route path="*" element={<NotFoundPage />} />
-              </Routes>
+          <main className="flex-1 bg-green-200">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path={`/users/user/${userId}`} element={<PrivateRoute><UserPage /></PrivateRoute>} />
+              <Route path="/signup" element={<SignUpPage />} />
+              <Route path="/login" element={<LogInPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
           </main>
       </div>
 
