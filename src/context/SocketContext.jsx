@@ -9,7 +9,8 @@ const SocketContext = createContext(null)
 export const SocketProvider = ({ children }) => {
     const [socket, setSocket] = useState(null)
     const [isConnected, setIsConnected] = useState(false) 
-    const { isSignedIn, user, authToken } = useAuth()
+    const { isSignedIn, user } = useAuth()
+    const authToken = localStorage.getItem("authToken")
 
     useEffect(() => {
         if (!isSignedIn || !authToken) {

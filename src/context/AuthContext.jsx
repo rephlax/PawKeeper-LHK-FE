@@ -2,6 +2,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, createContext, useContext } from "react";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005'
 const AuthContext = createContext();
 
 export const useAuth = () => {
@@ -25,7 +26,7 @@ const AuthWrapper = ({ children }) => {
     if (webToken) {
       try {
         const responseToVerify = await axios.get(
-          "http://localhost:5005/users/verify",
+          `${BACKEND_URL}/users/verify`,
           { headers: { authorization: `Bearer ${webToken}` } }
         );
         console.log(responseToVerify);
