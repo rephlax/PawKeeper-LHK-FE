@@ -13,7 +13,7 @@ export const useAuth = () => {
 };
 
 const AuthWrapper = ({ children }) => {
-  const [userId, setUserId] = useState(null);
+  const [userId, setUserId] = useState();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isSignedIn, setIsSignedIn] = useState(false);
@@ -28,7 +28,7 @@ const AuthWrapper = ({ children }) => {
           "http://localhost:5005/users/verify",
           { headers: { authorization: `Bearer ${webToken}` } }
         );
-        console.log(responseToVerify);
+        // console.log(responseToVerify);
         if (responseToVerify) {
           setUserId(responseToVerify.data.currentUser._id);
           setUser(responseToVerify.data.currentUser);
@@ -50,23 +50,16 @@ const AuthWrapper = ({ children }) => {
   };
 
   function handleLogout() {
-    console.log("Sucessfuly Logged Out!");
+    console.log("Successfully Logged Out!");
     localStorage.removeItem("authToken");
     localStorage.removeItem("userId");
-    nav("/log-in");
+    setUserId(null); // Clear userId from context
+    nav("/login");
   }
 
   useEffect(() => {
     authenticateUser();
   }, []);
-
-  // useEffect(() => {
-  //   if (userId) {
-  //     localStorage.setItem("userId", userId);
-  //   } else {
-  //     localStorage.removeItem("userId"); // Remove userId if null
-  //   }
-  // }, [userId]);
 
   return (
     <AuthContext.Provider

@@ -39,7 +39,7 @@ const SignUpPage = () => {
           setEmail("");
           setPassword("");
           setProfilePicture("");
-          nav("/log-in");
+          nav("/login");
         }
       });
     } catch (error) {

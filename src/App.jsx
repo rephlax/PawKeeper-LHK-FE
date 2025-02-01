@@ -30,8 +30,8 @@ function App() {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path={`/users/user/${userId}`} element={<PrivateRoute><UserPage /></PrivateRoute>} />
-              <Route path="/sign-up" element={<SignUpPage />} />
-              <Route path="/log-in" element={<LogInPage />} />
+              <Route path="/signup" element={<SignUpPage />} />
+              <Route path="/login" element={<LogInPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </main>
