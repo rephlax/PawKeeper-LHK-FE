@@ -5,16 +5,11 @@ import defaultUser from "../assets/defaultUser.png";
 import { useContext, useEffect } from "react";
 
 const UserPage = () => {
-  const { user, userId, handleLogout } = useContext(AuthContext);
+  const { user, handleLogout } = useContext(AuthContext);
   const nav = useNavigate();
-  const { id } = useParams(); // Assuming the user ID is passed as a URL parameter
+  
 
-  useEffect(() => {
-    if (userId !== id) {
-      // If the userId in context does not match the URL id, navigate to the correct user page
-      nav(`/users/user/${userId}`);
-    }
-  }, [userId, id, nav]);
+  
 
   return (
     <div>

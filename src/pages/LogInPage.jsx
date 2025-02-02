@@ -2,6 +2,7 @@ import axios from "axios";
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005'
 
 const LogInPage = () => {
   const [email, setEmail] = useState("");
@@ -21,7 +22,7 @@ const LogInPage = () => {
 
     try {
       const { data } = await axios.post(
-        "http://localhost:5005/users/login",
+        `${BACKEND_URL}/users/login`,
         userToLogin
       );
 

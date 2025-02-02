@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005'
 
 const SignUpPage = () => {
   const [username, setUsername] = useState("");
@@ -20,7 +21,7 @@ const SignUpPage = () => {
     };
 
     try {
-      await axios.get("http://localhost:5005/users/").then((response) => {
+      await axios.get(`${BACKEND_URL}/users/`).then((response) => {
         const userExists = response.data.some(
           (user) => user.username === newUser.username
         );
@@ -33,7 +34,7 @@ const SignUpPage = () => {
         } else if (emailExists) {
           alert("Email already exists");
         } else {
-          axios.post("http://localhost:5005/users/signup", newUser);
+          axios.post(`${BACKEND_URL}/users/signup`, newUser);
           alert("User created successfully");
           setUsername("");
           setEmail("");

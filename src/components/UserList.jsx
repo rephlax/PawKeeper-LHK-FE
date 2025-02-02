@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSocket } from '../context/SocketContext';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005'
 
 const UserList = () => {
     const [users, setUsers] = useState([]);
@@ -10,7 +11,7 @@ const UserList = () => {
 
         const fetchUsers = async () => {
             try {
-                const response = await fetch('http://localhost:5005/api/users', {
+                const response = await fetch(`${BACKEND_URL}/api/users`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('authToken')}`
                     }
