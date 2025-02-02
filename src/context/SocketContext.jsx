@@ -3,51 +3,88 @@ import { io } from 'socket.io-client'
 import { useAuth } from './AuthContext'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005'
+
 const SocketContext = createContext(null)
 
 export const SocketProvider = ({ children }) => {
     const [socket, setSocket] = useState(null)
-    const { isSignedIn, user, authToken } = useAuth() // Changed isAuthenticated to isSignedIn
+    const [isConnected, setIsConnected] = useState(false) 
+    const { isSignedIn, user } = useAuth()
+    const authToken = localStorage.getItem("authToken")
 
     useEffect(() => {
-        // Only connect if user is signed in
-        if (!isSignedIn || !authToken) return;
+        if (!isSignedIn || !authToken) {
+            setIsConnected(false)
+            return
+        }
 
-        console.log("Initiating socket connection to:", BACKEND_URL);
+        console.log("Initiating socket connection to:", BACKEND_URL)
         
         const newSocket = io(BACKEND_URL, {
             auth: {
                 token: authToken
             },
+            path: '/socket.io',
             transports: ['websocket', 'polling'],
             reconnection: true,
             reconnectionAttempts: 5,
-            reconnectionDelay: 1000
-        });
-
-        newSocket.on('connect', () => {
-            console.log('Socket connected!', newSocket.id);
-        });
+            reconnectionDelay: 1000,
+            timeout: 10000,
+            secure: true,
+            rejectUnauthorized: false
+        })
 
         newSocket.on('connect_error', (error) => {
             console.log('Connection error details:', {
                 message: error.message,
                 description: error,
-            });
-        });
+                url: BACKEND_URL,
+                transport: error.transport,
+                data: error.data
+            })
+            setIsConnected(false)
+        })
 
-        setSocket(newSocket);
+        // Rest of your code remains the same...
+        newSocket.on('connect', () => {
+            console.log('Socket connected!', newSocket.id)
+            setIsConnected(true)
+        })
+
+        newSocket.on('disconnect', () => {
+            console.log('Socket disconnected')
+            setIsConnected(false)
+        })
+
+        setSocket(newSocket)
     
         return () => {
-            if (newSocket) newSocket.close();
+            if (newSocket) {
+                newSocket.off('connect')
+                newSocket.off('disconnect')
+                newSocket.off('connect_error')
+                newSocket.close()
+            }
         }
-    }, [isSignedIn, authToken]) // Changed dependency from isAuthenticated to isSignedIn
+    }, [isSignedIn, authToken])
+
+    const contextValue = {
+        socket,
+        user,
+        isConnected,
+    }
 
     return (
-        <SocketContext.Provider value={{ socket, user }}>
+        <SocketContext.Provider value={contextValue}>
             {children}
         </SocketContext.Provider>
     )
 }
 
-export const useSocket = () => useContext(SocketContext)
+export const useSocket = () => {
+    const context = useContext(SocketContext)
+    if (!context) {
+        throw new Error('useSocket must be used within a SocketProvider')
+    }
+    return context
+}
