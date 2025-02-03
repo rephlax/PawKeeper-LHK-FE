@@ -2,9 +2,7 @@ import axios from "axios";
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005'
-
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005";
 
 const LogInPage = () => {
   const [email, setEmail] = useState("");
@@ -29,7 +27,7 @@ const LogInPage = () => {
       );
 
       alert("Login Sucessfull", data);
-      console.log(data._id)
+      console.log(data._id);
 
       localStorage.setItem("authToken", data.authToken);
       localStorage.setItem("userId", userId);
@@ -39,7 +37,7 @@ const LogInPage = () => {
 
       nav(`/users/user/${userId}`);
     } catch (error) {
-      console.log("here is the error", error);      
+      console.log("here is the error", error);
     }
   }
   return (
