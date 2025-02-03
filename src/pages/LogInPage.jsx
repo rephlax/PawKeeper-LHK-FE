@@ -37,8 +37,7 @@ const LogInPage = () => {
 
       nav(`/users/user/${userId}`);
     } catch (error) {
-      console.log("here is the error", error);
-      setError(error.response.data.message);
+      console.log("here is the error", error);      
     }
   }
   return (
