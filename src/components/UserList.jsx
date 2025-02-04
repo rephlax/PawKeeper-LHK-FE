@@ -4,13 +4,14 @@ import { useSocket } from '../context/SocketContext';
 const UserList = () => {
     const [users, setUsers] = useState([]);
     const { socket, isUserOnline } = useSocket();
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005';
 
     useEffect(() => {
         if (!socket) return;
 
         const fetchUsers = async () => {
             try {
-                const response = await fetch('http://localhost:5005/api/users', {
+                const response = await fetch(`${BACKEND_URL}/api/users`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('authToken')}`
                     }
