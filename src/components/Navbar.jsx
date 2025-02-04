@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import logo from "../assets/logo.png"
+import logo from "../assets/logo.png";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const Navbar = () => {
   return (
@@ -10,13 +11,19 @@ const Navbar = () => {
         </Link>
       </div>
 
-      <div className="flex gap-4 justify-evenly items-center text-lg" style={{ paddingRight: '10px' }}>
+      <div
+        className="flex gap-4 justify-evenly items-center text-lg"
+        style={{ paddingRight: "10px" }}
+      >
         <Link to="/sign-up" className="navbar-link">
           Sign up
         </Link>
         <Link to="/log-in" className="navbar-link">
           Log in
         </Link>
+        <div>
+          <LanguageSwitcher />
+        </div>
       </div>
     </nav>
   );
