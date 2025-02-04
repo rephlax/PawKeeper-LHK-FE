@@ -9,9 +9,9 @@ const LogInPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { authenticateUser } = useContext(AuthContext);
+  const { authenticateUser, user , userId} = useContext(AuthContext);
   const nav = useNavigate();
-  const { userId } = useContext(AuthContext);
+  
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -28,18 +28,20 @@ const LogInPage = () => {
       );
 
       alert("Login Sucessfull", data);
-      console.log(data._id)
+      
+      console.log(data)
+      console.log(user)
 
       localStorage.setItem("authToken", data.authToken);
       localStorage.setItem("userId", userId);
-      console.log(userId);
+      
 
       await authenticateUser();
 
-      nav(`/users/user/${userId}`);
+      nav(`/users/user/${data.userId}`);
     } catch (error) {
+      setError(error);
       console.log("here is the error", error);
-      setError(error.response.data.message);
     }
   }
   return (
