@@ -8,13 +8,15 @@ const SocketContext = createContext(null)
 
 export const SocketProvider = ({ children }) => {
     const [socket, setSocket] = useState(null)
-    const [isConnected, setIsConnected] = useState(false) 
+    const [isConnected, setIsConnected] = useState(false)
+    const [onlineUsers, setOnlineUsers] = useState(new Set())
     const { isSignedIn, user } = useAuth()
     const authToken = localStorage.getItem("authToken")
 
     useEffect(() => {
         if (!isSignedIn || !authToken) {
             setIsConnected(false)
+            setOnlineUsers(new Set())
             return
         }
 
@@ -22,7 +24,8 @@ export const SocketProvider = ({ children }) => {
         
         const newSocket = io(BACKEND_URL, {
             auth: {
-                token: authToken
+                token: authToken,
+                userId: user?._id
             },
             path: '/socket.io',
             transports: ['websocket', 'polling'],
@@ -32,6 +35,25 @@ export const SocketProvider = ({ children }) => {
             timeout: 10000,
             secure: true,
             rejectUnauthorized: false
+        })
+
+        newSocket.on('users_online', (users) => {
+            console.log('Received online users:', users)
+            setOnlineUsers(new Set(users))
+        })
+
+        newSocket.on('user_connected', (userId) => {
+            console.log('User connected:', userId)
+            setOnlineUsers(prev => new Set([...prev, userId]))
+        })
+
+        newSocket.on('user_disconnected', (userId) => {
+            console.log('User disconnected:', userId)
+            setOnlineUsers(prev => {
+                const updated = new Set(prev)
+                updated.delete(userId)
+                return updated
+            })
         })
 
         newSocket.on('connect_error', (error) => {
@@ -45,15 +67,16 @@ export const SocketProvider = ({ children }) => {
             setIsConnected(false)
         })
 
-        // Rest of your code remains the same...
         newSocket.on('connect', () => {
             console.log('Socket connected!', newSocket.id)
             setIsConnected(true)
+            newSocket.emit('get_online_users')
         })
 
         newSocket.on('disconnect', () => {
             console.log('Socket disconnected')
             setIsConnected(false)
+            setOnlineUsers(new Set())
         })
 
         setSocket(newSocket)
@@ -63,15 +86,20 @@ export const SocketProvider = ({ children }) => {
                 newSocket.off('connect')
                 newSocket.off('disconnect')
                 newSocket.off('connect_error')
+                newSocket.off('users_online')
+                newSocket.off('user_connected')
+                newSocket.off('user_disconnected')
                 newSocket.close()
             }
         }
-    }, [isSignedIn, authToken])
+    }, [isSignedIn, authToken, user?._id])
 
     const contextValue = {
         socket,
         user,
         isConnected,
+        onlineUsers,
+        isUserOnline: (userId) => onlineUsers.has(userId)
     }
 
     return (
