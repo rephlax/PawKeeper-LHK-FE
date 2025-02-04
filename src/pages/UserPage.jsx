@@ -9,12 +9,7 @@ const UserPage = () => {
   const nav = useNavigate();
   const { id } = useParams(); // Assuming the user ID is passed as a URL parameter
 
-  useEffect(() => {
-    if (userId !== id) {
-      // If the userId in context does not match the URL id, navigate to the correct user page
-      nav(`/users/user/${userId}`);
-    }
-  }, [userId, id, nav]);
+ console.log(user, userId)
 
   return (
     <div>

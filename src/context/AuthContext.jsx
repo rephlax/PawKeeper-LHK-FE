@@ -20,7 +20,7 @@ const AuthWrapper = ({ children }) => {
  const [isSignedIn, setIsSignedIn] = useState(false);
 
  const nav = useNavigate();
- const authenticateUser = async () => {
+ const authenticateUser = async (userId) => {
    const webToken = localStorage.getItem("authToken");
 
    if (webToken) {
@@ -31,13 +31,15 @@ const AuthWrapper = ({ children }) => {
            headers: { 
              Authorization: `Bearer ${webToken}`,
              'Content-Type': 'application/json',
-             'Origin': window.location.origin
+            //  'Origin': window.location.origin
            },
            withCredentials: true 
          }
        );
        
        if (responseToVerify && responseToVerify.data) {
+         console.log(responseToVerify.data.currentUser);
+         console.log(responseToVerify.data.currentUser._id)
          setUserId(responseToVerify.data.currentUser._id);
          setUser(responseToVerify.data.currentUser);
          setIsSignedIn(true);
@@ -61,8 +63,7 @@ const AuthWrapper = ({ children }) => {
  function handleLogout() {
    console.log("Successfully Logged Out!");
    localStorage.removeItem("authToken");
-   localStorage.removeItem("userId");
-   setUserId(null);
+   localStorage.removeItem("userId");   
    setUser(null);
    setIsSignedIn(false);
    nav("/log-in");
