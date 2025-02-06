@@ -42,6 +42,7 @@ const UserList = () => {
     }, [socket, user?._id]);
 
     const startPrivateChat = (userId) => {
+        console.log('Starting private chat with:', userId);
         socket.emit('start_private_chat', { targetUserId: userId });
     };
 

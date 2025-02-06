@@ -15,13 +15,39 @@ const ChatWidget = () => {
     useEffect(() => {
         if (!socket) return;
 
+        // Listen for private chat started
         socket.on('private_chat_started', (roomId) => {
+            console.log('Private chat started:', roomId);
             setActiveRoom(roomId);
             setShowUserList(false);
         });
 
-        return () => socket.off('private_chat_started');
+        // Listen for chat invitations
+        socket.on('chat_invitation', (invitation) => {
+            console.log('Received chat invitation:', invitation);
+            setActiveRoom(invitation.roomId);
+            setShowUserList(false);
+        });
+
+        socket.on('error', (error) => {
+            console.error('Socket error:', error);
+        });
+
+        return () => {
+            socket.off('private_chat_started');
+            socket.off('chat_invitation');
+            socket.off('error');
+        };
     }, [socket]);
+
+    // Handler for joining room
+    const handleJoinRoom = (roomId) => {
+        if (socket) {
+            socket.emit('join_room', roomId);
+            setActiveRoom(roomId);
+            setShowUserList(false);
+        }
+    };
 
     return (
         <div className="fixed bottom-14 right-4 z-50" style={{ maxHeight: '600px' }}>
@@ -35,17 +61,28 @@ const ChatWidget = () => {
             ) : (
                 <div className="bg-cream-background rounded-lg shadow-xl flex flex-col border-2 border-cream-accent/50 p-4" 
                      style={{ width: '320px', height: '480px' }}>
-                    <div className=" bg-cream-background text-cream-text flex justify-between items-center rounded-t-lg">
-                        <h3 className="font-medium text-lg cursor-default" style={{ paddingLeft: '6px' }}>Chat</h3>
+                    <div className="bg-cream-background text-cream-text flex justify-between items-center rounded-t-lg">
+                        <h3 className="font-medium text-lg cursor-default" style={{ paddingLeft: '6px' }}>
+                            {activeRoom ? 'Private Chat' : 'Chat'}
+                        </h3>
                         <div className="flex gap-2">
+                            {!activeRoom && (
+                                <button 
+                                    onClick={() => setShowUserList(!showUserList)}
+                                    className="cursor-pointer hover:bg-cream-surface p-1 rounded"
+                                >
+                                    <Users className="h-5 w-5" />
+                                </button>
+                            )}
                             <button 
-                                onClick={() => setShowUserList(!showUserList)}
-                                className="cursor-pointer hover:bg-cream-surface p-1 rounded"
-                            >
-                                <Users className="h-5 w-5" />
-                            </button>
-                            <button 
-                                onClick={() => setIsOpen(false)}
+                                onClick={() => {
+                                    if (activeRoom) {
+                                        setActiveRoom(null);
+                                        setShowUserList(true);
+                                    } else {
+                                        setIsOpen(false);
+                                    }
+                                }}
                                 className="cursor-pointer hover:bg-cream-surface p-1 rounded"
                             >
                                 <X className="h-5 w-5" />
@@ -56,7 +93,7 @@ const ChatWidget = () => {
                     <div className="border-b border-cream-accent relative">
                         <div className="absolute top-full left-0 right-0 h-2 bg-gradient-to-b from-cream-800/20 to-transparent">
                         </div>
-                        <ChatInvitations />
+                        <ChatInvitations onAccept={handleJoinRoom} />
                     </div>
 
                     <div className="flex-1 overflow-hidden">
