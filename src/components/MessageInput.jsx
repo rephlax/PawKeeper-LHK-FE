@@ -3,18 +3,21 @@ import { useSocket } from "../context/SocketContext";
 
 const MessageInput = ({ roomId }) => {
     const [message, setMessage] = useState("");
-    const socket = useSocket();
+    const { socket } = useSocket();  // Destructure from hook
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!message.trim() || !socket || !roomId) return;
 
-        socket.emit("send_message", {
-            roomId,
-            content: message.trim()
-        });
-
-        setMessage("");
+        try {
+            socket.emit("send_message", {
+                roomId,
+                content: message.trim()
+            });
+            setMessage("");
+        } catch (error) {
+            console.error("Error sending message:", error);
+        }
     };
 
     return (
@@ -28,7 +31,7 @@ const MessageInput = ({ roomId }) => {
             />
             <button
                 type="submit"
-                disabled={!message.trim()}
+                disabled={!message.trim() || !socket}
                 className="bg-cream-background text-cream-text px-4 py-2 rounded-lg hover:bg-cream-surface transition-colors disabled:opacity-50"
             >
                 Send

@@ -9,24 +9,26 @@ const ChatInvitations = () => {
         if (!socket) return;
 
         socket.on('chat_invitation', (invitation) => {
+            console.log('Received invitation:', invitation);
             setInvitations(prev => [...prev, invitation]);
         });
 
-        // Cleanup
         return () => {
-            if (socket) {
-                socket.off('chat_invitation');
-            }
+            socket?.off('chat_invitation');
         };
     }, [socket]);
 
     const acceptInvitation = (invitation) => {
         if (!socket) return;
         
-        socket.emit('join_room', invitation.roomId);
-        setInvitations(prev => 
-            prev.filter(inv => inv.roomId !== invitation.roomId)
-        );
+        try {
+            socket.emit('join_room', invitation.roomId);
+            setInvitations(prev => 
+                prev.filter(inv => inv.roomId !== invitation.roomId)
+            );
+        } catch (error) {
+            console.error('Error accepting invitation:', error);
+        }
     };
 
     if (invitations.length === 0) return null;

@@ -3,8 +3,8 @@ import { useSocket } from '../context/SocketContext';
 
 const UserList = () => {
     const [users, setUsers] = useState([]);
-    const { socket, isUserOnline } = useSocket();
-    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005';
+    const { socket, isUserOnline, user } = useSocket();
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
     useEffect(() => {
         if (!socket) return;
@@ -18,7 +18,7 @@ const UserList = () => {
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    setUsers(data.filter(user => user._id !== socket.user._id));
+                    setUsers(data.filter(u => u._id !== user?._id));
                 }
             } catch (error) {
                 console.error('Error fetching users:', error);
@@ -26,15 +26,20 @@ const UserList = () => {
         };
 
         fetchUsers();
-        
-        socket.on('users_online', () => {
-            fetchUsers();
+
+        const events = ['users_online', 'user_connected', 'user_disconnected'];
+        events.forEach(event => {
+            socket.on(event, fetchUsers);
         });
 
+        socket.emit('get_online_users');
+
         return () => {
-            socket.off('users_online');
+            events.forEach(event => {
+                socket.off(event);
+            });
         };
-    }, [socket]);
+    }, [socket, user?._id]);
 
     const startPrivateChat = (userId) => {
         socket.emit('start_private_chat', { targetUserId: userId });

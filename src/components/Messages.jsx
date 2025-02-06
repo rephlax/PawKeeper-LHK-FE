@@ -1,31 +1,27 @@
 import { useRef, useEffect, useState } from 'react'
 import { useSocket } from '../context/SocketContext'
 
-const Messages = () => {
+const Messages = ({ roomId }) => {
     const messagesEndRef = useRef(null)
-    const { socket, username } = useSocket()
+    const { socket, user } = useSocket()
     const [messages, setMessages] = useState([])
 
     useEffect(() => {
-        if (socket) {
-            socket.on('receive_message', (message) => {
+        if (!socket || !roomId) return;
+
+        socket.on('receive_message', (message) => {
+            if (message.roomId === roomId) {
                 setMessages(prev => [...prev, message])
-            });
-        }
+            }
+        });
 
         return () => {
-            if (socket) {
-                socket.off('receive_message')
-            }
+            socket?.off('receive_message')
         }
-    }, [socket])
-
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-    }
+    }, [socket, roomId])
 
     useEffect(() => {
-        scrollToBottom()
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
     }, [messages])
 
     return (
@@ -34,20 +30,20 @@ const Messages = () => {
                 <div
                     key={message.id}
                     className={`flex ${
-                        message.sender === username 
+                        message.sender._id === user?._id 
                             ? 'justify-end' 
                             : 'justify-start'
                     }`}
                 >
                     <div
                         className={`max-w-[70%] p-3 rounded-lg ${
-                            message.sender === username
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-gray-100 text-gray-900'
+                            message.sender._id === user?._id
+                                ? 'bg-cream-500 text-white'
+                                : 'bg-cream-100 text-gray-900'
                         }`}
                     >
-                        <p className="text-xs opacity-75">{message.sender}</p>
-                        <p className="text-sm break-words">{message.text}</p>
+                        <p className="text-xs opacity-75">{message.sender.username}</p>
+                        <p className="text-sm break-words">{message.content}</p>
                         <p className="text-xs opacity-75">
                             {new Date(message.timestamp).toLocaleTimeString()}
                         </p>
