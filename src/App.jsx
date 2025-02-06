@@ -10,6 +10,7 @@ import ChatWidget from "./components/ChatWidget";
 import PrivateRoute from "./context/PrivateRoute";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
+import UpdateUserForm from "./components/UpdateUserForm";
 
 function App() {
   const {userId} = useContext(AuthContext) 
@@ -32,6 +33,7 @@ function App() {
             <Routes>
                   <Route path="/" element={<HomePage />} />
                   <Route path={`/users/user/${userId}`} element={<PrivateRoute><UserPage /></PrivateRoute>} />
+                  <Route path={`/users/update-user/${userId}`} element={<PrivateRoute><UpdateUserForm /></PrivateRoute>} />
                   <Route path="/sign-up" element={<SignUpPage />} />
                   <Route path="/log-in" element={<LogInPage />} />
                   <Route path="*" element={<NotFoundPage />} />

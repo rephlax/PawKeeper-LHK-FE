@@ -29,11 +29,11 @@ const LogInPage = () => {
 
       alert("Login Sucessfull", data);
       
-      console.log(data)
-      console.log(user)
+      // console.log(data)
+      // console.log(userId)
 
       localStorage.setItem("authToken", data.authToken);
-      localStorage.setItem("userId", userId);
+      localStorage.setItem("userId", data.userId);
       
 
       await authenticateUser();
@@ -41,6 +41,7 @@ const LogInPage = () => {
       nav(`/users/user/${data.userId}`);
     } catch (error) {
       setError(error);
+      alert(error.response.data.message)
       console.log("here is the error", error);
     }
   }

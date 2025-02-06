@@ -9,6 +9,12 @@ const SignUpPage = () => {
  const [email, setEmail] = useState("");
  const [password, setPassword] = useState("");
  const [profilePicture, setProfilePicture] = useState("");
+ const [rate, setRate] = useState("");
+ const [latitude, setLatitude]=useState("");
+ const [longitude, setLongitude] = useState("");
+ const [sitter, setSitter] = useState(false);
+ const [rating, setRating] = useState(0)
+
 
  const nav = useNavigate()
 
@@ -19,6 +25,12 @@ const SignUpPage = () => {
      username: username,
      email: email,
      password: password,
+     profilePicture: profilePicture,
+     rate: rate,
+     latitude: latitude,
+     longitude: longitude,
+     sitter:sitter,
+     rating
    };
 
    try {
@@ -41,7 +53,11 @@ const SignUpPage = () => {
          setEmail("");
          setPassword("");
          setProfilePicture("");
-         nav("/login");
+         setLatitude("");
+         setLongitude("");
+         setRate("");
+         setSitter(false)
+         nav("/log-in");
        }
      });
    } catch (error) {
@@ -52,40 +68,95 @@ const SignUpPage = () => {
    <div>
      <h1>Become a PawKeeper</h1>
      <form onSubmit={handleSubmit} className="form">
-       <label>
-         Username:
-         <input
-           type="text"
-           value={username}
-           onChange={(e) => setUsername(e.target.value)}
-         />
-       </label>
-       <label>
-         Email:
-         <input
-           type="text"
-           value={email}
-           onChange={(e) => setEmail(e.target.value)}
-         />
-       </label>
-       <label>
-         Password:
-         <input
-           type="password"
-           value={password}
-           onChange={(e) => setPassword(e.target.value)}
-         />
-       </label>
-       <label>
-         Profile Picture:
-         <input
-           type="file"
-           value={profilePicture}
-           onChange={(e) => setProfilePicture(e.target.value)}
-         />
-       </label>
-       <button>Sign up</button>
-     </form>
+        <label>
+          Email
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
+          />
+        </label>
+
+        <label>
+          Password
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
+          />
+        </label>
+
+        <label>
+          Username
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => {
+              setUsername(e.target.value);
+            }}
+          />
+        </label>
+
+        <label>
+          Profile Picture (URL)
+          <input
+            type="text"
+            value={profilePicture}
+            onChange={(e) => {
+              setProfilePicture(e.target.value);
+            }}
+          />
+        </label>
+
+        <label>
+          Rate
+          <input
+            type="number"
+            value={rate}
+            onChange={(e) => {
+              setRate(e.target.value);
+            }}
+          />
+        </label>
+
+        <label>
+          Location
+          <input
+            type="number"
+            placeholder="Latitude"
+            value={latitude}
+            onChange={(e) => {
+              setLatitude(e.target.value);
+            }}
+          />
+          <input
+            type="number"
+            placeholder="Longitude"
+            value={longitude}
+            onChange={(e) => {
+              setLongitude(e.target.value);
+            }}
+          />
+        </label>
+
+        <label>
+          Are you a pet sitter?
+          <input
+            type="checkbox"
+            value={sitter}
+            checked={sitter}
+            onChange={(e) => {
+              setSitter(e.target.checked);
+            }}
+          />
+        </label>
+
+        <button type="submit">Signup</button>
+      </form>
    </div>
  );
 };
