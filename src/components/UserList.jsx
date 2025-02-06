@@ -11,7 +11,7 @@ const UserList = () => {
 
         const fetchUsers = async () => {
             try {
-                const response = await fetch(`${BACKEND_URL}/api/users`, {
+                const response = await fetch(`${BACKEND_URL}/users/`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('authToken')}`
                     }
