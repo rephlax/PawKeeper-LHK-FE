@@ -29,13 +29,13 @@ function App() {
           </aside>
 
           <main className="flex-1 backdrop-blur-md bg-cream-50/50 p-6">
-            <Routes>
-                  <Route path="/" element={<HomePage />} />
-                  <Route path={`/users/user/${userId}`} element={<PrivateRoute><UserPage /></PrivateRoute>} />
-                  <Route path="/sign-up" element={<SignUpPage />} />
-                  <Route path="/log-in" element={<LogInPage />} />
-                  <Route path="*" element={<NotFoundPage />} />
-            </Routes>
+          <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/users/user/:userId" element={<PrivateRoute><UserPage /></PrivateRoute>} />
+              <Route path="/sign-up" element={<SignUpPage />} />
+              <Route path="/log-in" element={<LogInPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+          </Routes>
           </main>
       </div>
 
