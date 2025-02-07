@@ -3,13 +3,14 @@ import { useSocket } from "../context/SocketContext";
 
 const MessageInput = ({ roomId }) => {
     const [message, setMessage] = useState("");
-    const { socket } = useSocket();  // Destructure from hook
+    const { socket } = useSocket();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!message.trim() || !socket || !roomId) return;
 
         try {
+            console.log('Sending message to room:', roomId);
             socket.emit("send_message", {
                 roomId,
                 content: message.trim()
