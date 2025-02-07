@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { MessageSquare, X, Users } from 'lucide-react';
+import { MessageSquare, X, Users, MessageCircle } from 'lucide-react';
 import MessageInput from './MessageInput';
 import Messages from './Messages';
 import UserList from './UserList';
+import ActiveChats from './ActiveChats';
 import ChatInvitations from './ChatInvitations';
 import { useSocket } from '../context/SocketContext';
 
@@ -10,6 +11,7 @@ const ChatWidget = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [activeRoom, setActiveRoom] = useState(null);
     const [showUserList, setShowUserList] = useState(false);
+    const [view, setView] = useState('chats');
     const { socket } = useSocket();
 
     useEffect(() => {
@@ -67,18 +69,29 @@ const ChatWidget = () => {
                         </h3>
                         <div className="flex gap-2">
                             {!activeRoom && (
-                                <button 
-                                    onClick={() => setShowUserList(!showUserList)}
-                                    className="cursor-pointer hover:bg-cream-surface p-1 rounded"
-                                >
-                                    <Users className="h-5 w-5" />
-                                </button>
+                                <>
+                                    <button 
+                                        onClick={() => {
+                                            setShowUserList(!showUserList);
+                                            setView('users');
+                                        }}
+                                        className="cursor-pointer hover:bg-cream-surface p-1 rounded"
+                                        title={showUserList ? "Show Active Chats" : "Show Users"}
+                                    >
+                                        {showUserList ? 
+                                            <MessageCircle className="h-5 w-5" /> : 
+                                            <Users className="h-5 w-5" />
+                                        }
+                                    </button>
+                                </>
                             )}
                             <button 
                                 onClick={() => {
                                     if (activeRoom) {
+                                        socket?.emit('leave_room', activeRoom);
                                         setActiveRoom(null);
-                                        setShowUserList(true);
+                                        setShowUserList(false);
+                                        setView('chats');
                                     } else {
                                         setIsOpen(false);
                                     }
@@ -109,11 +122,7 @@ const ChatWidget = () => {
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex items-center justify-center h-full p-4">
-                                <p className="text-cream-text text-center">
-                                    Click the users icon to start a chat
-                                </p>
-                            </div>
+                            <ActiveChats />
                         )}
                     </div>
                 </div>
