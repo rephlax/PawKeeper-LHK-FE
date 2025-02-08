@@ -1,0 +1,28 @@
+{
+  "homepage": {
+    "welcome": "Welcome to PawKeeper"
+  },
+  "navbar": {
+    "login": "Log in",
+    "signup": "Sign up"
+  },
+  "signuppage": {
+    "title": "Become a PawKeeper",
+    "usernameLabel": "Username",
+    "profilePictureLabel": "Profile Picture (URL)",
+    "rateLabel": "Rate",
+    "locationLabel": "Location",
+    "latitudePlaceholder": "Latitude",
+    "longitudePlaceholder": "Longitude",
+    "sitterLabel": "Are you a pet sitter?",
+    "signupButton": "Signup"
+  },
+  "loginpage": {
+      "title": "Log in page",
+      "loginButton": "Login"
+  },
+  "forms": {
+    "emailLabel": "Email",
+    "passwordLabel": "Password"
+  }
+}

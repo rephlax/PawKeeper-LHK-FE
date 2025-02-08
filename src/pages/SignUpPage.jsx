@@ -1,10 +1,12 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005';
 
 const SignUpPage = () => {
+ const { t } = useTranslation();
  const [username, setUsername] = useState("");
  const [email, setEmail] = useState("");
  const [password, setPassword] = useState("");
@@ -66,10 +68,10 @@ const SignUpPage = () => {
  }
  return (
    <div>
-     <h1>Become a PawKeeper</h1>
+     <h1>{t('signuppage.title')}</h1>
      <form onSubmit={handleSubmit} className="form">
         <label>
-          Email
+        {t('forms.emailLabel')}
           <input
             type="email"
             value={email}
@@ -80,7 +82,7 @@ const SignUpPage = () => {
         </label>
 
         <label>
-          Password
+        {t('forms.passwordLabel')}
           <input
             type="password"
             value={password}
@@ -91,7 +93,7 @@ const SignUpPage = () => {
         </label>
 
         <label>
-          Username
+        {t('signuppage.usernameLabel')}
           <input
             type="text"
             value={username}
@@ -102,7 +104,7 @@ const SignUpPage = () => {
         </label>
 
         <label>
-          Profile Picture (URL)
+        {t('signuppage.profilePictureLabel')}
           <input
             type="text"
             value={profilePicture}
@@ -113,7 +115,7 @@ const SignUpPage = () => {
         </label>
 
         <label>
-          Rate
+        {t('signuppage.rateLabel')}
           <input
             type="number"
             value={rate}
@@ -124,10 +126,10 @@ const SignUpPage = () => {
         </label>
 
         <label>
-          Location
+        {t('signuppage.locationLabel')}
           <input
             type="number"
-            placeholder="Latitude"
+            placeholder={t('signuppage.latitudePlaceholder')}
             value={latitude}
             onChange={(e) => {
               setLatitude(e.target.value);
@@ -135,7 +137,7 @@ const SignUpPage = () => {
           />
           <input
             type="number"
-            placeholder="Longitude"
+            placeholder={t('signuppage.longitudePlaceholder')}
             value={longitude}
             onChange={(e) => {
               setLongitude(e.target.value);
@@ -144,7 +146,7 @@ const SignUpPage = () => {
         </label>
 
         <label>
-          Are you a pet sitter?
+        {t('signuppage.sitterLabel')}
           <input
             type="checkbox"
             value={sitter}
@@ -155,7 +157,7 @@ const SignUpPage = () => {
           />
         </label>
 
-        <button type="submit">Signup</button>
+        <button type="submit">{t('signuppage.signupButton')}</button>
       </form>
    </div>
  );
