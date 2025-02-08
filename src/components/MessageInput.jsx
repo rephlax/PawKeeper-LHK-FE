@@ -5,20 +5,21 @@ const MessageInput = ({ roomId }) => {
     const [message, setMessage] = useState("");
     const { socket } = useSocket();
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         if (!message.trim() || !socket || !roomId) return;
 
-        try {
-            console.log('Sending message to room:', roomId);
-            socket.emit("send_message", {
-                roomId,
-                content: message.trim()
-            });
+        console.log('Sending message to room:', roomId);
+        socket.emit("send_message", {
+            roomId,
+            content: message.trim()
+        }, (error) => {
+            if (error) {
+                console.error("Error sending message:", error);
+                return;
+            }
             setMessage("");
-        } catch (error) {
-            console.error("Error sending message:", error);
-        }
+        });
     };
 
     return (

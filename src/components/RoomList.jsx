@@ -9,7 +9,6 @@ const RoomList = ({ onRoomSelect, activeRoomId, onCreateRoom }) => {
     useEffect(() => {
         if (!socket) return;
 
-        // Request rooms when component mounts
         socket.emit('get_rooms');
 
         // Listen for rooms list
