@@ -38,6 +38,11 @@ body,
   font-weight: bold;
 }
 
+.profilePic {
+  height: 250px;
+  
+}
+
 .language-switcher {
   position: relative;
   display: inline-block;

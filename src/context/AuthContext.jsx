@@ -64,34 +64,21 @@ const AuthWrapper = ({ children }) => {
   };
 
   async function handleDeleteUser() {
-    const webToken = localStorage.getItem("authToken")
-   if (webToken) {
-    try {
-      const deletedUser = await axios
-        .delete(`${BACKEND_URL}/users/delete-user/${userId}`, {
-          headers: {authorization: `Bearer ${webToken}`}
-        })
-        .then(() => {
-          alert("User Deleted!")
-          handleLogout();
-        });
-    } catch (error) {
-      console.log("Here is the Error", error)
-    }
-   }
-  }
-
-  async function handleUpdateUser() {
     const webToken = localStorage.getItem("authToken");
-
-    if(webToken) {
+    if (webToken) {
       try {
-        
+        const deletedUser = await axios
+          .delete(`${BACKEND_URL}/users/delete-user/${userId}`, {
+            headers: { authorization: `Bearer ${webToken}` },
+          })
+          .then(() => {
+            alert("User Deleted!");
+            handleLogout();
+          });
       } catch (error) {
-        console.log("Here is the Error", error)
+        console.log("Here is the Error", error);
       }
     }
-
   }
 
   function handleLogout() {

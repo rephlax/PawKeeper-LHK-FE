@@ -1,39 +1,60 @@
-import axios from "axios";
-import { useNavigate, useParams, Link} from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { AuthContext, useAuth } from "../context/AuthContext";
 import defaultUser from "../assets/defaultUser.png";
 import { useContext, useEffect, useState } from "react";
-// import axios from "axios";
+import axios from "axios";
+const webToken = localStorage.getItem("authToken");
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005";
 
 const UserPage = () => {
-  const { user, userId, handleLogout, handleDeleteUser } = useContext(AuthContext);
-  const nav = useNavigate();
-  const { id } = useParams(); // Assuming the user ID is passed as a URL parameter
+  const [userData, setUserData] = useState({});
+  const { user, handleLogout, handleDeleteUser } = useContext(AuthContext);
+  const { userId } = useParams();
+  useEffect(() => {
+    async function getOneUser() {
+      try {
+        const userData = await axios.get(
+          `${BACKEND_URL}/users/user/${userId}`,
+          { headers: { authorization: `Bearer ${webToken}` } }
+        );
+        setUserData(userData);
+      } catch (error) {
+        console.log(error);
+      }
+    }
 
-  console.log(user, userId);
-
-  if (!user || !userId) {
-    return <p>Loading user information...</p>;
-  }
+    if (userId) {
+      getOneUser();
+    }
+  }, [userId]);
 
   return (
     <div>
       <h1>User Page</h1>
-      {user ? (
+      {userData.data ? (
         <div>
-          {user.profilePicture ? (
-            <img src={user.profilePicture} />
+          {userData.data.profilePicture ? (
+            <img src={userData.data.profilePicture} className="profilePic" />
           ) : (
-            <img src={defaultUser} />
+            <img src={defaultUser} className="profilePic" />
           )}
-          <h2>Welcome, {user.username}!</h2>
-          <p>Email: {user.email}</p>
-          <p>Rating: {user.rating}</p>
-          <p>Location: {user.location}</p>
+          <h2>Welcome, {userData.data.username}!</h2>
+          <p>Email: {userData.data.email}</p>
+          <p>Rating: {userData.data.rating}</p>
+          <p>Location:</p>
+          <ul>
+            <li>Latitude: {userData.data.location.coordinates.latitude}</li>
+            <li>Longitude: {userData.data.location.coordinates.longitude}</li>
+          </ul>
           <div className="action-buttons">
-            <Link to={`/users/update-user/${userId}`}><button>Update User Information</button></Link>
+            <Link to={`/users/update-user/${userId}`}>
+              <button>Update User Information</button>
+            </Link>
             <button onClick={handleDeleteUser}>Delete User</button>
             <button onClick={handleLogout}>Logout</button>
+            <Link to={`/users/update-user/${userId}/password-change`}>
+              <button>Change Password</button>
+            </Link>
           </div>
         </div>
       ) : (
