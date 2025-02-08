@@ -10,6 +10,7 @@ import ChatWidget from "./components/ChatWidget";
 import PrivateRoute from "./context/PrivateRoute";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
+import UpdateUserForm from "./components/UpdateUserForm";
 
 function App() {
   const {userId} = useContext(AuthContext) 
