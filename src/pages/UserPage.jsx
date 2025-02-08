@@ -3,7 +3,7 @@ import { useNavigate, useParams, Link} from "react-router-dom";
 import { AuthContext, useAuth } from "../context/AuthContext";
 import defaultUser from "../assets/defaultUser.png";
 import { useContext, useEffect, useState } from "react";
-import axios from "axios";
+// import axios from "axios";
 
 const UserPage = () => {
   const { user, userId, handleLogout, handleDeleteUser } = useContext(AuthContext);
