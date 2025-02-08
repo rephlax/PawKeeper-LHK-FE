@@ -12,10 +12,14 @@ const UserPage = () => {
 
   console.log(user, userId);
 
+  if (!user || !userId) {
+    return <p>Loading user information...</p>;
+  }
+
   return (
     <div>
       <h1>User Page</h1>
-      {userData ? (
+      {user ? (
         <div>
           {user.profilePicture ? (
             <img src={user.profilePicture} />

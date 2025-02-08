@@ -14,18 +14,18 @@ export const SocketProvider = ({ children }) => {
     const authToken = localStorage.getItem("authToken")
 
     useEffect(() => {
-        if (!isSignedIn || !authToken) {
+        if (!isSignedIn || !authToken || !user) {
             setIsConnected(false)
             setOnlineUsers(new Set())
             return
         }
 
-        console.log("Initiating socket connection to:", BACKEND_URL)
+        console.log("Initiating socket connection to:", BACKEND_URL, "with user", user)
         
         const newSocket = io(BACKEND_URL, {
             auth: {
                 token: authToken,
-                userId: user?._id
+                userId: user._id
             },
             path: '/socket.io',
             transports: ['websocket', 'polling'],
@@ -92,7 +92,7 @@ export const SocketProvider = ({ children }) => {
                 newSocket.close()
             }
         }
-    }, [isSignedIn, authToken, user?._id])
+    }, [isSignedIn, authToken, user])
 
     const contextValue = {
         socket,
