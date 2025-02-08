@@ -2,10 +2,13 @@ import axios from "axios";
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { useTranslation } from "react-i18next";
+
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005';
 
 const LogInPage = () => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -47,10 +50,10 @@ const LogInPage = () => {
   }
   return (
     <div>
-      <h1>Log in page</h1>
+      <h1>{t('loginpage.title')}</h1>
       <form className="form" onSubmit={handleLogin}>
         <label>
-          Email:
+        {t('forms.emailLabel')}
           <input
             type="email"
             value={email}
@@ -58,14 +61,14 @@ const LogInPage = () => {
           />
         </label>
         <label>
-          Password:
+        {t('forms.passwordLabel')}
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </label>
-        <button>Login</button>
+        <button>{t('loginpage.loginButton')}</button>
       </form>
     </div>
   );

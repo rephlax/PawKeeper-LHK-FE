@@ -1,3 +1,28 @@
 {
-  "welcome": "Bem-vindo ao PawKeeper"
+  "homepage": {
+    "welcome": "Bem-vindo ao PawKeeper"
+  },
+  "navbar": {
+    "login": "Entrar",
+    "signup": "Inscrever-se"
+  },
+  "signuppage": {
+    "title": "Torne-se um PawKeeper",
+    "usernameLabel": "Nome de usuário",
+    "profilePictureLabel": "Foto de perfil (URL)",
+    "rateLabel": "Taxa",
+    "locationLabel": "Localização",
+    "latitudePlaceholder": "Latitude",
+    "longitudePlaceholder": "Longitude",
+    "sitterLabel": "Você é um cuidador de animais?",
+    "signupButton": "Inscrever-se"
+  },
+  "loginpage": {
+    "title": "Página de Login",
+    "loginButton": "Entrar"
+  },
+  "forms": {
+    "emailLabel": "Email",
+    "passwordLabel": "Senha"
+  }
 }

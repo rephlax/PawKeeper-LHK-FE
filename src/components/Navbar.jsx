@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 
 const Navbar = () => {
+  const { t } = useTranslation();
   return (
     <nav className="flex items-center justify-between h-full px-8">
       <div className="navbar-logo">
@@ -16,10 +18,10 @@ const Navbar = () => {
         style={{ paddingRight: "10px" }}
       >
         <Link to="/sign-up" className="navbar-link">
-          Sign up
+        {t("navbar.signup")}
         </Link>
         <Link to="/log-in" className="navbar-link">
-          Log in
+        {t("navbar.login")}
         </Link>
         <div>
           <LanguageSwitcher />

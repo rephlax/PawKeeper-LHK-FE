@@ -1,3 +1,28 @@
 {
-  "welcome": "Ласкаво просимо до PawKeeper"
+  "homepage": {
+    "welcome": "Ласкаво просимо до PawKeeper"
+  },
+  "navbar": {
+    "login": "Увійти",
+    "signup": "Зареєструватися"
+  },
+  "signuppage": {
+    "title": "Станьте PawKeeper",
+    "usernameLabel": "Ім'я користувача",
+    "profilePictureLabel": "Фото профілю (URL)",
+    "rateLabel": "Тариф",
+    "locationLabel": "Локація",
+    "latitudePlaceholder": "Широта",
+    "longitudePlaceholder": "Довгота",
+    "sitterLabel": "Ви петсітер?",
+    "signupButton": "Зареєструватися"
+  },
+  "loginpage": {
+    "title": "Сторінка входу",
+    "loginButton": "Увійти"
+  },
+  "forms": {
+    "emailLabel": "Email",
+    "passwordLabel": "Пароль"
+  }
 }
