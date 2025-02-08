@@ -1,76 +1,113 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005";
 
 const UpdateUserForm = () => {
-  const { user, userId} = useContext(AuthContext);
-  
+  const { user, userId } = useContext(AuthContext);
+
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [profilePicture, setProfilePicture] = useState("");
   const [rate, setRate] = useState("");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
   const [sitter, setSitter] = useState(false);
-  
-  const webToken = localStorage.getItem("authToken")
+  const [imageFile, setImageFile] = useState(null);
+  const [uploading, setUploading] = useState(false)
+
+  const webToken = localStorage.getItem("authToken");
 
   useEffect(() => {
     async function getOneUser() {
-        
-     if(webToken) {
-      try {
-        const userToUpdate = await axios.get(`${BACKEND_URL}/users/user/${userId}`, {headers: {
-            authorization: `Bearer ${webToken}`
-        }});
-        const user = userToUpdate.data
-        setUsername(user.username);
-        setEmail(user.email);
-        setProfilePicture(user.profilePicture);
-        setRate(user.rate);
-        setLatitude(user.location?.coordinates.latitude || 0);
-        setLongitude(user.location?.coordinates.longitude || 0);
-        setSitter(user.sitter)
-       
-      } catch (error) {
-        console.log("Here is the error", error);
+      if (webToken) {
+        try {
+          const userToUpdate = await axios.get(
+            `${BACKEND_URL}/users/user/${userId}`,
+            {
+              headers: {
+                authorization: `Bearer ${webToken}`,
+              },
+            }
+          );
+          const user = userToUpdate.data;
+          setUsername(user.username);
+          setEmail(user.email);
+          setProfilePicture(user.profilePicture);
+          setRate(user.rate);
+          setLatitude(user.location?.coordinates.latitude || 0);
+          setLongitude(user.location?.coordinates.longitude || 0);
+          setSitter(user.sitter);
+        } catch (error) {
+          console.log("Here is the error", error);
+        }
       }
-     }
     }
     getOneUser();
   }, [userId]);
 
-  async function handleUpdateUser() {
-   
+  async function handleUpdateUser(e) {
+    e.preventDefault();
 
-    if(webToken) {
-      try {
-        const updatedUser = {
-          username,
-          email,
-          password,
-          profilePicture,
-          rate,
+    const updatedUser = {
+      username,
+      email,
+      profilePicture,
+      rate,
+      location: {
+        coordinates: {
           latitude,
           longitude,
-          sitter      
-        }
+        },
+      },
+      sitter,
+    };
 
-        await axios.patch(`${BACKEND_URL}/users/user/${userId}`, updatedUser)
-        
+    console.log(updatedUser);
+
+    if (webToken) {
+      try {
+        await axios.patch(
+          `${BACKEND_URL}/users/update-user/${userId}`,
+          updatedUser,
+          { headers: { authorization: `Bearer ${webToken}` } }
+        );
       } catch (error) {
-        console.log("Here is the Error", error)
+        console.log("Here is the Error", error);
       }
     }
-
   }
 
+  const handleImageChange = (e) => {
+    setImageFile(e.target.files[0]);
+  };
 
+  const handleUpload = async () => {
+    if (!imageFile) return;
 
+    setUploading(true);
+
+    const formData = new FormData();
+    formData.append("file", imageFile);
+    formData.append("upload_preset", "ml_default"); // Cloudinary upload preset
+
+    try {
+      const response = await axios.post(
+        "https://api.cloudinary.com/v1_1/dzdrwiugn/image/upload",
+        formData
+      );
+
+      console.log(response);
+      setProfilePicture(response.data.secure_url);
+      console.log(profilePicture); // Save Cloudinary image URL in state
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   return (
     <>
@@ -87,17 +124,6 @@ const UpdateUserForm = () => {
         </label>
 
         <label>
-          Change Password
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-            }}
-          />
-        </label>
-
-        <label>
           Username
           <input
             type="text"
@@ -109,15 +135,20 @@ const UpdateUserForm = () => {
         </label>
 
         <label>
-          Profile Picture (URL)
+          Profile Picture 
           <input
-            type="text"
-            value={profilePicture}
-            onChange={(e) => {
-              setProfilePicture(e.target.value);
-            }}
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
           />
         </label>
+        <button
+            type="button"
+            onClick={handleUpload}
+            disabled={uploading}
+          >
+            {uploading ? "Uploading..." : "Upload Image"}
+          </button> 
 
         <label>
           Rate
@@ -162,6 +193,10 @@ const UpdateUserForm = () => {
         </label>
 
         <button type="submit">Submit</button>
+        <Link to={`/users/user/${userId}`}>
+
+        <button>Back to Profile</button>
+        </Link>
       </form>
     </>
   );

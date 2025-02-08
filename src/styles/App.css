@@ -35,3 +35,8 @@ html, body, #root {
   border-radius: 50px;
   font-weight: bold;
 }
+
+.profilePic {
+  height: 250px;
+  
+}
