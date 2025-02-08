@@ -1,11 +1,12 @@
 import { useContext, useEffect, useState } from "react";
-import { data, useParams } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
+import { useParams } from "react-router-dom";
+
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005";
 
 const UpdateUserForm = () => {
-  const { user, handleSubmit , userId} = useContext(AuthContext);
+  const { user, userId} = useContext(AuthContext);
   
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -15,28 +16,65 @@ const UpdateUserForm = () => {
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
   const [sitter, setSitter] = useState(false);
-  const [rating, setRating] = useState(0);
+  
+  const webToken = localStorage.getItem("authToken")
 
   useEffect(() => {
     async function getOneUser() {
-        const webToken = localStorage.getItem("authToken")
+        
+     if(webToken) {
       try {
         const userToUpdate = await axios.get(`${BACKEND_URL}/users/user/${userId}`, {headers: {
             authorization: `Bearer ${webToken}`
         }});
-        
-        // setUsername(user.username);
-        // setEmail(user.email);
+        const user = userToUpdate.data
+        setUsername(user.username);
+        setEmail(user.email);
+        setProfilePicture(user.profilePicture);
+        setRate(user.rate);
+        setLatitude(user.location?.coordinates.latitude || 0);
+        setLongitude(user.location?.coordinates.longitude || 0);
+        setSitter(user.sitter)
+       
       } catch (error) {
         console.log("Here is the error", error);
       }
+     }
     }
     getOneUser();
   }, [userId]);
 
+  async function handleUpdateUser() {
+   
+
+    if(webToken) {
+      try {
+        const updatedUser = {
+          username,
+          email,
+          password,
+          profilePicture,
+          rate,
+          latitude,
+          longitude,
+          sitter      
+        }
+
+        await axios.patch(`${BACKEND_URL}/users/user/${userId}`, updatedUser)
+        
+      } catch (error) {
+        console.log("Here is the Error", error)
+      }
+    }
+
+  }
+
+
+
+
   return (
     <>
-      <form onSubmit={handleSubmit} className="form">
+      <form onSubmit={handleUpdateUser} className="form">
         <label>
           Email
           <input
@@ -49,7 +87,7 @@ const UpdateUserForm = () => {
         </label>
 
         <label>
-          Password
+          Change Password
           <input
             type="password"
             value={password}
@@ -116,7 +154,7 @@ const UpdateUserForm = () => {
           Are you a pet sitter?
           <input
             type="checkbox"
-            checked={data.sitter}
+            checked={sitter}
             onChange={(e) => {
               setSitter(e.target.checked);
             }}

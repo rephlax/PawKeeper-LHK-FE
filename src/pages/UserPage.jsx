@@ -1,4 +1,4 @@
-import axios from "axios";
+
 import { useNavigate, useParams, Link} from "react-router-dom";
 import { AuthContext, useAuth } from "../context/AuthContext";
 import defaultUser from "../assets/defaultUser.png";
@@ -6,16 +6,16 @@ import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 
 const UserPage = () => {
-  const { user, userId, handleLogout, handleDeleteUser } = useContext(AuthContext);
-  const nav = useNavigate();
-  const { id } = useParams(); // Assuming the user ID is passed as a URL parameter
+  const { user, handleLogout, handleDeleteUser } = useContext(AuthContext);
+  
+  const {userId} = useParams()
 
   console.log(user, userId);
 
   return (
     <div>
       <h1>User Page</h1>
-      {userData ? (
+      {user ? (
         <div>
           {user.profilePicture ? (
             <img src={user.profilePicture} />
