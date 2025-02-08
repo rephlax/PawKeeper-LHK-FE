@@ -11,7 +11,8 @@ const CreateRoomModal = ({ onClose, onCreateRoom }) => {
 
         onCreateRoom({
             name: roomName.trim(),
-            type
+            type,
+            participants: []
         });
         onClose();
     };
