@@ -3,7 +3,8 @@ import { MessageSquare, X, Users, MessageCircle } from 'lucide-react';
 import MessageInput from './MessageInput';
 import Messages from './Messages';
 import UserList from './UserList';
-import ActiveChats from './ActiveChats';
+import RoomList from './RoomList';
+import CreateRoomModal from './CreateRoomModal';
 import ChatInvitations from './ChatInvitations';
 import { useSocket } from '../context/SocketContext';
 
@@ -11,24 +12,20 @@ const ChatWidget = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [activeRoom, setActiveRoom] = useState(null);
     const [showUserList, setShowUserList] = useState(false);
-    const [view, setView] = useState('chats');
+    const [showCreateRoom, setShowCreateRoom] = useState(false);
     const { socket } = useSocket();
 
     useEffect(() => {
         if (!socket) return;
 
-        // Listen for private chat started
-        socket.on('private_chat_started', (roomId) => {
-            console.log('Private chat started:', roomId);
-            setActiveRoom(roomId);
+        socket.on('room_joined', (room) => {
+            console.log('Joined room:', room);
+            setActiveRoom(room._id);
             setShowUserList(false);
         });
 
-        // Listen for chat invitations
-        socket.on('chat_invitation', (invitation) => {
-            console.log('Received chat invitation:', invitation);
-            setActiveRoom(invitation.roomId);
-            setShowUserList(false);
+        socket.on('room_invitation', (invitation) => {
+            console.log('Received room invitation:', invitation);
         });
 
         socket.on('error', (error) => {
@@ -36,18 +33,29 @@ const ChatWidget = () => {
         });
 
         return () => {
-            socket.off('private_chat_started');
-            socket.off('chat_invitation');
+            socket.off('room_joined');
+            socket.off('room_invitation');
             socket.off('error');
         };
     }, [socket]);
 
-    // Handler for joining room
-    const handleJoinRoom = (roomId) => {
+    const handleCreateRoom = (roomData) => {
+        if (socket) {
+            socket.emit('create_room', roomData);
+        }
+    };
+
+    const handleRoomSelect = (roomId) => {
         if (socket) {
             socket.emit('join_room', roomId);
             setActiveRoom(roomId);
-            setShowUserList(false);
+        }
+    };
+
+    const handleLeaveRoom = () => {
+        if (socket && activeRoom) {
+            socket.emit('leave_room', activeRoom);
+            setActiveRoom(null);
         }
     };
 
@@ -65,18 +73,15 @@ const ChatWidget = () => {
                      style={{ width: '320px', height: '480px' }}>
                     <div className="bg-cream-background text-cream-text flex justify-between items-center rounded-t-lg">
                         <h3 className="font-medium text-lg cursor-default" style={{ paddingLeft: '6px' }}>
-                            {activeRoom ? 'Private Chat' : 'Chat'}
+                            {activeRoom ? 'Chat' : 'Chats'}
                         </h3>
                         <div className="flex gap-2">
                             {!activeRoom && (
                                 <>
                                     <button 
-                                        onClick={() => {
-                                            setShowUserList(!showUserList);
-                                            setView('users');
-                                        }}
+                                        onClick={() => setShowUserList(!showUserList)}
                                         className="cursor-pointer hover:bg-cream-surface p-1 rounded"
-                                        title={showUserList ? "Show Active Chats" : "Show Users"}
+                                        title={showUserList ? "Show Chats" : "Show Users"}
                                     >
                                         {showUserList ? 
                                             <MessageCircle className="h-5 w-5" /> : 
@@ -88,10 +93,7 @@ const ChatWidget = () => {
                             <button 
                                 onClick={() => {
                                     if (activeRoom) {
-                                        socket?.emit('leave_room', activeRoom);
-                                        setActiveRoom(null);
-                                        setShowUserList(false);
-                                        setView('chats');
+                                        handleLeaveRoom();
                                     } else {
                                         setIsOpen(false);
                                     }
@@ -103,16 +105,10 @@ const ChatWidget = () => {
                         </div>
                     </div>
 
-                    <div className="border-b border-cream-accent relative">
-                        <div className="absolute top-full left-0 right-0 h-2 bg-gradient-to-b from-cream-800/20 to-transparent">
-                        </div>
-                        <ChatInvitations onAccept={handleJoinRoom} />
-                    </div>
+                    <ChatInvitations onAccept={handleRoomSelect} />
 
                     <div className="flex-1 overflow-hidden">
-                        {showUserList ? (
-                            <UserList />
-                        ) : activeRoom ? (
+                        {activeRoom ? (
                             <div className="flex flex-col h-full">
                                 <div className="flex-1 overflow-hidden">
                                     <Messages roomId={activeRoom} />
@@ -121,11 +117,24 @@ const ChatWidget = () => {
                                     <MessageInput roomId={activeRoom} />
                                 </div>
                             </div>
+                        ) : showUserList ? (
+                            <UserList />
                         ) : (
-                            <ActiveChats />
+                            <RoomList 
+                                onRoomSelect={handleRoomSelect}
+                                activeRoomId={activeRoom}
+                                onCreateRoom={() => setShowCreateRoom(true)}
+                            />
                         )}
                     </div>
                 </div>
+            )}
+
+            {showCreateRoom && (
+                <CreateRoomModal 
+                    onClose={() => setShowCreateRoom(false)}
+                    onCreateRoom={handleCreateRoom}
+                />
             )}
         </div>
     );
