@@ -33,7 +33,7 @@ function App() {
           <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/users/user/:userId" element={<PrivateRoute><UserPage /></PrivateRoute>} />
-              <Route path={`/users/update-user/$:userId`} element={<PrivateRoute><UpdateUserForm /></PrivateRoute>} />
+              <Route path={`/users/update-user/:userId`} element={<PrivateRoute><UpdateUserForm /></PrivateRoute>} />
               <Route path="/sign-up" element={<SignUpPage />} />
               <Route path="/log-in" element={<LogInPage />} />
               <Route path="*" element={<NotFoundPage />} />
