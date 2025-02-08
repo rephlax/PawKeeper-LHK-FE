@@ -7,13 +7,14 @@ const CreateRoomModal = ({ onClose, onCreateRoom }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!roomName.trim()) return;
-
-        onCreateRoom({
-            name: roomName.trim(),
-            type,
-            participants: []
-        });
+        const roomData = {
+            name: roomName,
+            type: roomType, // 'direct' or 'group'
+            participants: selectedParticipants.map(p => p._id)
+        };
+        
+        console.log('Creating room with data:', roomData);
+        onCreateRoom(roomData);
         onClose();
     };
 
