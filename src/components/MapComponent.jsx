@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { GoogleMap, Marker, InfoWindow } from '@react-google-maps/api';
-import { useSocket } from '../contexts/SocketContext';
+import { useSocket } from '../context/SocketContext';
 
 const MapComponent = () => {
   const { socket } = useSocket();
