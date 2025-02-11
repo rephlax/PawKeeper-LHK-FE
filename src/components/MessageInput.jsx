@@ -8,17 +8,19 @@ const MessageInput = ({ roomId }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!message.trim() || !socket || !roomId) return;
+        const messageContent = message.trim();
+        setMessage("");
 
         console.log('Sending message to room:', roomId);
         socket.emit("send_message", {
             roomId,
-            content: message.trim()
+            content: messageContent
         }, (error) => {
             if (error) {
                 console.error("Error sending message:", error);
+                setMessage(messageContent);
                 return;
             }
-            setMessage("");
         });
     };
 
