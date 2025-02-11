@@ -2,9 +2,11 @@ import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
   const { t } = useTranslation();
+  const { isSignedIn, user } = useAuth();
   return (
     <nav className="flex items-center justify-between h-full px-8">
       <div className="navbar-logo">
@@ -23,6 +25,12 @@ const Navbar = () => {
         <Link to="/log-in" className="navbar-link">
         {t("navbar.login")}
         </Link>
+        {isSignedIn && user.sitter && (
+        <>
+          <Link to="/sitter/create-pin">Create Sitter Pin</Link>
+          <Link to="/sitter/search">Find Sitters</Link>
+        </>
+        )}
         <div>
           <LanguageSwitcher />
         </div>

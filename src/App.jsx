@@ -8,6 +8,8 @@ import Navbar from "./components/Navbar";
 import { Routes, Route } from "react-router-dom";
 import ChatWidget from "./components/ChatWidget";
 import PrivateRoute from "./context/PrivateRoute";
+import LocationPinManager from "./components/LocationPinManager";
+import PinSearch from "./components/PinSearch";
 
 import UpdateUserForm from "./components/UpdateUserForm";
 import PasswordChange from "./components/PasswordChange";
@@ -54,6 +56,22 @@ function App() {
               element={
                 <PrivateRoute>
                   <PasswordChange/>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/sitter/create-pin"
+              element={
+                <PrivateRoute>
+                  <LocationPinManager />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/sitter/search"
+              element={
+                <PrivateRoute>
+                  <PinSearch />
                 </PrivateRoute>
               }
             />

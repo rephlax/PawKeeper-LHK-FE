@@ -11,6 +11,7 @@ import { initReactI18next } from "react-i18next";
 import enTranslations from "./locales/en.json";
 import ptTranslations from "./locales/pt.json";
 import ukTranslations from "./locales/uk.json";
+import GoogleMapsWrapper from "./components/GoogleMapsWrapper";
 
 // Initialize i18next
 i18n.use(initReactI18next).init({
@@ -29,7 +30,9 @@ createRoot(document.getElementById("root")).render(
     <BrowserRouter>
       <AuthWrapper>
         <SocketProvider>
-          <App />
+          <GoogleMapsWrapper>
+            <App />
+          </GoogleMapsWrapper>
         </SocketProvider>
       </AuthWrapper>
     </BrowserRouter>

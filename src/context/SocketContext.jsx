@@ -67,6 +67,18 @@ export const SocketProvider = ({ children }) => {
             setIsConnected(false)
         })
 
+        newSocket.on('nearby_sitters', (sitters) => {
+            setNearbySitters(sitters);
+        });
+        
+        const findNearbySitters = (location) => {
+            newSocket.emit('search_nearby_sitters', location, (response) => {
+                if (response.sitters) {
+                    setNearbySitters(response.sitters);
+                }
+            });
+        };
+
         newSocket.on('connect', () => {
             console.log('Socket connected!', newSocket.id)
             setIsConnected(true)
