@@ -186,39 +186,59 @@ const LocationPinManager = () => {
                             <input
                                 type="text"
                                 placeholder="Enter your location"
-                                className="location-input"
+                                className="w-full px-4 py-2 bg-cream-50 border border-cream-300 rounded-lg 
+                                        focus:outline-none focus:ring-2 focus:ring-cream-500 
+                                        placeholder:text-cream-600 mb-2"
                             />
                         </Autocomplete>
+                        <p className="text-sm text-cream-600 mb-4">
+                            You can also click on the map to set your location or drag the marker to adjust it
+                        </p>
                     </div>
-
                     <GoogleMap
                         mapContainerStyle={{ height: '400px', width: '100%' }}
                         zoom={10}
                         center={location || { lat: 40.7128, lng: -74.0060 }}
                         onClick={handleMapClick}
                         options={{
-                          mapId: import.meta.env.VITE_GOOGLE_MAPS_ID,
-                          zoomControl: true,
-                          mapTypeControl: false,
-                          scaleControl: true,
-                          streetViewControl: false,
-                          rotateControl: false,
-                          fullscreenControl: true
+                            mapId: import.meta.env.VITE_GOOGLE_MAPS_ID,
+                            zoomControl: true,
+                            mapTypeControl: false,
+                            scaleControl: true,
+                            streetViewControl: false,
+                            rotateControl: false,
+                            fullscreenControl: true
                         }}
                     >
                         {location && (
-                            <Marker 
-                                position={location}
-                                draggable={true}
-                                onDragEnd={(e) => {
-                                    const lat = e.latLng.lat();
-                                    const lng = e.latLng.lng();
-                                    setLocation({ lat, lng });
-                                    setFormData(prev => ({
-                                        ...prev,
-                                        latitude: lat,
-                                        longitude: lng
-                                    }));
+                            <div
+                                ref={(element) => {
+                                    if (!element) return;
+
+                                    const marker = new window.google.maps.marker.AdvancedMarkerElement({
+                                        map,
+                                        position: location,
+                                        title: 'Your Location',
+                                        draggable: true,
+                                        content: new window.google.maps.marker.PinElement({
+                                            scale: 1.2,
+                                            background: '#FFBD80', // cream-500
+                                            glyphColor: '#FFFFFF',
+                                            glyph: "📍"
+                                        }).element
+                                    });
+
+                                    marker.addListener('dragend', (e) => {
+                                        const position = marker.position;
+                                        const lat = position.lat;
+                                        const lng = position.lng;
+                                        setLocation({ lat, lng });
+                                        setFormData(prev => ({
+                                            ...prev,
+                                            latitude: lat,
+                                            longitude: lng
+                                        }));
+                                    });
                                 }}
                             />
                         )}
@@ -275,18 +295,51 @@ const LocationPinManager = () => {
                     
                     <GoogleMap
                         mapContainerStyle={{ height: '400px', width: '100%' }}
-                        zoom={12}
-                        center={{
-                            lat: pin.location.coordinates.latitude,
-                            lng: pin.location.coordinates.longitude
+                        zoom={10}
+                        center={location || { lat: 40.7128, lng: -74.0060 }}
+                        onClick={handleMapClick}
+                        options={{
+                            mapId: import.meta.env.VITE_GOOGLE_MAPS_ID,
+                            zoomControl: true,
+                            mapTypeControl: false,
+                            scaleControl: true,
+                            streetViewControl: false,
+                            rotateControl: false,
+                            fullscreenControl: true
                         }}
                     >
-                        <Marker 
-                            position={{
-                                lat: pin.location.coordinates.latitude,
-                                lng: pin.location.coordinates.longitude
-                            }}
-                        />
+                        {location && (
+                            <div
+                                ref={(element) => {
+                                    if (!element) return;
+
+                                    const marker = new window.google.maps.marker.AdvancedMarkerElement({
+                                        map,
+                                        position: location,
+                                        title: 'Your Location',
+                                        draggable: true,
+                                        content: new window.google.maps.marker.PinElement({
+                                            scale: 1.2,
+                                            background: '#FFBD80', // cream-500
+                                            glyphColor: '#FFFFFF',
+                                            glyph: "📍"
+                                        }).element
+                                    });
+
+                                    marker.addListener('dragend', (e) => {
+                                        const position = marker.position;
+                                        const lat = position.lat;
+                                        const lng = position.lng;
+                                        setLocation({ lat, lng });
+                                        setFormData(prev => ({
+                                            ...prev,
+                                            latitude: lat,
+                                            longitude: lng
+                                        }));
+                                    });
+                                }}
+                            />
+                        )}
                     </GoogleMap>
 
                     <button onClick={handleDelete}>Delete Pin</button>
