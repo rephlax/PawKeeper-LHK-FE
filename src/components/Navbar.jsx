@@ -38,7 +38,14 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            {user.sitter && (
+            <button 
+              onClick={toggleMap} 
+              className="navbar-link"
+            >
+              {isMapOpen ? 'Close Map' : 'View Map'}
+            </button>
+            
+            {user?.sitter && (
               <>
                 <Link to="/sitter/create-pin" className="navbar-link">
                   Create Sitter Pin
@@ -48,12 +55,6 @@ const Navbar = () => {
                 </Link>
               </>
             )}
-            <button 
-              onClick={toggleMap} 
-              className="navbar-link"
-            >
-              {isMapOpen ? 'Close Map' : 'View Map'}
-            </button>
             <Link to={`/users/user/${user._id}`} className="navbar-link">
               Profile
             </Link>
