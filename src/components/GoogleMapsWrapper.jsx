@@ -8,6 +8,7 @@ const GoogleMapsWrapper = ({ children }) => {
     <LoadScript
       googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
       libraries={libraries}
+      mapIds={[import.meta.env.VITE_GOOGLE_MAPS_ID]}
     >
       {children}
     </LoadScript>

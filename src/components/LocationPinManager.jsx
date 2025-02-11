@@ -196,6 +196,15 @@ const LocationPinManager = () => {
                         zoom={10}
                         center={location || { lat: 40.7128, lng: -74.0060 }}
                         onClick={handleMapClick}
+                        options={{
+                          mapId: import.meta.env.VITE_GOOGLE_MAPS_ID,
+                          zoomControl: true,
+                          mapTypeControl: false,
+                          scaleControl: true,
+                          streetViewControl: false,
+                          rotateControl: false,
+                          fullscreenControl: true
+                        }}
                     >
                         {location && (
                             <Marker 

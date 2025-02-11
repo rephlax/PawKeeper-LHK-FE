@@ -162,6 +162,7 @@ const MapComponent = () => {
   };
 
   const mapOptions = {
+    mapId: import.meta.env.VITE_GOOGLE_MAPS_ID,
     zoomControl: true,
     mapTypeControl: false,
     scaleControl: true,
