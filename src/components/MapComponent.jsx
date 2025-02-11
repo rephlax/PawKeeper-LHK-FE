@@ -16,7 +16,6 @@ const MapComponent = () => {
   const autocompleteRef = useRef(null);
   const markersRef = useRef({});
 
-  // Get user's location on component mount
   useEffect(() => {
     handleGetCurrentLocation();
   }, []);
@@ -64,7 +63,7 @@ const MapComponent = () => {
           title: 'Your Location',
           content: new window.google.maps.marker.PinElement({
             scale: 1.2,
-            background: '#4285F4',
+            background: '#FFBD80', // cream-500
             glyphColor: '#FFFFFF',
             glyph: "📍"
           }).element
@@ -90,7 +89,7 @@ const MapComponent = () => {
           title: pin.title,
           content: new window.google.maps.marker.PinElement({
             scale: 1,
-            background: '#EA4335',
+            background: '#FFA64D', // cream-700
             glyphColor: '#FFFFFF',
             glyph: "🐾"
           }).element
@@ -163,20 +162,44 @@ const MapComponent = () => {
   };
 
   const mapOptions = {
-    mapId: import.meta.env.VITE_GOOGLE_MAPS_ID,
-    styles: [
-      {
-        featureType: "all",
-        elementType: "labels.text.fill",
-        stylers: [{ color: "#8B4513" }]
-      }
-    ],
     zoomControl: true,
     mapTypeControl: false,
     scaleControl: true,
     streetViewControl: false,
     rotateControl: false,
-    fullscreenControl: true
+    fullscreenControl: true,
+    styles: [
+      {
+        featureType: 'all',
+        elementType: 'geometry',
+        stylers: [{ color: '#FFF4E6' }] // cream-100
+      },
+      {
+        featureType: 'water',
+        elementType: 'geometry',
+        stylers: [{ color: '#FFE8CC' }] // cream-200
+      },
+      {
+        featureType: 'poi',
+        elementType: 'geometry',
+        stylers: [{ color: '#FFD9B3' }] // cream-300
+      },
+      {
+        featureType: 'road',
+        elementType: 'geometry',
+        stylers: [{ color: '#FFCB99' }] // cream-400
+      },
+      {
+        featureType: 'all',
+        elementType: 'labels.text.fill',
+        stylers: [{ color: '#FFA64D' }] // cream-700
+      },
+      {
+        featureType: 'all',
+        elementType: 'labels.text.stroke',
+        stylers: [{ color: '#FFFBF5' }] // cream-50
+      }
+    ]
   };
 
   return (
@@ -288,11 +311,11 @@ const MapComponent = () => {
       <div className="flex gap-4 p-3 bg-cream-100/80 rounded-lg backdrop-blur-sm 
                     border border-cream-300 text-sm text-cream-700">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-[#4285F4]"></div>
+          <div className="w-3 h-3 rounded-full bg-[#FFBD80]"></div>
           <span>Your Location</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-[#EA4335]"></div>
+          <div className="w-3 h-3 rounded-full bg-[#FFA64D]"></div>
           <span>Pet Sitters</span>
         </div>
       </div>
