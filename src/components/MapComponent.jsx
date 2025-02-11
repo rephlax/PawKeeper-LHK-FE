@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { GoogleMap, Marker, InfoWindow, Autocomplete } from '@react-google-maps/api';
+import { GoogleMap, InfoWindow, Autocomplete } from '@react-google-maps/api';
 import { useSocket } from '../context/SocketContext';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
@@ -13,6 +13,7 @@ const MapComponent = () => {
   const [selectedPin, setSelectedPin] = useState(null);
   const [searchLocation, setSearchLocation] = useState(null);
   const autocompleteRef = useRef(null);
+  const markersRef = useRef({});
 
   useEffect(() => {
     handleGetCurrentLocation();
@@ -42,6 +43,50 @@ const MapComponent = () => {
       );
     }
   }, [socket, userLocation, user]);
+
+  useEffect(() => {
+    if (!map || !window.google) return;
+
+    Object.values(markersRef.current).forEach(marker => marker.setMap(null));
+    markersRef.current = {};
+
+    if (userLocation) {
+      const userMarker = new window.google.maps.marker.AdvancedMarkerElement({
+        map,
+        position: userLocation,
+        title: 'Your Location',
+        content: new window.google.maps.marker.PinElement({
+          scale: 1.2,
+          background: '#4285F4',
+          glyphColor: '#FFFFFF'
+        }).element
+      });
+
+      markersRef.current['user'] = userMarker;
+    }
+
+    nearbyPins.forEach(pin => {
+      const position = {
+        lat: pin.location.coordinates.latitude,
+        lng: pin.location.coordinates.longitude
+      };
+
+      const marker = new window.google.maps.marker.AdvancedMarkerElement({
+        map,
+        position,
+        title: pin.title,
+        content: new window.google.maps.marker.PinElement({
+          scale: 1,
+          background: '#EA4335',
+          glyphColor: '#FFFFFF'
+        }).element
+      });
+
+      marker.addListener('click', () => setSelectedPin(pin));
+      markersRef.current[pin._id] = marker;
+    });
+
+  }, [map, nearbyPins, userLocation]);
 
   const handleGetCurrentLocation = () => {
     if (navigator.geolocation) {
@@ -88,8 +133,9 @@ const MapComponent = () => {
   };
 
   return (
-    <div className="relative flex flex-col gap-4">
-      <div className="flex items-center gap-4 p-4 bg-white rounded-lg shadow">
+    <div className="relative flex flex-col gap-4 bg-cream-50/50 p-6 rounded-xl">
+      {/* Search Section */}
+      <div className="flex items-center gap-4 p-4 bg-cream-100/80 rounded-lg backdrop-blur-sm border border-cream-300 shadow-cream">
         <Autocomplete
           onLoad={ref => autocompleteRef.current = ref}
           onPlaceChanged={handlePlaceSelect}
@@ -97,47 +143,49 @@ const MapComponent = () => {
           <input
             type="text"
             placeholder="Search location..."
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 bg-cream-50 border border-cream-300 rounded-lg 
+                     focus:outline-none focus:ring-2 focus:ring-cream-500 
+                     placeholder:text-cream-600 text-cream-800"
           />
         </Autocomplete>
         <button
           onClick={handleGetCurrentLocation}
-          className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors"
+          className="px-4 py-2 text-cream-800 bg-cream-200 rounded-lg 
+                   hover:bg-cream-300 transition-colors duration-200 
+                   border border-cream-300 min-w-[140px]
+                   shadow-cream"
         >
           Current Location
         </button>
       </div>
 
-      <div className="relative">
+      {/* Map Container */}
+      <div className="relative rounded-lg overflow-hidden border border-cream-300 shadow-cream">
         <GoogleMap
-          mapContainerStyle={mapContainerStyle}
+          mapContainerStyle={{
+            width: '100%',
+            height: '500px',
+            borderRadius: '0.5rem'
+          }}
           center={userLocation || defaultCenter}
           zoom={12}
           onLoad={map => setMap(map)}
+          options={{
+            styles: [
+              {
+                featureType: "all",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#8B4513" }]
+              }
+            ],
+            zoomControl: true,
+            mapTypeControl: false,
+            scaleControl: true,
+            streetViewControl: false,
+            rotateControl: false,
+            fullscreenControl: true
+          }}
         >
-          {userLocation && (
-            <Marker 
-              position={userLocation}
-              icon={{
-                url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png'
-              }}
-            />
-          )}
-
-          {nearbyPins.map(pin => (
-            <Marker
-              key={pin._id}
-              position={{
-                lat: pin.location.coordinates.latitude,
-                lng: pin.location.coordinates.longitude
-              }}
-              onClick={() => setSelectedPin(pin)}
-              icon={{
-                url: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png'
-              }}
-            />
-          ))}
-
           {selectedPin && (
             <InfoWindow
               position={{
@@ -146,23 +194,32 @@ const MapComponent = () => {
               }}
               onCloseClick={() => setSelectedPin(null)}
             >
-              <div className="p-4 max-w-sm">
-                <h3 className="text-lg font-bold mb-2">{selectedPin.title}</h3>
-                <p className="text-gray-600 mb-2">{selectedPin.description}</p>
+              <div className="p-4 max-w-sm bg-cream-50 rounded-lg">
+                <h3 className="text-lg font-bold mb-2 text-cream-800">
+                  {selectedPin.title}
+                </h3>
+                <p className="text-cream-700 mb-2">
+                  {selectedPin.description}
+                </p>
                 {selectedPin.services && (
                   <p className="text-sm mb-2">
-                    <span className="font-semibold">Services:</span> {selectedPin.services.join(', ')}
+                    <span className="font-semibold text-cream-700">Services:</span>
+                    <span className="text-cream-600"> {selectedPin.services.join(', ')}</span>
                   </p>
                 )}
                 {selectedPin.hourlyRate && (
                   <p className="text-sm mb-2">
-                    <span className="font-semibold">Rate:</span> ${selectedPin.hourlyRate}/hr
+                    <span className="font-semibold text-cream-700">Rate:</span>
+                    <span className="text-cream-600"> ${selectedPin.hourlyRate}/hr</span>
                   </p>
                 )}
                 {user?.sitter && selectedPin.user === user._id && (
                   <Link 
                     to="/sitter/create-pin"
-                    className="text-blue-500 hover:text-blue-600 text-sm"
+                    className="inline-block mt-2 px-3 py-1 text-cream-700 
+                             hover:text-cream-800 bg-cream-200 
+                             hover:bg-cream-300 rounded-md transition-colors 
+                             text-sm border border-cream-300"
                   >
                     Edit My Pin
                   </Link>
@@ -176,7 +233,10 @@ const MapComponent = () => {
           <div className="absolute bottom-4 right-4">
             <Link 
               to="/sitter/create-pin"
-              className="px-4 py-2 text-white bg-blue-500 rounded-lg shadow hover:bg-blue-600 transition-colors"
+              className="px-4 py-2 text-cream-800 bg-cream-200 rounded-lg 
+                       hover:bg-cream-300 transition-colors duration-200 
+                       border border-cream-300 shadow-cream
+                       flex items-center gap-2"
             >
               {nearbyPins.some(pin => pin.user === user._id) 
                 ? 'Edit My Pin' 
@@ -185,6 +245,18 @@ const MapComponent = () => {
             </Link>
           </div>
         )}
+      </div>
+
+      <div className="flex gap-4 p-3 bg-cream-100/80 rounded-lg backdrop-blur-sm 
+                    border border-cream-300 text-sm text-cream-700">
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full bg-[#4285F4]"></div>
+          <span>Your Location</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full bg-[#EA4335]"></div>
+          <span>Pet Sitters</span>
+        </div>
       </div>
     </div>
   );
