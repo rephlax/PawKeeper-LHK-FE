@@ -1,8 +1,9 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { GoogleMap, InfoWindow, Autocomplete } from '@react-google-maps/api';
+import React, { useState, useEffect, useRef } from 'react';
+import { GoogleMap, Marker, InfoWindow, Autocomplete } from '@react-google-maps/api';
 import { useSocket } from '../context/SocketContext';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const MapComponent = () => {
   const { socket } = useSocket();
@@ -11,16 +12,23 @@ const MapComponent = () => {
   const [userLocation, setUserLocation] = useState(null);
   const [nearbyPins, setNearbyPins] = useState([]);
   const [selectedPin, setSelectedPin] = useState(null);
-  const [searchLocation, setSearchLocation] = useState(null);
+  const [isPinCreationMode, setIsPinCreationMode] = useState(false);
+  const [newPinLocation, setNewPinLocation] = useState(null);
   const [locationError, setLocationError] = useState(null);
   const autocompleteRef = useRef(null);
   const markersRef = useRef({});
+
+  // Debug logging for sitter status
+  useEffect(() => {
+    console.log('User Object:', user);
+    console.log('Is Sitter:', user?.sitter);
+    console.log('Nearby Pins:', nearbyPins);
+  }, [user, nearbyPins]);
 
   useEffect(() => {
     handleGetCurrentLocation();
   }, []);
 
-  // Handle socket communications when location changes
   useEffect(() => {
     if (socket && userLocation) {
       if (user?.sitter) {
@@ -104,6 +112,36 @@ const MapComponent = () => {
 
   }, [map, nearbyPins, userLocation]);
 
+  // Map click handler for pin creation
+  const handleMapClick = (event) => {
+    if (isPinCreationMode && user?.sitter) {
+      const lat = event.latLng.lat();
+      const lng = event.latLng.lng();
+      
+      setNewPinLocation({ lat, lng });
+    }
+  };
+
+  // Start pin creation mode
+  const handleStartPinCreation = () => {
+    setIsPinCreationMode(true);
+    setNewPinLocation(null);
+  };
+
+  // Cancel pin creation
+  const handleCancelPinCreation = () => {
+    setIsPinCreationMode(false);
+    setNewPinLocation(null);
+  };
+
+  // Confirm pin location and redirect to pin creation form
+  const handleConfirmPinLocation = () => {
+    if (newPinLocation) {
+      // Navigate to pin creation with pre-filled location
+      window.location.href = `/sitter/create-pin?lat=${newPinLocation.lat}&lng=${newPinLocation.lng}`;
+    }
+  };
+
   const handleGetCurrentLocation = () => {
     setLocationError(null);
     
@@ -168,39 +206,7 @@ const MapComponent = () => {
     scaleControl: true,
     streetViewControl: false,
     rotateControl: false,
-    fullscreenControl: true,
-    styles: [
-      {
-        featureType: 'all',
-        elementType: 'geometry',
-        stylers: [{ color: '#FFF4E6' }] // cream-100
-      },
-      {
-        featureType: 'water',
-        elementType: 'geometry',
-        stylers: [{ color: '#FFE8CC' }] // cream-200
-      },
-      {
-        featureType: 'poi',
-        elementType: 'geometry',
-        stylers: [{ color: '#FFD9B3' }] // cream-300
-      },
-      {
-        featureType: 'road',
-        elementType: 'geometry',
-        stylers: [{ color: '#FFCB99' }] // cream-400
-      },
-      {
-        featureType: 'all',
-        elementType: 'labels.text.fill',
-        stylers: [{ color: '#FFA64D' }] // cream-700
-      },
-      {
-        featureType: 'all',
-        elementType: 'labels.text.stroke',
-        stylers: [{ color: '#FFFBF5' }] // cream-50
-      }
-    ]
+    fullscreenControl: true
   };
 
   return (
@@ -244,7 +250,8 @@ const MapComponent = () => {
           mapContainerStyle={mapContainerStyle}
           center={userLocation || defaultCenter}
           zoom={12}
-          onLoad={map => setMap(map)}
+          onLoad={setMap}
+          onClick={handleMapClick}
           options={mapOptions}
         >
           {selectedPin && (
@@ -288,22 +295,57 @@ const MapComponent = () => {
               </div>
             </InfoWindow>
           )}
+
+          {/* New Pin Creation Marker */}
+          {newPinLocation && (
+            <Marker 
+              position={newPinLocation}
+              draggable={true}
+              onDragEnd={(e) => {
+                setNewPinLocation({
+                  lat: e.latLng.lat(),
+                  lng: e.latLng.lng()
+                });
+              }}
+            />
+          )}
         </GoogleMap>
 
+        {/* Pin Creation Controls */}
         {user?.sitter && (
           <div className="absolute bottom-4 right-4">
-            <Link 
-              to="/sitter/create-pin"
-              className="px-4 py-2 text-cream-800 bg-cream-200 rounded-lg 
-                       hover:bg-cream-300 transition-colors duration-200 
-                       border border-cream-300 shadow-cream
-                       flex items-center gap-2"
-            >
-              {nearbyPins.some(pin => pin.user === user._id) 
-                ? '✏️ Edit My Pin' 
-                : '📍 Add My Location'
-              }
-            </Link>
+            {!isPinCreationMode ? (
+              <button 
+                onClick={handleStartPinCreation}
+                className="px-4 py-2 text-cream-800 bg-cream-200 rounded-lg 
+                           hover:bg-cream-300 transition-colors duration-200 
+                           border border-cream-300 shadow-cream
+                           flex items-center gap-2"
+              >
+                {nearbyPins.some(pin => pin.user === user._id) 
+                  ? '✏️ Edit My Pin' 
+                  : '📍 Add My Location'}
+              </button>
+            ) : (
+              <div className="flex gap-2">
+                {newPinLocation ? (
+                  <button 
+                    onClick={handleConfirmPinLocation}
+                    className="px-4 py-2 text-cream-800 bg-cream-300 rounded-lg"
+                  >
+                    Confirm Location
+                  </button>
+                ) : (
+                  <p className="text-cream-700">Click on the map to set your location</p>
+                )}
+                <button 
+                  onClick={handleCancelPinCreation}
+                  className="px-4 py-2 text-cream-600 bg-cream-100 rounded-lg"
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
