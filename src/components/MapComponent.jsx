@@ -12,13 +12,16 @@ const MapComponent = () => {
   const [nearbyPins, setNearbyPins] = useState([]);
   const [selectedPin, setSelectedPin] = useState(null);
   const [searchLocation, setSearchLocation] = useState(null);
+  const [locationError, setLocationError] = useState(null);
   const autocompleteRef = useRef(null);
   const markersRef = useRef({});
 
+  // Get user's location on component mount
   useEffect(() => {
     handleGetCurrentLocation();
   }, []);
 
+  // Handle socket communications when location changes
   useEffect(() => {
     if (socket && userLocation) {
       if (user?.sitter) {
@@ -44,68 +47,94 @@ const MapComponent = () => {
     }
   }, [socket, userLocation, user]);
 
+  // Handle markers when map or location changes
   useEffect(() => {
     if (!map || !window.google) return;
 
+    // Clear existing markers
     Object.values(markersRef.current).forEach(marker => marker.setMap(null));
     markersRef.current = {};
 
+    // Add user location marker
     if (userLocation) {
-      const userMarker = new window.google.maps.marker.AdvancedMarkerElement({
-        map,
-        position: userLocation,
-        title: 'Your Location',
-        content: new window.google.maps.marker.PinElement({
-          scale: 1.2,
-          background: '#4285F4',
-          glyphColor: '#FFFFFF'
-        }).element
-      });
+      try {
+        const userMarker = new window.google.maps.marker.AdvancedMarkerElement({
+          map,
+          position: userLocation,
+          title: 'Your Location',
+          content: new window.google.maps.marker.PinElement({
+            scale: 1.2,
+            background: '#4285F4',
+            glyphColor: '#FFFFFF',
+            glyph: "📍"
+          }).element
+        });
 
-      markersRef.current['user'] = userMarker;
+        markersRef.current['user'] = userMarker;
+      } catch (error) {
+        console.error('Error creating user marker:', error);
+      }
     }
 
+    // Add nearby sitter markers
     nearbyPins.forEach(pin => {
-      const position = {
-        lat: pin.location.coordinates.latitude,
-        lng: pin.location.coordinates.longitude
-      };
+      try {
+        const position = {
+          lat: pin.location.coordinates.latitude,
+          lng: pin.location.coordinates.longitude
+        };
 
-      const marker = new window.google.maps.marker.AdvancedMarkerElement({
-        map,
-        position,
-        title: pin.title,
-        content: new window.google.maps.marker.PinElement({
-          scale: 1,
-          background: '#EA4335',
-          glyphColor: '#FFFFFF'
-        }).element
-      });
+        const marker = new window.google.maps.marker.AdvancedMarkerElement({
+          map,
+          position,
+          title: pin.title,
+          content: new window.google.maps.marker.PinElement({
+            scale: 1,
+            background: '#EA4335',
+            glyphColor: '#FFFFFF',
+            glyph: "🐾"
+          }).element
+        });
 
-      marker.addListener('click', () => setSelectedPin(pin));
-      markersRef.current[pin._id] = marker;
+        marker.addListener('click', () => setSelectedPin(pin));
+        markersRef.current[pin._id] = marker;
+      } catch (error) {
+        console.error('Error creating pin marker:', error);
+      }
     });
 
   }, [map, nearbyPins, userLocation]);
 
   const handleGetCurrentLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const location = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          };
-          setUserLocation(location);
-          if (map) {
-            map.panTo(location);
-          }
-        },
-        (error) => {
-          console.error('Geolocation error:', error);
-        }
-      );
+    setLocationError(null);
+    
+    if (!navigator.geolocation) {
+      setLocationError("Geolocation is not supported by your browser");
+      return;
     }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const location = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+        setUserLocation(location);
+        if (map) {
+          map.panTo(location);
+          map.setZoom(14);
+        }
+      },
+      (error) => {
+        console.error('Geolocation error:', error);
+        setLocationError("Unable to retrieve your location. Please make sure location services are enabled.");
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
+      }
+    );
   };
 
   const handlePlaceSelect = () => {
@@ -118,13 +147,14 @@ const MapComponent = () => {
       setUserLocation(location);
       if (map) {
         map.panTo(location);
+        map.setZoom(14);
       }
     }
   };
 
   const mapContainerStyle = {
     width: '100%',
-    height: '400px'
+    height: '500px'
   };
 
   const defaultCenter = {
@@ -132,59 +162,66 @@ const MapComponent = () => {
     lng: -74.0060
   };
 
+  const mapOptions = {
+    mapId: import.meta.env.VITE_GOOGLE_MAPS_ID,
+    styles: [
+      {
+        featureType: "all",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#8B4513" }]
+      }
+    ],
+    zoomControl: true,
+    mapTypeControl: false,
+    scaleControl: true,
+    streetViewControl: false,
+    rotateControl: false,
+    fullscreenControl: true
+  };
+
   return (
     <div className="relative flex flex-col gap-4 bg-cream-50/50 p-6 rounded-xl">
       {/* Search Section */}
-      <div className="flex items-center gap-4 p-4 bg-cream-100/80 rounded-lg backdrop-blur-sm border border-cream-300 shadow-cream">
-        <Autocomplete
-          onLoad={ref => autocompleteRef.current = ref}
-          onPlaceChanged={handlePlaceSelect}
-        >
-          <input
-            type="text"
-            placeholder="Search location..."
-            className="w-full px-4 py-2 bg-cream-50 border border-cream-300 rounded-lg 
-                     focus:outline-none focus:ring-2 focus:ring-cream-500 
-                     placeholder:text-cream-600 text-cream-800"
-          />
-        </Autocomplete>
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 p-4 bg-cream-100/80 rounded-lg backdrop-blur-sm border border-cream-300 shadow-cream">
+        <div className="flex-grow">
+          <Autocomplete
+            onLoad={ref => autocompleteRef.current = ref}
+            onPlaceChanged={handlePlaceSelect}
+          >
+            <input
+              type="text"
+              placeholder="Search location..."
+              className="w-full px-4 py-2 bg-cream-50 border border-cream-300 rounded-lg 
+                       focus:outline-none focus:ring-2 focus:ring-cream-500 
+                       placeholder:text-cream-600 text-cream-800"
+            />
+          </Autocomplete>
+        </div>
         <button
           onClick={handleGetCurrentLocation}
           className="px-4 py-2 text-cream-800 bg-cream-200 rounded-lg 
                    hover:bg-cream-300 transition-colors duration-200 
-                   border border-cream-300 min-w-[140px]
-                   shadow-cream"
+                   border border-cream-300 min-w-[140px] shadow-cream
+                   flex items-center justify-center gap-2"
         >
-          Current Location
+          <span>📍</span> Current Location
         </button>
       </div>
+
+      {locationError && (
+        <div className="p-3 bg-red-50 border-l-4 border-red-400 rounded text-red-700">
+          {locationError}
+        </div>
+      )}
 
       {/* Map Container */}
       <div className="relative rounded-lg overflow-hidden border border-cream-300 shadow-cream">
         <GoogleMap
-          mapContainerStyle={{
-            width: '100%',
-            height: '500px',
-            borderRadius: '0.5rem'
-          }}
+          mapContainerStyle={mapContainerStyle}
           center={userLocation || defaultCenter}
           zoom={12}
           onLoad={map => setMap(map)}
-          options={{
-            styles: [
-              {
-                featureType: "all",
-                elementType: "labels.text.fill",
-                stylers: [{ color: "#8B4513" }]
-              }
-            ],
-            zoomControl: true,
-            mapTypeControl: false,
-            scaleControl: true,
-            streetViewControl: false,
-            rotateControl: false,
-            fullscreenControl: true
-          }}
+          options={mapOptions}
         >
           {selectedPin && (
             <InfoWindow
@@ -239,14 +276,15 @@ const MapComponent = () => {
                        flex items-center gap-2"
             >
               {nearbyPins.some(pin => pin.user === user._id) 
-                ? 'Edit My Pin' 
-                : 'Add My Location'
+                ? '✏️ Edit My Pin' 
+                : '📍 Add My Location'
               }
             </Link>
           </div>
         )}
       </div>
 
+      {/* Legend */}
       <div className="flex gap-4 p-3 bg-cream-100/80 rounded-lg backdrop-blur-sm 
                     border border-cream-300 text-sm text-cream-700">
         <div className="flex items-center gap-2">
