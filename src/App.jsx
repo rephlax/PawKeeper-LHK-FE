@@ -11,6 +11,7 @@ import ChatWidget from "./components/ChatWidget";
 import PrivateRoute from "./context/PrivateRoute";
 import UpdateUserForm from "./components/UpdateUserForm";
 import PasswordChange from "./components/PasswordChange";
+import AddPetForm from "./components/AddPetForm";
 import { useAuth } from "./context/AuthContext";
 
 function App() {
@@ -55,6 +56,14 @@ function App() {
                   </PrivateRoute>
                 }
               />
+            <Route
+              path={`/pets/add-pet/:userId`}
+              element={
+                <PrivateRoute>
+                  <AddPetForm />
+                </PrivateRoute>
+              }
+            />
               <Route
                 path={`/users/update-user/:userId/password-change`}
                 element={
