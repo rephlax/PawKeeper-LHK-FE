@@ -18,6 +18,7 @@ const AuthWrapper = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isSignedIn, setIsSignedIn] = useState(false);
+  const [isMapOpen, setIsMapOpen] = useState(false);
 
   const nav = useNavigate();
   const authenticateUser = async (userId) => {
@@ -105,6 +106,8 @@ const AuthWrapper = ({ children }) => {
         authenticateUser,
         handleLogout,
         handleDeleteUser,
+        isMapOpen,
+        setIsMapOpen,
       }}
     >
       {children}
