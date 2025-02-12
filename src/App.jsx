@@ -11,6 +11,7 @@ import PrivateRoute from "./context/PrivateRoute";
 
 import UpdateUserForm from "./components/UpdateUserForm";
 import PasswordChange from "./components/PasswordChange";
+import AddPetForm from "./components/AddPetForm";
 
 function App() {
   return (
@@ -46,6 +47,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <UpdateUserForm />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path={`/pets/add-pet/:userId`}
+              element={
+                <PrivateRoute>
+                  <AddPetForm />
                 </PrivateRoute>
               }
             />

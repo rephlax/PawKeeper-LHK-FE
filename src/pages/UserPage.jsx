@@ -7,9 +7,12 @@ const webToken = localStorage.getItem("authToken");
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005";
 
 const UserPage = () => {
-  const [userData, setUserData] = useState({});
+  const [userInfo, setUserInfo] = useState({});
+  const [pets, setPets] = useState([])
   const { user, handleLogout, handleDeleteUser } = useContext(AuthContext);
   const { userId } = useParams();
+
+
   useEffect(() => {
     async function getOneUser() {
       try {
@@ -17,7 +20,18 @@ const UserPage = () => {
           `${BACKEND_URL}/users/user/${userId}`,
           { headers: { authorization: `Bearer ${webToken}` } }
         );
-        setUserData(userData);
+        setUserInfo(userData.data);
+        
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    async function getAllPets() {
+      try {
+        const userPets = await axios.get(`${BACKEND_URL}/pets/${userId}`, { headers: { authorization: `Bearer ${webToken}` } });
+        setPets(userPets.data)
+
       } catch (error) {
         console.log(error);
       }
@@ -25,27 +39,63 @@ const UserPage = () => {
 
     if (userId) {
       getOneUser();
+      getAllPets();
     }
   }, [userId]);
 
+
+ 
+//TODO: backed to create get all pets by user ID then axios call to get them here
+ 
   return (
     <div>
       <h1>User Page</h1>
-      {userData.data ? (
+      {userInfo && userInfo ? (
         <div>
-          {userData.data.profilePicture ? (
-            <img src={userData.data.profilePicture} className="profilePic" />
+          {userInfo.profilePicture ? (
+            <img src={userInfo.profilePicture} className="profilePic" />
           ) : (
             <img src={defaultUser} className="profilePic" />
           )}
-          <h2>Welcome, {userData.data.username}!</h2>
-          <p>Email: {userData.data.email}</p>
-          <p>Rating: {userData.data.rating}</p>
-          <p>Location:</p>
-          <ul>
-            <li>Latitude: {userData.data.location.coordinates.latitude}</li>
-            <li>Longitude: {userData.data.location.coordinates.longitude}</li>
-          </ul>
+          <h2>Welcome, {userInfo.username}!</h2>
+          <p>Email: {userInfo.email}</p>
+          <p>Rating: {userInfo.rating}</p>
+          <p>
+            <strong>Location:</strong>
+          </p>
+          <p>
+            Latitude:{" "}
+            {userInfo.location?.coordinates?.latitude || "Not available"}
+          </p>
+          <p>
+            Longitude:{" "}
+            {userInfo.location?.coordinates?.longitude || "Not available"}
+          </p>
+
+          <div className="pets">
+            <p>Owned Pets</p>
+            {pets.length > 0 ? (
+              pets.map((pet, index) => (
+                <div key={pet._id || index}>
+                  <p>
+                    <strong>Name:</strong> {pet.petName}
+                  </p>
+                  <p>
+                    <strong>Age:</strong> {pet.petAge}
+                  </p>
+                  <p>
+                    <strong>Species:</strong> {pet.petSpecies}
+                  </p>
+                  <button>Delete Pet</button>
+                  <hr />
+                </div>
+              ))
+            ) : (
+              <p>No pets owned.</p>
+            )}
+            <Link to={`/pets/add-pet/${userId}`}>Add Pet</Link>
+          </div>
+
           <div className="action-buttons">
             <Link to={`/users/update-user/${userId}`}>
               <button>Update User Information</button>

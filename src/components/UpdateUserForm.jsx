@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005";
 
@@ -18,6 +18,7 @@ const UpdateUserForm = () => {
   const [imageFile, setImageFile] = useState(null);
   const [uploading, setUploading] = useState(false)
 
+  const nav = useNavigate()
   const webToken = localStorage.getItem("authToken");
 
   useEffect(() => {
@@ -74,6 +75,9 @@ const UpdateUserForm = () => {
           updatedUser,
           { headers: { authorization: `Bearer ${webToken}` } }
         );
+
+        alert("User Updated!")
+        nav(`/users/user/${userId}`)
       } catch (error) {
         console.log("Here is the Error", error);
       }
