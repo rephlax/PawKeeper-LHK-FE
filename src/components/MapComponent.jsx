@@ -109,3 +109,5 @@ const MapComponent = () => {
       </GoogleMap>
     );
   };
+
+  export default MapComponent;
