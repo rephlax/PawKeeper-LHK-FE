@@ -8,10 +8,9 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005";
 
 const UserPage = () => {
   const [userInfo, setUserInfo] = useState({});
-  const [pets, setPets] = useState([])
+  const [pets, setPets] = useState([]);
   const { user, handleLogout, handleDeleteUser } = useContext(AuthContext);
   const { userId } = useParams();
-
 
   useEffect(() => {
     async function getOneUser() {
@@ -21,7 +20,6 @@ const UserPage = () => {
           { headers: { authorization: `Bearer ${webToken}` } }
         );
         setUserInfo(userData.data);
-        
       } catch (error) {
         console.log(error);
       }
@@ -29,9 +27,10 @@ const UserPage = () => {
 
     async function getAllPets() {
       try {
-        const userPets = await axios.get(`${BACKEND_URL}/pets/${userId}`, { headers: { authorization: `Bearer ${webToken}` } });
-        setPets(userPets.data)
-
+        const userPets = await axios.get(`${BACKEND_URL}/pets/${userId}`, {
+          headers: { authorization: `Bearer ${webToken}` },
+        });
+        setPets(userPets.data);
       } catch (error) {
         console.log(error);
       }
@@ -43,10 +42,14 @@ const UserPage = () => {
     }
   }, [userId]);
 
+  async function handleDeletePet(id) {
+    const deletedPet = await axios.delete(`${BACKEND_URL}/pets/${id}`, {
+      headers: { authorization: `Bearer ${webToken}` },
+    });
+    const filteredPets = pets.filter((pet) => pet._id !== id);
+    setPets(filteredPets);
+  }
 
- 
-//TODO: backed to create get all pets by user ID then axios call to get them here
- 
   return (
     <div>
       <h1>User Page</h1>
@@ -86,7 +89,9 @@ const UserPage = () => {
                   <p>
                     <strong>Species:</strong> {pet.petSpecies}
                   </p>
-                  <button>Delete Pet</button>
+                  <button onClick={() => handleDeletePet(pet._id)}>
+                    Delete Pet
+                  </button>
                   <hr />
                 </div>
               ))
