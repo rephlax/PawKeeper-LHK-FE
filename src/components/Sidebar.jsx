@@ -109,11 +109,11 @@ const Sidebar = () => {
                                 ${isCreatingPin ? 'bg-cream-200 text-cream-900' : 'hover:bg-cream-100'}`}
                         >
                             <MapPin className="h-5 w-5" />
-                            <span>{isCreatingPin ? 'Cancel Pin Creation' : 'Create New Pin'}</span>
+                            <span>{isCreatingPin ? 'Cancel Pin Form' : 'Create Location Pin'}</span>
                         </button>
                         {isCreatingPin && (
                             <p className="text-sm text-cream-600 px-3">
-                                Click anywhere on the map to place your pin
+                                Fill out your sitter details to create a pin at your current location
                             </p>
                         )}
                     </div>
