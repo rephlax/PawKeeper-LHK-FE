@@ -13,6 +13,7 @@ import UpdateUserForm from "./components/UpdateUserForm";
 import PasswordChange from "./components/PasswordChange";
 import AddPetForm from "./components/AddPetForm";
 import { useAuth } from "./context/AuthContext";
+import UpdatePetForm from "./components/UpdatePetForm";
 
 function App() {
   const { isMapOpen } = useAuth();
@@ -61,6 +62,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <AddPetForm />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path={`/pets/update-pet/:userId/:petId`}
+              element={
+                <PrivateRoute>
+                  <UpdatePetForm/>
                 </PrivateRoute>
               }
             />

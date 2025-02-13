@@ -1,10 +1,10 @@
 import axios from "axios";
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from 'react-i18next';
-import { Autocomplete } from '@react-google-maps/api';
+import { useTranslation } from "react-i18next";
+import { Autocomplete } from "@react-google-maps/api";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005";
 
 const SignUpPage = () => {
   const { t } = useTranslation();
@@ -17,6 +17,8 @@ const SignUpPage = () => {
   const [longitude, setLongitude] = useState("");
   const [sitter, setSitter] = useState(false);
   const [rating, setRating] = useState(0);
+  const [imageFile, setImageFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const autocompleteRef = useRef(null);
 
   const nav = useNavigate();
@@ -58,7 +60,7 @@ const SignUpPage = () => {
       latitude,
       longitude,
       sitter,
-      rating
+      rating,
     };
 
     try {
@@ -93,12 +95,41 @@ const SignUpPage = () => {
     }
   }
 
+  const handleImageChange = (e) => {
+    setImageFile(e.target.files[0]);
+  };
+
+  const handleUpload = async () => {
+    if (!imageFile) return;
+
+    setUploading(true);
+
+    const formData = new FormData();
+    formData.append("file", imageFile);
+    formData.append("upload_preset", "ml_default"); // Cloudinary upload preset
+
+    try {
+      const response = await axios.post(
+        "https://api.cloudinary.com/v1_1/dzdrwiugn/image/upload",
+        formData
+      );
+
+      console.log(response);
+      setProfilePicture(response.data.secure_url);
+      console.log(profilePicture); // Save Cloudinary image URL in state
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
     <div>
-      <h1>{t('signuppage.title')}</h1>
+      <h1>{t("signuppage.title")}</h1>
       <form onSubmit={handleSubmit} className="form">
         <label>
-          {t('forms.emailLabel')}
+          {t("forms.emailLabel")}
           <input
             type="email"
             value={email}
@@ -107,7 +138,7 @@ const SignUpPage = () => {
         </label>
 
         <label>
-          {t('forms.passwordLabel')}
+          {t("forms.passwordLabel")}
           <input
             type="password"
             value={password}
@@ -116,7 +147,7 @@ const SignUpPage = () => {
         </label>
 
         <label>
-          {t('signuppage.usernameLabel')}
+          {t("signuppage.usernameLabel")}
           <input
             type="text"
             value={username}
@@ -125,16 +156,15 @@ const SignUpPage = () => {
         </label>
 
         <label>
-          {t('signuppage.profilePictureLabel')}
-          <input
-            type="text"
-            value={profilePicture}
-            onChange={(e) => setProfilePicture(e.target.value)}
-          />
+          {t("signuppage.profilePictureLabel")}
+          <input type="file" accept="image/*" onChange={handleImageChange} />
         </label>
+        <button type="button" onClick={handleUpload} disabled={uploading}>
+          {uploading ? "Uploading..." : "Upload Image"}
+        </button>
 
         <label>
-          {t('signuppage.rateLabel')}
+          {t("signuppage.rateLabel")}
           <input
             type="number"
             value={rate}
@@ -143,10 +173,10 @@ const SignUpPage = () => {
         </label>
 
         <div className="location-section">
-          <label>{t('signuppage.locationLabel')}</label>
-          
+          <label>{t("signuppage.locationLabel")}</label>
+
           <Autocomplete
-            onLoad={ref => autocompleteRef.current = ref}
+            onLoad={(ref) => (autocompleteRef.current = ref)}
             onPlaceChanged={handlePlaceSelect}
           >
             <input
@@ -156,8 +186,8 @@ const SignUpPage = () => {
             />
           </Autocomplete>
 
-          <button 
-            type="button" 
+          <button
+            type="button"
             onClick={getCurrentLocation}
             className="get-location-btn"
           >
@@ -167,13 +197,13 @@ const SignUpPage = () => {
           <div className="coordinates-inputs">
             <input
               type="number"
-              placeholder={t('signuppage.latitudePlaceholder')}
+              placeholder={t("signuppage.latitudePlaceholder")}
               value={latitude}
               onChange={(e) => setLatitude(e.target.value)}
             />
             <input
               type="number"
-              placeholder={t('signuppage.longitudePlaceholder')}
+              placeholder={t("signuppage.longitudePlaceholder")}
               value={longitude}
               onChange={(e) => setLongitude(e.target.value)}
             />
@@ -181,7 +211,7 @@ const SignUpPage = () => {
         </div>
 
         <label>
-          {t('signuppage.sitterLabel')}
+          {t("signuppage.sitterLabel")}
           <input
             type="checkbox"
             checked={sitter}
@@ -189,7 +219,7 @@ const SignUpPage = () => {
           />
         </label>
 
-        <button type="submit">{t('signuppage.signupButton')}</button>
+        <button type="submit">{t("signuppage.signupButton")}</button>
       </form>
     </div>
   );

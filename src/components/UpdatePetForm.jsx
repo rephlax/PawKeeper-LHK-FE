@@ -1,53 +1,61 @@
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 
-
-
-
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005";
 const webToken = localStorage.getItem("authToken");
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005";
 
-
-const AddPetForm = () => {
-    const { userId } = useParams();
-    const { t } = useTranslation();
+const UpdatePet = () => {
+  const { userId, petId } = useParams();
   const [petName, setPetName] = useState("");
-  const [petAge, setPetAge] = useState(0);
-  const [petSpecies, setPetSpecies] = useState("");
+  const [petAge, setPetAge] = useState("");
   const [petPicture, setPetPicture] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [uploading, setUploading] = useState(false);
-  const nav = useNavigate();
-  
 
-  async function handleCreatePet(e) {
+  const nav= useNavigate()
+
+  async function handleUpdatePet(e) {
     e.preventDefault();
 
-    
-    if (webToken) {
-      try {
-        const newPet = {
-          petName,
-          petAge,
-          petSpecies,
-          petPicture,
-          owner: userId
-        };
-        axios.post(`${BACKEND_URL}/pets/${userId}`, newPet, {
-          headers: {
-            authorization: `Bearer ${webToken}`,
-          },
-        });
+    const updatedPet = {
+      petName,
+      petAge,
+      petPicture
+    }
 
-        alert("Pet Added Sucessfully!")
+    try {
+      const response = await axios.patch(`${BACKEND_URL}/pets/${petId}`, updatedPet, { headers: { authorization: `Bearer ${webToken}` } })
+
+      if(response) {
+        alert("Pet Updated")
         nav(`/users/user/${userId}`)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    async function getOnePet() {
+      try {
+        const petToUpdate = await axios.get(
+          `${BACKEND_URL}/pets/${userId}/${petId}`,
+          { headers: { authorization: `Bearer ${webToken}` } }
+        );
+
+        const pet = petToUpdate.data;
+        console.log(pet);
+        setPetAge(pet.petAge);
+        setPetName(pet.petName);
+        setPetPicture(pet.petPicture);
       } catch (error) {
         console.log(error);
       }
     }
-  }
+
+    getOnePet();
+  }, [userId, petId]);
 
   const handleImageChange = (e) => {
     setImageFile(e.target.files[0]);
@@ -70,7 +78,6 @@ const AddPetForm = () => {
 
       console.log(response);
       setPetPicture(response.data.secure_url);
-      
     } catch (error) {
       console.error("Error uploading image:", error);
     } finally {
@@ -78,37 +85,24 @@ const AddPetForm = () => {
     }
   };
 
+
   return (
-    <div>
-      <form className="form" onSubmit={handleCreatePet}>
+    <div className="form">
+      <form onSubmit={handleUpdatePet}>
         <label>
           Pet Name:
           <input
             type="text"
             value={petName}
-            onChange={(e) => {
-              setPetName(e.target.value);
-            }}
+            onChange={(e) => setPetName(e.target.value)}
           />
         </label>
         <label>
           Pet Age:
           <input
-            type="number"
-            value={petAge}
-            onChange={(e) => {
-              setPetAge(e.target.value);
-            }}
-          />
-        </label>
-        <label>
-          Pet Species:
-          <input
             type="text"
-            value={petSpecies}
-            onChange={(e) => {
-              setPetSpecies(e.target.value);
-            }}
+            value={petAge}
+            onChange={(e) => setPetAge(e.target.value)}
           />
         </label>
         <label>
@@ -118,9 +112,10 @@ const AddPetForm = () => {
         <button type="button" onClick={handleUpload} disabled={uploading}>
           {uploading ? "Uploading..." : "Upload Image"}
         </button>
-        <button>Add Pet</button>
+
+        <button>Update Pet</button>
       </form>
     </div>
   );
 };
-export default AddPetForm;
+export default UpdatePet;

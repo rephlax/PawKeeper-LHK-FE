@@ -1,6 +1,7 @@
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { AuthContext, useAuth } from "../context/AuthContext";
 import defaultUser from "../assets/defaultUser.png";
+import defaultPet from "../assets/defaultPet.png"
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 const webToken = localStorage.getItem("authToken");
@@ -89,9 +90,11 @@ const UserPage = () => {
                   <p>
                     <strong>Species:</strong> {pet.petSpecies}
                   </p>
+                  {/* {pet.petPicture ? <img src={pet.petPicture} alt=""/>: <img src={defaultUser} alt=""/>} */}
                   <button onClick={() => handleDeletePet(pet._id)}>
                     Delete Pet
                   </button>
+                  <Link to={`/pets/update-pet/${userId}/${pet._id}`}><button>Update Pet Info</button></Link>
                   <hr />
                 </div>
               ))
