@@ -5,6 +5,7 @@ import UserPage from "./pages/UserPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
+import Sidebar from "./components/Sidebar";
 import MapComponent from "./components/MapComponent";
 import { Routes, Route } from "react-router-dom";
 import ChatWidget from "./components/ChatWidget";
@@ -28,11 +29,8 @@ function App() {
       </nav>
 
       <div className="flex flex-1 relative z-10">
-        <aside
-          className="w-64 backdrop-blur-md bg-cream-50/50  
-                          border-r border-cream-accent text-cream-text"
-        >
-          Sidebar area
+      <aside className="w-64 backdrop-blur-md bg-cream-50/50 border-r border-cream-accent text-cream-text">
+          <Sidebar />
         </aside>
 
         <main className="flex-1 backdrop-blur-md bg-cream-50/50 p-6">
