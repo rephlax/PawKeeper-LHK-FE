@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { useTranslation } from "react-i18next";
 
-
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005';
 
 const LogInPage = () => {
@@ -14,8 +13,9 @@ const LogInPage = () => {
   const [error, setError] = useState("");
   const { authenticateUser, user , userId} = useContext(AuthContext);
   const nav = useNavigate();
-  
-
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const openEyesImg = "https://res.cloudinary.com/dmvawq2ak/image/upload/v1739475664/openeyes_snlduk.svg";
+  const closedEyesImg = "https://res.cloudinary.com/dmvawq2ak/image/upload/v1739475660/closedeyes_jljsee.svg"
   async function handleLogin(e) {
     e.preventDefault();
 
@@ -52,6 +52,11 @@ const LogInPage = () => {
     <div>
       <h1>{t('loginpage.title')}</h1>
       <form className="form" onSubmit={handleLogin}>
+      <img
+        src={isPasswordFocused ? closedEyesImg : openEyesImg}
+        alt="Cat eyes"
+        className="cat-image"
+      />
         <label>
         {t('forms.emailLabel')}
           <input
@@ -66,6 +71,8 @@ const LogInPage = () => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onFocus={() => setIsPasswordFocused(true)}  // Handle focus
+            onBlur={() => setIsPasswordFocused(false)}  // Handle blur
           />
         </label>
         <button>{t('loginpage.loginButton')}</button>

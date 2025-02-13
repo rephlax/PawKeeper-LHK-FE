@@ -24,5 +24,24 @@
   "forms": {
     "emailLabel": "Email",
     "passwordLabel": "Senha"
+  },
+  "userpage": {
+    "title": "Página do Usuário",
+    "welcome": "Bem-vindo",
+    "rating": "Avaliação",
+    "pets": {
+      "allpets": "Animais de estimação",
+      "name": "Nome",
+      "age": "Idade",
+      "species": "Espécie",
+      "deletepet": "Excluir animal",
+      "nopets": "Nenhum animal de estimação",
+      "addpet": "Adicionar animal"
+    },
+    "update": "Atualizar informações do usuário",
+    "deleteuser": "Excluir usuário",
+    "logout": "Sair",
+    "newpass": "Alterar senha",
+    "loading": "Carregando informações do usuário"
   }
 }

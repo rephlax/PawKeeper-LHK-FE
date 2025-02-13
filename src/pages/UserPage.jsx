@@ -5,8 +5,10 @@ import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 const webToken = localStorage.getItem("authToken");
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005";
+import { useTranslation } from "react-i18next";
 
 const UserPage = () => {
+  const { t } = useTranslation();
   const [userInfo, setUserInfo] = useState({});
   const [pets, setPets] = useState([]);
   const { user, handleLogout, handleDeleteUser } = useContext(AuthContext);
@@ -52,7 +54,7 @@ const UserPage = () => {
 
   return (
     <div>
-      <h1>User Page</h1>
+      <h1>{t('userpage.title')}</h1>
       {userInfo && userInfo ? (
         <div>
           {userInfo.profilePicture ? (
@@ -60,60 +62,60 @@ const UserPage = () => {
           ) : (
             <img src={defaultUser} className="profilePic" />
           )}
-          <h2>Welcome, {userInfo.username}!</h2>
-          <p>Email: {userInfo.email}</p>
-          <p>Rating: {userInfo.rating}</p>
+          <h2>{t('userpage.welcome')}, {userInfo.username}!</h2>
+          <p>{t('forms.emailLabel')}: {userInfo.email}</p>
+          <p>{t('userpage.rating')}: {userInfo.rating}</p>
           <p>
-            <strong>Location:</strong>
+            <strong>{t('signuppage.locationLabel')}:</strong>
           </p>
           <p>
-            Latitude:{" "}
+          {t('signuppage.latitudePlaceholder')}:{" "}
             {userInfo.location?.coordinates?.latitude || "Not available"}
           </p>
           <p>
-            Longitude:{" "}
+          {t('signuppage.longitudePlaceholder')}:{" "}
             {userInfo.location?.coordinates?.longitude || "Not available"}
           </p>
 
           <div className="pets">
-            <p>Owned Pets</p>
+            <p>{t('userpage.pets.allpets')}</p>
             {pets.length > 0 ? (
               pets.map((pet, index) => (
                 <div key={pet._id || index}>
                   <p>
-                    <strong>Name:</strong> {pet.petName}
+                    <strong>{t('userpage.pets.name')}:</strong> {pet.petName}
                   </p>
                   <p>
-                    <strong>Age:</strong> {pet.petAge}
+                    <strong>{t('userpage.pets.age')}:</strong> {pet.petAge}
                   </p>
                   <p>
-                    <strong>Species:</strong> {pet.petSpecies}
+                    <strong>{t('userpage.pets.species')}:</strong> {pet.petSpecies}
                   </p>
                   <button onClick={() => handleDeletePet(pet._id)}>
-                    Delete Pet
+                  {t('userpage.pets.deletepet')}
                   </button>
                   <hr />
                 </div>
               ))
             ) : (
-              <p>No pets owned.</p>
+              <p>{t('userpage.pets.nopets')}.</p>
             )}
-            <Link to={`/pets/add-pet/${userId}`}>Add Pet</Link>
+            <Link to={`/pets/add-pet/${userId}`}>{t('userpage.pets.addpet')}</Link>
           </div>
 
           <div className="action-buttons">
             <Link to={`/users/update-user/${userId}`}>
-              <button>Update User Information</button>
+              <button>{t('userpage.update')}</button>
             </Link>
-            <button onClick={handleDeleteUser}>Delete User</button>
-            <button onClick={handleLogout}>Logout</button>
+            <button onClick={handleDeleteUser}>{t('userpage.deleteuser')}</button>
+            <button onClick={handleLogout}>{t('userpage.logout')}</button>
             <Link to={`/users/update-user/${userId}/password-change`}>
-              <button>Change Password</button>
+              <button>{t('userpage.newpass')}</button>
             </Link>
           </div>
         </div>
       ) : (
-        <p>Loading user information...</p>
+        <p>{t('userpage.loading')}...</p>
       )}
     </div>
   );
