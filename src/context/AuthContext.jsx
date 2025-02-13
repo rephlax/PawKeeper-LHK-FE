@@ -1,6 +1,6 @@
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, createContext, useContext } from "react";
+import axios from "axios";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005";
 const AuthContext = createContext();
@@ -21,31 +21,40 @@ const AuthWrapper = ({ children }) => {
   const [isMapOpen, setIsMapOpen] = useState(false);
 
   const nav = useNavigate();
-  const authenticateUser = async (userId) => {
-    const webToken = localStorage.getItem("authToken");
 
+  const getAuthConfig = () => ({
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+      "Content-Type": "application/json",
+    },
+    withCredentials: true,
+  });
+
+  const authenticateUser = async () => {
+    const webToken = localStorage.getItem("authToken");
     if (webToken) {
       try {
         const responseToVerify = await axios.get(
           `${BACKEND_URL}/users/verify`,
-          {
-            headers: {
-              Authorization: `Bearer ${webToken}`,
-              "Content-Type": "application/json",
-              //  'Origin': window.location.origin
-            },
-            withCredentials: true,
-          }
+          getAuthConfig()
         );
 
         if (responseToVerify && responseToVerify.data) {
-          // console.log(responseToVerify.data.currentUser);
-          // console.log(responseToVerify.data.currentUser._id);
-          setUserId(responseToVerify.data.currentUser._id);
-          setUser(responseToVerify.data.currentUser);
-          setIsSignedIn(true);
-          setLoading(false);
+          const currentUserId = responseToVerify.data.currentUser._id;
+          
+          const userResponse = await axios.get(
+            `${BACKEND_URL}/users/user/${currentUserId}`,
+            getAuthConfig()
+          );
+
+          if (userResponse && userResponse.data) {
+            setUserId(currentUserId);
+            setUser(userResponse.data);
+            setIsSignedIn(true);
+            console.log("User authenticated with sitter status:", userResponse.data.sitter);
+          }
         }
+        setLoading(false);
       } catch (error) {
         console.log(
           "Error validating the token",
@@ -64,21 +73,64 @@ const AuthWrapper = ({ children }) => {
     }
   };
 
-  async function handleDeleteUser() {
-    const webToken = localStorage.getItem("authToken");
-    if (webToken) {
-      try {
-        const deletedUser = await axios
-          .delete(`${BACKEND_URL}/users/delete-user/${userId}`, {
-            headers: { authorization: `Bearer ${webToken}` },
-          })
-          .then(() => {
-            alert("User Deleted!");
-            handleLogout();
-          });
-      } catch (error) {
-        console.log("Here is the Error", error);
+  // Sitter-specific methods
+  const isSitter = () => {
+    return user?.sitter || false;
+  };
+
+  const getSitterStatus = async (targetUserId) => {
+    try {
+      if (targetUserId === userId) {
+        return user?.sitter || false;
       }
+
+      const response = await axios.get(
+        `${BACKEND_URL}/users/user/${targetUserId}`,
+        getAuthConfig()
+      );
+
+      return response.data?.sitter || false;
+    } catch (error) {
+      console.error('Error getting sitter status:', error);
+      return false;
+    }
+  };
+
+  const updateSitterStatus = async (newStatus) => {
+    if (!userId || !isSignedIn) return false;
+
+    try {
+      const response = await axios.patch(
+        `${BACKEND_URL}/users/update-user/${userId}`,
+        { sitter: newStatus },
+        getAuthConfig()
+      );
+
+      if (response.data?.foundUser) {
+        setUser(prev => ({
+          ...prev,
+          sitter: newStatus
+        }));
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error updating sitter status:', error);
+      return false;
+    }
+  };
+
+  async function handleDeleteUser() {
+    try {
+      await axios.delete(
+        `${BACKEND_URL}/users/delete-user/${userId}`,
+        getAuthConfig()
+      ).then(() => {
+        alert("User Deleted!");
+        handleLogout();
+      });
+    } catch (error) {
+      console.log("Here is the Error", error);
     }
   }
 
@@ -95,6 +147,12 @@ const AuthWrapper = ({ children }) => {
     authenticateUser();
   }, []);
 
+  useEffect(() => {
+    if (user) {
+      console.log("Current user sitter status:", user.sitter);
+    }
+  }, [user]);
+
   return (
     <AuthContext.Provider
       value={{
@@ -108,10 +166,14 @@ const AuthWrapper = ({ children }) => {
         handleDeleteUser,
         isMapOpen,
         setIsMapOpen,
+        isSitter,
+        getSitterStatus,
+        updateSitterStatus,
       }}
     >
       {children}
     </AuthContext.Provider>
   );
 };
+
 export { AuthContext, AuthWrapper };

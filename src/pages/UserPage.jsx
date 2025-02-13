@@ -1,16 +1,17 @@
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { AuthContext, useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import defaultUser from "../assets/defaultUser.png";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-const webToken = localStorage.getItem("authToken");
+
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005";
 
 const UserPage = () => {
   const [userInfo, setUserInfo] = useState({});
   const [pets, setPets] = useState([]);
-  const { user, handleLogout, handleDeleteUser } = useContext(AuthContext);
+  const { user, handleLogout, handleDeleteUser, isSitter, updateSitterStatus } = useAuth();
   const { userId } = useParams();
+  const webToken = localStorage.getItem("authToken");
 
   useEffect(() => {
     async function getOneUser() {
@@ -42,6 +43,16 @@ const UserPage = () => {
     }
   }, [userId]);
 
+  const handleSitterToggle = async () => {
+    const success = await updateSitterStatus(!isSitter());
+    if (success) {
+      setUserInfo(prev => ({
+        ...prev,
+        sitter: !prev.sitter
+      }));
+    }
+  };
+
   async function handleDeletePet(id) {
     const deletedPet = await axios.delete(`${BACKEND_URL}/pets/${id}`, {
       headers: { authorization: `Bearer ${webToken}` },
@@ -56,13 +67,27 @@ const UserPage = () => {
       {userInfo && userInfo ? (
         <div>
           {userInfo.profilePicture ? (
-            <img src={userInfo.profilePicture} className="profilePic" />
+            <img src={userInfo.profilePicture} className="profilePic" alt="Profile" />
           ) : (
-            <img src={defaultUser} className="profilePic" />
+            <img src={defaultUser} className="profilePic" alt="Default profile" />
           )}
           <h2>Welcome, {userInfo.username}!</h2>
           <p>Email: {userInfo.email}</p>
           <p>Rating: {userInfo.rating}</p>
+          
+          {/* Sitter Status Toggle */}
+          {user && user._id === userId && (
+            <div className="sitter-status my-4">
+              <p>Sitter Status: {userInfo.sitter ? 'Active' : 'Inactive'}</p>
+              <button 
+                onClick={handleSitterToggle}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-2"
+              >
+                {userInfo.sitter ? 'Deactivate Sitter Status' : 'Become a Sitter'}
+              </button>
+            </div>
+          )}
+
           <p>
             <strong>Location:</strong>
           </p>
@@ -89,26 +114,42 @@ const UserPage = () => {
                   <p>
                     <strong>Species:</strong> {pet.petSpecies}
                   </p>
-                  <button onClick={() => handleDeletePet(pet._id)}>
+                  <button onClick={() => handleDeletePet(pet._id)}
+                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
                     Delete Pet
                   </button>
-                  <hr />
+                  <hr className="my-2" />
                 </div>
               ))
             ) : (
               <p>No pets owned.</p>
             )}
-            <Link to={`/pets/add-pet/${userId}`}>Add Pet</Link>
+            <Link to={`/pets/add-pet/${userId}`}
+              className="inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mt-4">
+              Add Pet
+            </Link>
           </div>
 
-          <div className="action-buttons">
+          <div className="action-buttons mt-6 space-y-2">
             <Link to={`/users/update-user/${userId}`}>
-              <button>Update User Information</button>
+              <button className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                Update User Information
+              </button>
             </Link>
-            <button onClick={handleDeleteUser}>Delete User</button>
-            <button onClick={handleLogout}>Logout</button>
+            <button 
+              onClick={handleDeleteUser}
+              className="w-full bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+              Delete User
+            </button>
+            <button 
+              onClick={handleLogout}
+              className="w-full bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+              Logout
+            </button>
             <Link to={`/users/update-user/${userId}/password-change`}>
-              <button>Change Password</button>
+              <button className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                Change Password
+              </button>
             </Link>
           </div>
         </div>
