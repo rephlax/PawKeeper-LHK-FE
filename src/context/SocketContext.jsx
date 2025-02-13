@@ -10,6 +10,7 @@ export const SocketProvider = ({ children }) => {
     const [socket, setSocket] = useState(null)
     const [isConnected, setIsConnected] = useState(false)
     const [onlineUsers, setOnlineUsers] = useState(new Set())
+    const [nearbySitters, setNearbySitters] = useState([])
     const { isSignedIn, user } = useAuth()
     const authToken = localStorage.getItem("authToken")
 
@@ -17,6 +18,7 @@ export const SocketProvider = ({ children }) => {
         if (!isSignedIn || !authToken || !user) {
             setIsConnected(false)
             setOnlineUsers(new Set())
+            setNearbySitters([])
             return
         }
 
@@ -67,18 +69,6 @@ export const SocketProvider = ({ children }) => {
             setIsConnected(false)
         })
 
-        newSocket.on('nearby_sitters', (sitters) => {
-            setNearbySitters(sitters);
-        });
-        
-        const findNearbySitters = (location) => {
-            newSocket.emit('search_nearby_sitters', location, (response) => {
-                if (response.sitters) {
-                    setNearbySitters(response.sitters);
-                }
-            });
-        };
-
         newSocket.on('connect', () => {
             console.log('Socket connected!', newSocket.id)
             setIsConnected(true)
@@ -91,6 +81,11 @@ export const SocketProvider = ({ children }) => {
             setOnlineUsers(new Set())
         })
 
+        newSocket.on('nearby_sitters', (sitters) => {
+            console.log('Received nearby sitters:', sitters)
+            setNearbySitters(sitters)
+        })
+
         setSocket(newSocket)
     
         return () => {
@@ -101,16 +96,29 @@ export const SocketProvider = ({ children }) => {
                 newSocket.off('users_online')
                 newSocket.off('user_connected')
                 newSocket.off('user_disconnected')
+                newSocket.off('nearby_sitters')
                 newSocket.close()
             }
         }
     }, [isSignedIn, authToken, user])
+
+    const findNearbySitters = (location) => {
+        if (socket) {
+            socket.emit('search_nearby_sitters', location, (response) => {
+                if (response?.sitters) {
+                    setNearbySitters(response.sitters)
+                }
+            })
+        }
+    }
 
     const contextValue = {
         socket,
         user,
         isConnected,
         onlineUsers,
+        nearbySitters,
+        findNearbySitters,
         isUserOnline: (userId) => onlineUsers.has(userId)
     }
 

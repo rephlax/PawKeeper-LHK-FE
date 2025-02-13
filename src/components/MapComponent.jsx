@@ -1,20 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { GoogleMap, Marker, InfoWindow } from '@react-google-maps/api';
 import { useSocket } from '../context/SocketContext';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-// localhost wont work with this api
+// Default center (London)
+const DEFAULT_CENTER = { lat: 51.509865, lng: -0.118092 };
 
 const MapComponent = () => {
     const { user, isSitter } = useAuth();
     const { socket } = useSocket();
     const [map, setMap] = useState(null);
-    const [userLocation, setUserLocation] = useState(null);
+    const [userLocation, setUserLocation] = useState(DEFAULT_CENTER);
     const [userPin, setUserPin] = useState(null);
     const [selectedPin, setSelectedPin] = useState(null);
     const [showPinForm, setShowPinForm] = useState(false);
+    const [locationError, setLocationError] = useState(null);
     const [pinForm, setPinForm] = useState({
         title: '',
         description: '',
@@ -26,8 +28,10 @@ const MapComponent = () => {
     useEffect(() => {
         if (socket) {
             socket.on('center_map', (location) => {
-                setUserLocation(location);
-                map?.panTo(location);
+                if (location && location.lat && location.lng) {
+                    setUserLocation(location);
+                    map?.panTo(location);
+                }
             });
 
             socket.on('toggle_pin_creation', ({ isCreating }) => {
@@ -46,11 +50,11 @@ const MapComponent = () => {
         }
     }, [socket, map]);
 
-    const getAuthConfig = () => ({
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem('authToken')}`
-        }
-    });
+    const getAuthConfig = useCallback(() => ({
+      headers: {
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`
+      }
+    }), []);
 
     const loadUserPin = async () => {
         if (user?._id) {
@@ -75,23 +79,49 @@ const MapComponent = () => {
         loadUserPin();
     }, [user]);
 
-    useEffect(() => {
+    const getUserLocation = () => {
+        if (!navigator.geolocation) {
+            setLocationError('Geolocation is not supported by your browser');
+            return;
+        }
+
+        const options = {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0
+        };
+
         navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const location = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                };
-                setUserLocation(location);
-                if (socket) {
-                    socket.emit('share_location', location);
-                }
-            },
-            (error) => {
-                console.error('Location error:', error);
-                alert('Unable to get your location. Please check your browser settings.');
-            }
-        );
+          (position) => {
+              const location = {
+                  lat: position.coords.latitude,
+                  lng: position.coords.longitude
+              };
+              setUserLocation(location);
+              setLocationError(null);
+              map?.panTo(location);
+              if (socket) {
+                  socket.emit('share_location', location);
+              }
+          },
+          (error) => {
+              let message;
+              switch(error.code) {
+                  case error.PERMISSION_DENIED:
+                      message = 'Please enable location access in your browser settings to use this feature.';
+                      break;
+                  default:
+                      message = 'Unable to get your location. Please try again.';
+              }
+              setLocationError(message);
+              setUserLocation(DEFAULT_CENTER);
+          }
+      );
+
+    useEffect(() => {
+        getUserLocation();
+        const locationInterval = setInterval(getUserLocation, 60000); // Update every minute
+        return () => clearInterval(locationInterval);
     }, [socket]);
 
     const handleInputChange = (e) => {
@@ -146,7 +176,13 @@ const MapComponent = () => {
             alert('Pin created successfully at your current location!');
         } catch (error) {
             console.error('Pin creation error:', error);
-            alert(error.response?.data?.message || 'Error creating pin');
+            let errorMessage = 'Error creating pin. ';
+            if (error.response?.status === 403) {
+                errorMessage += 'Please log in again.';
+            } else if (error.response?.data?.message) {
+                errorMessage += error.response.data.message;
+            }
+            alert(errorMessage);
         }
     };
 
@@ -159,6 +195,12 @@ const MapComponent = () => {
     return (
         <div className="w-full h-full flex">
             <div className={showPinForm ? "w-2/3" : "w-full"}>
+                {locationError && (
+                    <div className="absolute top-4 left-4 z-10 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded max-w-md">
+                        <p>{locationError}</p>
+                    </div>
+                )}
+                
                 <GoogleMap
                     center={userLocation}
                     zoom={14}
@@ -166,7 +208,9 @@ const MapComponent = () => {
                     options={{
                         mapId: import.meta.env.VITE_GOOGLE_MAPS_ID,
                         disableDefaultUI: false,
-                        clickableIcons: false
+                        clickableIcons: false,
+                        zoomControl: true,
+                        streetViewControl: true
                     }}
                     onLoad={setMap}
                 >
