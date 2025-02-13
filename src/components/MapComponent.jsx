@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { GoogleMap, Marker, InfoWindow, Autocomplete } from '@react-google-maps/api';
+import React, { useState, useEffect } from 'react';
+import { GoogleMap, Marker, InfoWindow } from '@react-google-maps/api';
 import { useSocket } from '../context/SocketContext';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
@@ -7,7 +7,8 @@ import axios from 'axios';
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005';
 
 const MapComponent = () => {
-    const { user, socket } = useAuth();
+    const { user, isSitter } = useAuth();
+    const { socket } = useSocket();
     const [map, setMap] = useState(null);
     const [userLocation, setUserLocation] = useState(null);
     const [userPin, setUserPin] = useState(null);
@@ -20,56 +21,95 @@ const MapComponent = () => {
         services: []
     });
 
-    // Load existing user pin
+    // Socket event listeners
     useEffect(() => {
-        const loadUserPin = async () => {
-            if (user?._id) {
-                try {
-                    const response = await axios.get(`${BACKEND_URL}/api/location-pins/search`, {
-                        params: {
-                            userId: user._id
-                        }
-                    });
-                    if (response.data.length > 0) {
-                        setUserPin(response.data[0]);
+        if (socket) {
+            // Listen for center map events
+            socket.on('center_map', (location) => {
+                setUserLocation(location);
+                map?.panTo(location);
+            });
+
+            // Listen for pin creation mode toggle
+            socket.on('toggle_pin_creation', ({ isCreating }) => {
+                setIsCreatingPin(isCreating);
+                if (!isCreating) {
+                    setNewPinLocation(null);
+                    setSelectedPin(null);
+                }
+            });
+
+            // Listen for pin created events
+            socket.on('pin_created', () => {
+                loadUserPin();
+            });
+
+            return () => {
+                socket.off('center_map');
+                socket.off('toggle_pin_creation');
+                socket.off('pin_created');
+            };
+        }
+    }, [socket, map]);
+
+    // Helper function to get auth config
+    const getAuthConfig = () => ({
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('authToken')}`
+        }
+    });
+
+    // Load user pin function
+    const loadUserPin = async () => {
+        if (user?._id) {
+            try {
+                const response = await axios.get(
+                    `${BACKEND_URL}/api/location-pins/search`,
+                    {
+                        params: { userId: user._id },
+                        ...getAuthConfig()
                     }
-                } catch (error) {
-                    console.error('Error loading user pin:', error);
+                );
+                if (response.data.length > 0) {
+                    setUserPin(response.data[0]);
+                }
+            } catch (error) {
+                console.error('Error loading user pin:', error);
+                if (error.response?.status === 403) {
+                    console.log('Authentication error - please try logging in again');
                 }
             }
-        };
+        }
+    };
+
+    // Load initial user pin
+    useEffect(() => {
         loadUserPin();
     }, [user]);
 
-    // Event handler for centering map
+    // Get initial user location
     useEffect(() => {
-        const handleCenterMap = (event) => {
-            const location = event.detail;
-            setUserLocation(location);
-            map?.panTo(location);
-        };
-
-        window.addEventListener('centerMap', handleCenterMap);
-        return () => window.removeEventListener('centerMap', handleCenterMap);
-    }, [map]);
-
-    // Event handler for pin creation toggle
-    useEffect(() => {
-        const handleTogglePinCreation = (event) => {
-            setIsCreatingPin(event.detail.isCreating);
-            if (!event.detail.isCreating) {
-                setNewPinLocation(null);
-                setSelectedPin(null);
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const location = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                setUserLocation(location);
+                if (socket) {
+                    socket.emit('share_location', location);
+                }
+            },
+            (error) => {
+                console.error('Location error:', error);
+                alert('Unable to get your location. Please check your browser settings.');
             }
-        };
-
-        window.addEventListener('togglePinCreation', handleTogglePinCreation);
-        return () => window.removeEventListener('togglePinCreation', handleTogglePinCreation);
-    }, []);
+        );
+    }, [socket]);
 
     // Handle map click for pin creation
     const handleMapClick = (event) => {
-        if (isCreatingPin && user?.sitter) {
+        if (isCreatingPin && isSitter()) {
             const clickedLocation = {
                 lat: event.latLng.lat(),
                 lng: event.latLng.lng()
@@ -89,7 +129,7 @@ const MapComponent = () => {
 
     // Create pin
     const createPin = async () => {
-        if (!newPinLocation || !user?.sitter) return;
+        if (!newPinLocation || !isSitter()) return;
 
         try {
             const pinData = {
@@ -102,11 +142,7 @@ const MapComponent = () => {
             const response = await axios.post(
                 `${BACKEND_URL}/api/location-pins/create`,
                 pinData,
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('authToken')}`
-                    }
-                }
+                getAuthConfig()
             );
             
             setUserPin(response.data);
@@ -115,20 +151,20 @@ const MapComponent = () => {
             setIsCreatingPin(false);
             setPinForm({ title: '', description: '', services: [] });
 
-            // Notify other users through socket
             if (socket) {
+                socket.emit('pin_created');
                 socket.emit('share_location', {
                     lat: pinData.latitude,
                     lng: pinData.longitude
                 });
             }
-
-            // Dispatch event to update sidebar
-            window.dispatchEvent(new CustomEvent('pinCreated'));
-
         } catch (error) {
             console.error('Pin creation error:', error);
-            alert(error.response?.data?.message || 'Error creating pin');
+            if (error.response?.status === 403) {
+                alert('Please log in again to create a pin');
+            } else {
+                alert(error.response?.data?.message || 'Error creating pin');
+            }
         }
     };
 
