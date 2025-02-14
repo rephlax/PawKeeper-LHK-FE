@@ -5,6 +5,8 @@ import { useAuth } from '../../context/AuthContext';
 import { setupAdvancedMarkers, updateMarkerPositions } from './utils/markers';
 import { DEFAULT_CENTER, getUserLocation } from './utils/location';
 import { setupSocketListeners } from './utils/socketHandlers';
+import PinForm from '../Modal/PinForm';
+import Modal from '../Modal';
 import axios from 'axios';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -144,9 +146,14 @@ const MapComponent = () => {
           </InfoWindow>
         )}
       </GoogleMap>
-      <Modal isOpen={showPinForm} onClose={() => setShowPinForm(false)}>
-        <PinForm onClose={() => setShowPinForm(false)} />
-      </Modal>
+      {showPinForm && (
+        <Modal 
+          isOpen={showPinForm} 
+          onClose={() => setShowPinForm(false)}
+        >
+          <PinForm onClose={() => setShowPinForm(false)} />
+        </Modal>
+      )}
     </div>
   );
 };
