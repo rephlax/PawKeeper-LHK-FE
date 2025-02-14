@@ -22,7 +22,7 @@ const PasswordChange = () => {
         const responseToChange = await axios.patch(
           `${BACKEND_URL}/users/update-user/${userId}/password-change`,
           newPasswords,
-          { headers: { authorization: `Bearer ${webToken}` } }
+          { headers: { authorization: `Bearer ${webToken}` } },
         );
 
         alert("password Changed with sucess!");

@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from "../context/AuthContext";
 import { Autocomplete } from "@react-google-maps/api";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005";
@@ -34,7 +34,7 @@ const SignUpPage = () => {
         (error) => {
           console.error("Error getting location:", error);
           alert("Unable to retrieve your location");
-        }
+        },
       );
     } else {
       alert("Geolocation is not supported by your browser");
@@ -72,10 +72,10 @@ const SignUpPage = () => {
     try {
       const existingUsers = await axios.get(`${BACKEND_URL}/users/`);
       const userExists = existingUsers.data.some(
-        (user) => user.username === newUser.username
+        (user) => user.username === newUser.username,
       );
       const emailExists = existingUsers.data.some(
-        (user) => user.email === newUser.email
+        (user) => user.email === newUser.email,
       );
 
       if (userExists) {
@@ -83,8 +83,11 @@ const SignUpPage = () => {
       } else if (emailExists) {
         alert("Email already exists");
       } else {
-        const response = await axios.post(`${BACKEND_URL}/users/signup`, newUser);
-        
+        const response = await axios.post(
+          `${BACKEND_URL}/users/signup`,
+          newUser,
+        );
+
         if (response.data) {
           alert("User created successfully");
           clearForm();
@@ -151,7 +154,7 @@ const SignUpPage = () => {
         </button>
 
         <label>
-          {t('signuppage.sitterLabel')}
+          {t("signuppage.sitterLabel")}
           <input
             type="checkbox"
             checked={sitter}
@@ -162,7 +165,7 @@ const SignUpPage = () => {
         {sitter && (
           <>
             <label>
-              {t('signuppage.rateLabel')}
+              {t("signuppage.rateLabel")}
               <input
                 type="number"
                 value={rate}
@@ -173,10 +176,10 @@ const SignUpPage = () => {
             </label>
 
             <div className="location-section">
-              <label>{t('signuppage.locationLabel')}</label>
-              
+              <label>{t("signuppage.locationLabel")}</label>
+
               <Autocomplete
-                onLoad={ref => autocompleteRef.current = ref}
+                onLoad={(ref) => (autocompleteRef.current = ref)}
                 onPlaceChanged={handlePlaceSelect}
               >
                 <input
@@ -186,8 +189,8 @@ const SignUpPage = () => {
                 />
               </Autocomplete>
 
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={getCurrentLocation}
                 className="get-location-btn"
               >
@@ -197,14 +200,14 @@ const SignUpPage = () => {
               <div className="coordinates-inputs">
                 <input
                   type="number"
-                  placeholder={t('signuppage.latitudePlaceholder')}
+                  placeholder={t("signuppage.latitudePlaceholder")}
                   value={latitude}
                   onChange={(e) => setLatitude(e.target.value)}
                   required={sitter}
                 />
                 <input
                   type="number"
-                  placeholder={t('signuppage.longitudePlaceholder')}
+                  placeholder={t("signuppage.longitudePlaceholder")}
                   value={longitude}
                   onChange={(e) => setLongitude(e.target.value)}
                   required={sitter}

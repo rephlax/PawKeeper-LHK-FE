@@ -1,2 +1,2 @@
-export * from './locationHandlers';
-export * from './pinHandlers';
+export * from "./locationHandlers";
+export * from "./pinHandlers";

@@ -13,7 +13,7 @@ const UpdatePet = () => {
   const [imageFile, setImageFile] = useState(null);
   const [uploading, setUploading] = useState(false);
 
-  const nav= useNavigate()
+  const nav = useNavigate();
 
   async function handleUpdatePet(e) {
     e.preventDefault();
@@ -21,18 +21,22 @@ const UpdatePet = () => {
     const updatedPet = {
       petName,
       petAge,
-      petPicture
-    }
+      petPicture,
+    };
 
     try {
-      const response = await axios.patch(`${BACKEND_URL}/pets/${petId}`, updatedPet, { headers: { authorization: `Bearer ${webToken}` } })
+      const response = await axios.patch(
+        `${BACKEND_URL}/pets/${petId}`,
+        updatedPet,
+        { headers: { authorization: `Bearer ${webToken}` } },
+      );
 
-      if(response) {
-        alert("Pet Updated")
-        nav(`/users/user/${userId}`)
+      if (response) {
+        alert("Pet Updated");
+        nav(`/users/user/${userId}`);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
@@ -41,7 +45,7 @@ const UpdatePet = () => {
       try {
         const petToUpdate = await axios.get(
           `${BACKEND_URL}/pets/${userId}/${petId}`,
-          { headers: { authorization: `Bearer ${webToken}` } }
+          { headers: { authorization: `Bearer ${webToken}` } },
         );
 
         const pet = petToUpdate.data;
@@ -73,7 +77,7 @@ const UpdatePet = () => {
     try {
       const response = await axios.post(
         "https://api.cloudinary.com/v1_1/dzdrwiugn/image/upload",
-        formData
+        formData,
       );
 
       console.log(response);
@@ -84,7 +88,6 @@ const UpdatePet = () => {
       setUploading(false);
     }
   };
-
 
   return (
     <div className="form">

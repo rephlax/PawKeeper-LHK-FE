@@ -23,28 +23,28 @@ const MapComponent = () => {
   const [mapVisible, setMapVisible] = useState(true);
   const [markers, setMarkers] = useState({
     home: null,
-    pin: null
+    pin: null,
   });
 
-  const getAuthConfig = useCallback(() => ({
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('authToken')}`
-    }
-  }), []);
+  const getAuthConfig = useCallback(
+    () => ({
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+      },
+    }),
+    []
+  );
 
   const loadUserPin = async () => {
     if (!user?._id) return;
-  
+
     try {
       console.log('Loading pin for user:', user._id);
-      const response = await axios.get(
-        `${BACKEND_URL}/api/location-pins/search`,
-        {
-          params: { userId: user._id },
-          ...getAuthConfig()
-        }
-      );
-      
+      const response = await axios.get(`${BACKEND_URL}/api/location-pins/search`, {
+        params: { userId: user._id },
+        ...getAuthConfig(),
+      });
+
       if (response.data.length > 0) {
         setUserPin(response.data[0]);
       }
@@ -53,7 +53,7 @@ const MapComponent = () => {
     }
   };
 
-  const handleEditPin = async (updatedData) => {
+  const handleEditPin = async updatedData => {
     try {
       const response = await axios.put(
         `${BACKEND_URL}/api/location-pins/update`,
@@ -72,7 +72,7 @@ const MapComponent = () => {
     }
   };
 
-  const startChat = (pinOwner) => {
+  const startChat = pinOwner => {
     if (socket) {
       socket.emit('start_private_chat', { targetUserId: pinOwner });
     }
@@ -84,8 +84,10 @@ const MapComponent = () => {
 
   useEffect(() => {
     getUserLocation(setUserLocation, setLocationError, map, socket);
-    const locationInterval = setInterval(() => 
-      getUserLocation(setUserLocation, setLocationError, map, socket), 60000);
+    const locationInterval = setInterval(
+      () => getUserLocation(setUserLocation, setLocationError, map, socket),
+      60000
+    );
     return () => clearInterval(locationInterval);
   }, [socket, map]);
 
@@ -94,35 +96,35 @@ const MapComponent = () => {
       console.warn('Socket not available for setup');
       return;
     }
-  
-    console.log('Setting up socket listeners with setShowPinForm:', !!setShowPinForm);
 
-    socket.on('toggle_pin_creation', (data) => {
+    console.log('Setting up socket listeners');
+
+    socket.on('toggle_pin_creation', data => {
       console.log('Received toggle_pin_creation:', data);
-      if (setShowPinForm) {
-        setShowPinForm(data.isCreating);
-        setMapVisible(!data.isCreating);
-      }
+      setShowPinForm(data.isCreating);
+      setMapVisible(!data.isCreating); // This will hide/show the map
     });
-  
-    socket.on('center_map', (location) => {
+
+    socket.on('center_map', location => {
       console.log('Received center_map event:', location);
       if (location && location.lat && location.lng) {
         setUserLocation(location);
         map?.panTo(location);
       }
     });
-  
+
     socket.on('pin_created', () => {
       console.log('Received pin_created event');
       loadUserPin();
+      setShowPinForm(false);
+      setMapVisible(true);
     });
 
     socket.on('pin_updated', () => {
       console.log('Received pin_updated event');
       loadUserPin();
     });
-  
+
     return () => {
       console.log('Cleaning up socket listeners');
       socket.off('center_map');
@@ -148,7 +150,7 @@ const MapComponent = () => {
     if (!selectedPin) return null;
 
     const isOwnPin = selectedPin.user === user?._id;
-    
+
     // User is not a sitter clicking their home location
     if (!user?.sitter && isOwnPin) {
       return null;
@@ -229,7 +231,7 @@ const MapComponent = () => {
             disableDefaultUI: false,
             clickableIcons: false,
             zoomControl: true,
-            streetViewControl: true
+            streetViewControl: true,
           }}
           onLoad={setMap}
         >
@@ -237,7 +239,7 @@ const MapComponent = () => {
             <InfoWindow
               position={{
                 lat: selectedPin.location.coordinates[1],
-                lng: selectedPin.location.coordinates[0]
+                lng: selectedPin.location.coordinates[0],
               }}
               onCloseClick={() => setSelectedPin(null)}
             >
@@ -247,8 +249,8 @@ const MapComponent = () => {
         </GoogleMap>
       </div>
 
-      <Modal 
-        isOpen={showPinForm} 
+      <Modal
+        isOpen={showPinForm}
         onClose={() => {
           setShowPinForm(false);
           setMapVisible(true);
@@ -257,7 +259,7 @@ const MapComponent = () => {
           }
         }}
       >
-        <PinForm 
+        <PinForm
           onClose={() => {
             setShowPinForm(false);
             setMapVisible(true);
@@ -268,10 +270,7 @@ const MapComponent = () => {
         />
       </Modal>
 
-      <Modal
-        isOpen={showEditForm}
-        onClose={() => setShowEditForm(false)}
-      >
+      <Modal isOpen={showEditForm} onClose={() => setShowEditForm(false)}>
         <PinForm
           isEditing={true}
           initialData={userPin}

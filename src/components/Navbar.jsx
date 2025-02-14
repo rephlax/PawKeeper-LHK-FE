@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -7,13 +7,7 @@ import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
   const { t } = useTranslation();
-  const { 
-    isSignedIn, 
-    user, 
-    handleLogout,
-    isMapOpen, 
-    setIsMapOpen 
-  } = useAuth();
+  const { isSignedIn, user, handleLogout, isMapOpen, setIsMapOpen } = useAuth();
 
   return (
     <nav className="flex items-center justify-between h-full px-8 relative">
@@ -23,7 +17,7 @@ const Navbar = () => {
         </Link>
       </div>
 
-      <div 
+      <div
         className="flex gap-4 justify-evenly items-center text-lg"
         style={{ paddingRight: "10px" }}
       >
@@ -38,26 +32,23 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            <button 
+            <button
               onClick={() => setIsMapOpen(!isMapOpen)}
               className="navbar-link"
             >
-              {isMapOpen ? 'Close Map' : 'Open Map'}
+              {isMapOpen ? "Close Map" : "Open Map"}
             </button>
 
             <Link to={`/users/user/${user._id}`} className="navbar-link">
               Profile
             </Link>
 
-            <button 
-              onClick={handleLogout} 
-              className="navbar-link"
-            >
+            <button onClick={handleLogout} className="navbar-link">
               Logout
             </button>
           </>
         )}
-        
+
         <div>
           <LanguageSwitcher />
         </div>

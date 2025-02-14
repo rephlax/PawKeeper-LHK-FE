@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { useSocket } from '../../context/SocketContext';
-import { MapControls, RegularSidebar } from './components';
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../../context/AuthContext";
+import { useSocket } from "../../context/SocketContext";
+import { MapControls, RegularSidebar } from "./components";
 
 const Sidebar = () => {
   const { user, isMapOpen } = useAuth();
@@ -10,12 +10,12 @@ const Sidebar = () => {
 
   useEffect(() => {
     if (socket) {
-      socket.on('pin_created', () => {
+      socket.on("pin_created", () => {
         setIsCreatingPin(false);
       });
 
       return () => {
-        socket.off('pin_created');
+        socket.off("pin_created");
       };
     }
   }, [socket]);

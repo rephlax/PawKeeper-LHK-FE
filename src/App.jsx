@@ -13,8 +13,8 @@ import PasswordChange from "./components/PasswordChange";
 import AddPetForm from "./components/AddPetForm";
 import { useAuth } from "./context/AuthContext";
 import UpdatePetForm from "./components/UpdatePetForm";
-import MapComponent from './components/Map';
-import Sidebar from './components/Sidebar';
+import MapComponent from "./components/Map";
+import Sidebar from "./components/Sidebar";
 
 function App() {
   const { isMapOpen } = useAuth();
@@ -29,7 +29,7 @@ function App() {
       </nav>
 
       <div className="flex flex-1 relative z-10">
-      <aside className="w-64 backdrop-blur-md bg-cream-50/50 border-r border-cream-accent text-cream-text">
+        <aside className="w-64 backdrop-blur-md bg-cream-50/50 border-r border-cream-accent text-cream-text">
           <Sidebar />
         </aside>
 
@@ -55,27 +55,27 @@ function App() {
                   </PrivateRoute>
                 }
               />
-            <Route
-              path={`/pets/add-pet/:userId`}
-              element={
-                <PrivateRoute>
-                  <AddPetForm />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path={`/pets/update-pet/:userId/:petId`}
-              element={
-                <PrivateRoute>
-                  <UpdatePetForm/>
-                </PrivateRoute>
-              }
-            />
+              <Route
+                path={`/pets/add-pet/:userId`}
+                element={
+                  <PrivateRoute>
+                    <AddPetForm />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path={`/pets/update-pet/:userId/:petId`}
+                element={
+                  <PrivateRoute>
+                    <UpdatePetForm />
+                  </PrivateRoute>
+                }
+              />
               <Route
                 path={`/users/update-user/:userId/password-change`}
                 element={
                   <PrivateRoute>
-                    <PasswordChange/>
+                    <PasswordChange />
                   </PrivateRoute>
                 }
               />

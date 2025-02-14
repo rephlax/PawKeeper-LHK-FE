@@ -36,5 +36,5 @@ createRoot(document.getElementById("root")).render(
         </SocketProvider>
       </AuthWrapper>
     </BrowserRouter>
-  </StrictMode>
+  </StrictMode>,
 );

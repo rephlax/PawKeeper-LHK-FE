@@ -36,29 +36,32 @@ const AuthWrapper = ({ children }) => {
       try {
         const responseToVerify = await axios.get(
           `${BACKEND_URL}/users/verify`,
-          getAuthConfig()
+          getAuthConfig(),
         );
 
         if (responseToVerify && responseToVerify.data) {
           const currentUserId = responseToVerify.data.currentUser._id;
-          
+
           const userResponse = await axios.get(
             `${BACKEND_URL}/users/user/${currentUserId}`,
-            getAuthConfig()
+            getAuthConfig(),
           );
 
           if (userResponse && userResponse.data) {
             setUserId(currentUserId);
             setUser(userResponse.data);
             setIsSignedIn(true);
-            console.log("User authenticated with sitter status:", userResponse.data.sitter);
+            console.log(
+              "User authenticated with sitter status:",
+              userResponse.data.sitter,
+            );
           }
         }
         setLoading(false);
       } catch (error) {
         console.log(
           "Error validating the token",
-          error.response?.data || error.message
+          error.response?.data || error.message,
         );
         setIsSignedIn(false);
         setLoading(false);
@@ -86,12 +89,12 @@ const AuthWrapper = ({ children }) => {
 
       const response = await axios.get(
         `${BACKEND_URL}/users/user/${targetUserId}`,
-        getAuthConfig()
+        getAuthConfig(),
       );
 
       return response.data?.sitter || false;
     } catch (error) {
-      console.error('Error getting sitter status:', error);
+      console.error("Error getting sitter status:", error);
       return false;
     }
   };
@@ -103,32 +106,31 @@ const AuthWrapper = ({ children }) => {
       const response = await axios.patch(
         `${BACKEND_URL}/users/update-user/${userId}`,
         { sitter: newStatus },
-        getAuthConfig()
+        getAuthConfig(),
       );
 
       if (response.data?.foundUser) {
-        setUser(prev => ({
+        setUser((prev) => ({
           ...prev,
-          sitter: newStatus
+          sitter: newStatus,
         }));
         return true;
       }
       return false;
     } catch (error) {
-      console.error('Error updating sitter status:', error);
+      console.error("Error updating sitter status:", error);
       return false;
     }
   };
 
   async function handleDeleteUser() {
     try {
-      await axios.delete(
-        `${BACKEND_URL}/users/delete-user/${userId}`,
-        getAuthConfig()
-      ).then(() => {
-        alert("User Deleted!");
-        handleLogout();
-      });
+      await axios
+        .delete(`${BACKEND_URL}/users/delete-user/${userId}`, getAuthConfig())
+        .then(() => {
+          alert("User Deleted!");
+          handleLogout();
+        });
     } catch (error) {
       console.log("Here is the Error", error);
     }

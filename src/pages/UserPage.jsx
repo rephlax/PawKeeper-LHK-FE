@@ -1,7 +1,7 @@
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import defaultUser from "../assets/defaultUser.png";
-import defaultPet from "../assets/defaultPet.png"
+import defaultPet from "../assets/defaultPet.png";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -10,7 +10,8 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005";
 const UserPage = () => {
   const [userInfo, setUserInfo] = useState({});
   const [pets, setPets] = useState([]);
-  const { user, handleLogout, handleDeleteUser, isSitter, updateSitterStatus } = useAuth();
+  const { user, handleLogout, handleDeleteUser, isSitter, updateSitterStatus } =
+    useAuth();
   const { userId } = useParams();
   const webToken = localStorage.getItem("authToken");
 
@@ -19,7 +20,7 @@ const UserPage = () => {
       try {
         const userData = await axios.get(
           `${BACKEND_URL}/users/user/${userId}`,
-          { headers: { authorization: `Bearer ${webToken}` } }
+          { headers: { authorization: `Bearer ${webToken}` } },
         );
         setUserInfo(userData.data);
       } catch (error) {
@@ -47,9 +48,9 @@ const UserPage = () => {
   const handleSitterToggle = async () => {
     const success = await updateSitterStatus(!isSitter());
     if (success) {
-      setUserInfo(prev => ({
+      setUserInfo((prev) => ({
         ...prev,
-        sitter: !prev.sitter
+        sitter: !prev.sitter,
       }));
     }
   };
@@ -68,23 +69,33 @@ const UserPage = () => {
       {userInfo && userInfo ? (
         <div>
           {userInfo.profilePicture ? (
-            <img src={userInfo.profilePicture} className="profilePic" alt="Profile" />
+            <img
+              src={userInfo.profilePicture}
+              className="profilePic"
+              alt="Profile"
+            />
           ) : (
-            <img src={defaultUser} className="profilePic" alt="Default profile" />
+            <img
+              src={defaultUser}
+              className="profilePic"
+              alt="Default profile"
+            />
           )}
           <h2>Welcome, {userInfo.username}!</h2>
           <p>Email: {userInfo.email}</p>
           <p>Rating: {userInfo.rating}</p>
-          
+
           {/* Sitter Status Toggle */}
           {user && user._id === userId && (
             <div className="sitter-status my-4">
-              <p>Sitter Status: {userInfo.sitter ? 'Active' : 'Inactive'}</p>
-              <button 
+              <p>Sitter Status: {userInfo.sitter ? "Active" : "Inactive"}</p>
+              <button
                 onClick={handleSitterToggle}
                 className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-2"
               >
-                {userInfo.sitter ? 'Deactivate Sitter Status' : 'Become a Sitter'}
+                {userInfo.sitter
+                  ? "Deactivate Sitter Status"
+                  : "Become a Sitter"}
               </button>
             </div>
           )}
@@ -119,15 +130,19 @@ const UserPage = () => {
                   <button onClick={() => handleDeletePet(pet._id)}>
                     Delete Pet
                   </button>
-                  <Link to={`/pets/update-pet/${userId}/${pet._id}`}><button>Update Pet Info</button></Link>
+                  <Link to={`/pets/update-pet/${userId}/${pet._id}`}>
+                    <button>Update Pet Info</button>
+                  </Link>
                   <hr className="my-2" />
                 </div>
               ))
             ) : (
               <p>No pets owned.</p>
             )}
-            <Link to={`/pets/add-pet/${userId}`}
-              className="inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mt-4">
+            <Link
+              to={`/pets/add-pet/${userId}`}
+              className="inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mt-4"
+            >
               Add Pet
             </Link>
           </div>
@@ -138,14 +153,16 @@ const UserPage = () => {
                 Update User Information
               </button>
             </Link>
-            <button 
+            <button
               onClick={handleDeleteUser}
-              className="w-full bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+              className="w-full bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            >
               Delete User
             </button>
-            <button 
+            <button
               onClick={handleLogout}
-              className="w-full bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+              className="w-full bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+            >
               Logout
             </button>
             <Link to={`/users/update-user/${userId}/password-change`}>

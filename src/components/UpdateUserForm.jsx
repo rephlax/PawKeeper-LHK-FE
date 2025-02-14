@@ -16,9 +16,9 @@ const UpdateUserForm = () => {
   const [longitude, setLongitude] = useState("");
   const [sitter, setSitter] = useState(false);
   const [imageFile, setImageFile] = useState(null);
-  const [uploading, setUploading] = useState(false)
+  const [uploading, setUploading] = useState(false);
 
-  const nav = useNavigate()
+  const nav = useNavigate();
   const webToken = localStorage.getItem("authToken");
 
   useEffect(() => {
@@ -31,7 +31,7 @@ const UpdateUserForm = () => {
               headers: {
                 authorization: `Bearer ${webToken}`,
               },
-            }
+            },
           );
           const user = userToUpdate.data;
           setUsername(user.username);
@@ -73,11 +73,11 @@ const UpdateUserForm = () => {
         await axios.patch(
           `${BACKEND_URL}/users/update-user/${userId}`,
           updatedUser,
-          { headers: { authorization: `Bearer ${webToken}` } }
+          { headers: { authorization: `Bearer ${webToken}` } },
         );
 
-        alert("User Updated!")
-        nav(`/users/user/${userId}`)
+        alert("User Updated!");
+        nav(`/users/user/${userId}`);
       } catch (error) {
         console.log("Here is the Error", error);
       }
@@ -100,7 +100,7 @@ const UpdateUserForm = () => {
     try {
       const response = await axios.post(
         "https://api.cloudinary.com/v1_1/dzdrwiugn/image/upload",
-        formData
+        formData,
       );
 
       console.log(response);
@@ -139,20 +139,12 @@ const UpdateUserForm = () => {
         </label>
 
         <label>
-          Profile Picture 
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-          />
+          Profile Picture
+          <input type="file" accept="image/*" onChange={handleImageChange} />
         </label>
-        <button
-            type="button"
-            onClick={handleUpload}
-            disabled={uploading}
-          >
-            {uploading ? "Uploading..." : "Upload Image"}
-          </button> 
+        <button type="button" onClick={handleUpload} disabled={uploading}>
+          {uploading ? "Uploading..." : "Upload Image"}
+        </button>
 
         <label>
           Rate
@@ -198,8 +190,7 @@ const UpdateUserForm = () => {
 
         <button type="submit">Submit</button>
         <Link to={`/users/user/${userId}`}>
-
-        <button>Back to Profile</button>
+          <button>Back to Profile</button>
         </Link>
       </form>
     </>

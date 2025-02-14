@@ -3,16 +3,12 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-
-
-
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005";
 const webToken = localStorage.getItem("authToken");
 
-
 const AddPetForm = () => {
-    const { userId } = useParams();
-    const { t } = useTranslation();
+  const { userId } = useParams();
+  const { t } = useTranslation();
   const [petName, setPetName] = useState("");
   const [petAge, setPetAge] = useState(0);
   const [petSpecies, setPetSpecies] = useState("");
@@ -20,12 +16,10 @@ const AddPetForm = () => {
   const [imageFile, setImageFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const nav = useNavigate();
-  
 
   async function handleCreatePet(e) {
     e.preventDefault();
 
-    
     if (webToken) {
       try {
         const newPet = {
@@ -33,7 +27,7 @@ const AddPetForm = () => {
           petAge,
           petSpecies,
           petPicture,
-          owner: userId
+          owner: userId,
         };
         axios.post(`${BACKEND_URL}/pets/${userId}`, newPet, {
           headers: {
@@ -41,8 +35,8 @@ const AddPetForm = () => {
           },
         });
 
-        alert("Pet Added Sucessfully!")
-        nav(`/users/user/${userId}`)
+        alert("Pet Added Sucessfully!");
+        nav(`/users/user/${userId}`);
       } catch (error) {
         console.log(error);
       }
@@ -65,12 +59,11 @@ const AddPetForm = () => {
     try {
       const response = await axios.post(
         "https://api.cloudinary.com/v1_1/dzdrwiugn/image/upload",
-        formData
+        formData,
       );
 
       console.log(response);
       setPetPicture(response.data.secure_url);
-      
     } catch (error) {
       console.error("Error uploading image:", error);
     } finally {
