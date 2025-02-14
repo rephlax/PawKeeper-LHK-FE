@@ -30,9 +30,15 @@ const MapComponent = () => {
   }), []);
 
   const loadUserPin = async () => {
-    if (!user?._id) return;
-
+    if (!user?._id) {
+      console.log('No user ID available for pin loading');
+      return;
+    }
+  
     try {
+      console.log('Attempting to load pin for user:', user._id);
+      console.log('Auth config:', getAuthConfig());
+      
       const response = await axios.get(
         `${BACKEND_URL}/api/location-pins/search`,
         {
@@ -40,11 +46,19 @@ const MapComponent = () => {
           ...getAuthConfig()
         }
       );
+  
+      console.log('Pin search response:', response.data);
+      
       if (response.data.length > 0) {
         setUserPin(response.data[0]);
       }
     } catch (error) {
-      console.error('Error loading user pin:', error);
+      console.error('Error loading user pin:', {
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+        config: error.config
+      });
     }
   };
 
