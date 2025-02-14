@@ -4,7 +4,6 @@ import { useSocket } from '../../context/SocketContext';
 import { useAuth } from '../../context/AuthContext';
 import { setupAdvancedMarkers, updateMarkerPositions } from './utils/markers';
 import { DEFAULT_CENTER, getUserLocation } from './utils/location';
-import { setupSocketListeners } from './utils/socketHandlers';
 import PinForm from '../Modal/PinForm';
 import Modal from '../Modal';
 import axios from 'axios';
@@ -20,6 +19,8 @@ const MapComponent = () => {
   const [selectedPin, setSelectedPin] = useState(null);
   const [locationError, setLocationError] = useState(null);
   const [showPinForm, setShowPinForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [mapVisible, setMapVisible] = useState(true);
   const [markers, setMarkers] = useState({
     home: null,
     pin: null
@@ -32,15 +33,10 @@ const MapComponent = () => {
   }), []);
 
   const loadUserPin = async () => {
-    if (!user?._id) {
-      console.log('No user ID available for pin loading');
-      return;
-    }
+    if (!user?._id) return;
   
     try {
-      console.log('Attempting to load pin for user:', user._id);
-      console.log('Auth config:', getAuthConfig());
-      
+      console.log('Loading pin for user:', user._id);
       const response = await axios.get(
         `${BACKEND_URL}/api/location-pins/search`,
         {
@@ -48,19 +44,31 @@ const MapComponent = () => {
           ...getAuthConfig()
         }
       );
-  
-      console.log('Pin search response:', response.data);
       
       if (response.data.length > 0) {
         setUserPin(response.data[0]);
       }
     } catch (error) {
-      console.error('Error loading user pin:', {
-        message: error.message,
-        status: error.response?.status,
-        data: error.response?.data,
-        config: error.config
-      });
+      console.error('Error loading user pin:', error);
+    }
+  };
+
+  const handleEditPin = async (updatedData) => {
+    try {
+      const response = await axios.put(
+        `${BACKEND_URL}/api/location-pins/update`,
+        updatedData,
+        getAuthConfig()
+      );
+
+      setUserPin(response.data);
+      setShowEditForm(false);
+      if (socket) {
+        socket.emit('pin_updated', response.data);
+      }
+    } catch (error) {
+      console.error('Error updating pin:', error);
+      alert('Failed to update pin information');
     }
   };
 
@@ -70,12 +78,10 @@ const MapComponent = () => {
     }
   };
 
-  // Load initial user pin
   useEffect(() => {
     loadUserPin();
   }, [user]);
 
-  // Set up location tracking
   useEffect(() => {
     getUserLocation(setUserLocation, setLocationError, map, socket);
     const locationInterval = setInterval(() => 
@@ -83,83 +89,196 @@ const MapComponent = () => {
     return () => clearInterval(locationInterval);
   }, [socket, map]);
 
-  // Set up socket listeners
   useEffect(() => {
-    return setupSocketListeners(socket, map, setUserLocation, loadUserPin, setShowPinForm);
+    if (!socket) {
+      console.warn('Socket not available for setup');
+      return;
+    }
+  
+    console.log('Setting up socket listeners with setShowPinForm:', !!setShowPinForm);
+
+    socket.on('toggle_pin_creation', (data) => {
+      console.log('Received toggle_pin_creation:', data);
+      if (setShowPinForm) {
+        setShowPinForm(data.isCreating);
+        setMapVisible(!data.isCreating);
+      }
+    });
+  
+    socket.on('center_map', (location) => {
+      console.log('Received center_map event:', location);
+      if (location && location.lat && location.lng) {
+        setUserLocation(location);
+        map?.panTo(location);
+      }
+    });
+  
+    socket.on('pin_created', () => {
+      console.log('Received pin_created event');
+      loadUserPin();
+    });
+
+    socket.on('pin_updated', () => {
+      console.log('Received pin_updated event');
+      loadUserPin();
+    });
+  
+    return () => {
+      console.log('Cleaning up socket listeners');
+      socket.off('center_map');
+      socket.off('toggle_pin_creation');
+      socket.off('pin_created');
+      socket.off('pin_updated');
+    };
   }, [socket, map]);
 
-  // Set up markers
   useEffect(() => {
-    setupAdvancedMarkers(map, userLocation, userPin, markers, setMarkers, setSelectedPin);
+    setupAdvancedMarkers(map, userLocation, userPin, markers, setMarkers, setSelectedPin, user);
     return () => {
       if (markers.home) markers.home.map = null;
       if (markers.pin) markers.pin.map = null;
     };
   }, [map, userLocation, userPin]);
 
-  // Update marker positions
   useEffect(() => {
     updateMarkerPositions(markers, userLocation, userPin);
   }, [userLocation, userPin, markers]);
 
+  const renderInfoWindowContent = () => {
+    if (!selectedPin) return null;
+
+    const isOwnPin = selectedPin.user === user?._id;
+    
+    // User is not a sitter clicking their home location
+    if (!user?.sitter && isOwnPin) {
+      return null;
+    }
+
+    // User is a sitter but not registered
+    if (user?.sitter && isOwnPin && !userPin) {
+      return (
+        <div className="p-4">
+          <h3 className="font-bold text-lg">Register as a Sitter</h3>
+          <p className="mt-2">Create a pin to start offering your services!</p>
+          <button
+            onClick={() => {
+              setShowPinForm(true);
+              setSelectedPin(null);
+            }}
+            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Register Now
+          </button>
+        </div>
+      );
+    }
+
+    // Registered sitter viewing their own pin
+    if (isOwnPin && userPin) {
+      return (
+        <div className="p-4">
+          <h3 className="font-bold text-lg">{selectedPin.title}</h3>
+          <p className="mt-2">{selectedPin.description}</p>
+          <p className="mt-1 text-gray-600">Availability: {selectedPin.availability}</p>
+          <p className="mt-1 text-gray-600">Rate: ${selectedPin.hourlyRate}/hr</p>
+          <button
+            onClick={() => {
+              setShowEditForm(true);
+              setSelectedPin(null);
+            }}
+            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Edit Information
+          </button>
+        </div>
+      );
+    }
+
+    // View of other sitter's pin
+    return (
+      <div className="p-4">
+        <h3 className="font-bold text-lg">{selectedPin.title}</h3>
+        <p className="mt-2">{selectedPin.description}</p>
+        <p className="mt-1 text-gray-600">Availability: {selectedPin.availability}</p>
+        <p className="mt-1 text-gray-600">Rate: ${selectedPin.hourlyRate}/hr</p>
+        <button
+          onClick={() => startChat(selectedPin.user)}
+          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Chat with Sitter
+        </button>
+      </div>
+    );
+  };
+
   return (
     <div className="w-full h-full">
-      {locationError && (
-        <div className="absolute top-4 left-4 z-10 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded max-w-md">
-          <p>{locationError}</p>
-        </div>
-      )}
-
-      <GoogleMap
-        center={userLocation}
-        zoom={14}
-        mapContainerClassName="w-full h-full"
-        options={{
-          mapId: import.meta.env.VITE_GOOGLE_MAPS_ID,
-          disableDefaultUI: false,
-          clickableIcons: false,
-          zoomControl: true,
-          streetViewControl: true
-        }}
-        onLoad={setMap}
-      >
-        {selectedPin && (
-          <InfoWindow
-            position={{
-              lat: selectedPin.location.coordinates[1],
-              lng: selectedPin.location.coordinates[0]
-            }}
-            onCloseClick={() => setSelectedPin(null)}
-          >
-            <div className="p-4">
-              <h3 className="font-bold text-lg">{selectedPin.title}</h3>
-              <p className="mt-2">{selectedPin.description}</p>
-              {selectedPin.user !== user?._id && (
-                <button
-                  onClick={() => startChat(selectedPin.user)}
-                  className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                >
-                  Chat with Sitter
-                </button>
-              )}
-            </div>
-          </InfoWindow>
+      <div className={`w-full h-full ${!mapVisible ? 'hidden' : ''}`}>
+        {locationError && (
+          <div className="absolute top-4 left-4 z-10 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded max-w-md">
+            <p>{locationError}</p>
+          </div>
         )}
-      </GoogleMap>
-      {showPinForm && (
-        <Modal 
+
+        <GoogleMap
+          center={userLocation}
+          zoom={14}
+          mapContainerClassName="w-full h-full"
+          options={{
+            mapId: import.meta.env.VITE_GOOGLE_MAPS_ID,
+            disableDefaultUI: false,
+            clickableIcons: false,
+            zoomControl: true,
+            streetViewControl: true
+          }}
+          onLoad={setMap}
+        >
+          {selectedPin && (
+            <InfoWindow
+              position={{
+                lat: selectedPin.location.coordinates[1],
+                lng: selectedPin.location.coordinates[0]
+              }}
+              onCloseClick={() => setSelectedPin(null)}
+            >
+              {renderInfoWindowContent()}
+            </InfoWindow>
+          )}
+        </GoogleMap>
+      </div>
+
+      <Modal 
         isOpen={showPinForm} 
-        onClose={() => setShowPinForm(false)}
-    >
+        onClose={() => {
+          setShowPinForm(false);
+          setMapVisible(true);
+          if (socket) {
+            socket.emit('toggle_pin_creation', { isCreating: false });
+          }
+        }}
+      >
         <PinForm 
-            onClose={() => setShowPinForm(false)} 
-            onSubmit={(data) => {
-                console.log('Form submitted:', data);
-                setShowPinForm(false);
-            }}
+          onClose={() => {
+            setShowPinForm(false);
+            setMapVisible(true);
+            if (socket) {
+              socket.emit('toggle_pin_creation', { isCreating: false });
+            }
+          }}
         />
-    </Modal>
-      )}
+      </Modal>
+
+      <Modal
+        isOpen={showEditForm}
+        onClose={() => setShowEditForm(false)}
+      >
+        <PinForm
+          isEditing={true}
+          initialData={userPin}
+          onSubmit={handleEditPin}
+          onClose={() => setShowEditForm(false)}
+        />
+      </Modal>
     </div>
   );
 };

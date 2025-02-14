@@ -1,35 +1,44 @@
-export const createMarkerElement = (type) => {
+export const createMarkerElement = (type, isUserLocation = false) => {
     const element = document.createElement('div');
     element.style.fontSize = '24px';
-    element.innerHTML = type === 'home' ? '🏠' : '🐾';
+    element.innerHTML = isUserLocation ? '🏠' : '🐾';
     return element;
 };
   
-export const setupAdvancedMarkers = async (map, userLocation, userPin, markers, setMarkers, setSelectedPin) => {
+export const setupAdvancedMarkers = async (map, userLocation, userPin, markers, setMarkers, setSelectedPin, currentUser) => {
     if (!map || !window.google?.maps?.marker?.AdvancedMarkerElement) return;
 
     try {
         const { AdvancedMarkerElement } = await window.google.maps.importLibrary("marker");
 
-        // Create home marker
+        // Home marker creaation at their own location.
         if (userLocation && !markers.home) {
             const homeMarker = new AdvancedMarkerElement({
                 map,
                 position: userLocation,
-                title: "Your Location",
-                content: createMarkerElement('home')
+                title: currentUser?.sitter ? "Your Sitter Location" : "Your Location",
+                content: createMarkerElement('home', true)
             });
 
             homeMarker.addListener('click', () => {
-                const pos = homeMarker.position;
-                console.log('Home marker clicked at:', { lat: pos.lat, lng: pos.lng });
+                console.log('Home location clicked');
+                // If user is a sitter, show their pin or that they need to register through the form.
+                if (currentUser?.sitter) {
+                    setSelectedPin({
+                        user: currentUser._id,
+                        location: {
+                            coordinates: [userLocation.lng, userLocation.lat]
+                        },
+                        ...userPin
+                    });
+                }
             });
 
             setMarkers(prev => ({ ...prev, home: homeMarker }));
         }
 
-        // Create pin marker
-        if (userPin && !markers.pin) {
+        // Section to create pin marker for sitter
+        if (userPin && currentUser?.sitter) {
             const pinMarker = new AdvancedMarkerElement({
                 map,
                 position: {
@@ -37,12 +46,15 @@ export const setupAdvancedMarkers = async (map, userLocation, userPin, markers, 
                     lng: userPin.location.coordinates[0]
                 },
                 title: userPin.title,
-                content: createMarkerElement('pin')
+                content: createMarkerElement('pin', false)
             });
 
             pinMarker.addListener('click', () => {
-                console.log('Pin clicked:', userPin);
-                setSelectedPin(userPin);
+                console.log('Sitter pin clicked:', userPin);
+                setSelectedPin({
+                    ...userPin,
+                    user: currentUser._id
+                });
             });
 
             setMarkers(prev => ({ ...prev, pin: pinMarker }));
