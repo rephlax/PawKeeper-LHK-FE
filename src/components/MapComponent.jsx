@@ -25,8 +25,18 @@ const MapComponent = () => {
     hourlyRate: 0
   });
 
-  const [homeAdvMarker, setHomeAdvMarker] = useState(null);
-  const [pinAdvMarker, setPinAdvMarker] = useState(null);
+  const [markers, setMarkers] = useState({
+    home: null,
+    pin: null
+  });
+
+  // Helper function to create marker content
+  const createMarkerElement = (type) => {
+    const element = document.createElement('div');
+    element.style.fontSize = '24px';
+    element.innerHTML = type === 'home' ? '🏠' : '🐾';
+    return element;
+  };
 
   // Socket event listeners
   useEffect(() => {
@@ -197,61 +207,60 @@ const MapComponent = () => {
     }
   };
 
+  // Setup markers when map and locations are ready
   useEffect(() => {
-    if (map && userLocation && window.google && window.google.maps?.marker?.AdvancedMarkerElement) {
-      const contentDiv = document.createElement('div');
-      contentDiv.style.fontSize = '24px';
-      contentDiv.innerText = '🏠';
+    if (!map || !window.google?.maps?.marker?.AdvancedMarkerElement) return;
 
-      if (!homeAdvMarker) {
-        const marker = new window.google.maps.marker.AdvancedMarkerElement({
+    const setupMarkers = async () => {
+      const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+
+      // Create home marker if we have user location
+      if (userLocation && !markers.home) {
+        const homeMarker = new AdvancedMarkerElement({
           map,
           position: userLocation,
-          content: contentDiv
+          title: "Your Location",
+          content: createMarkerElement('home')
         });
-        setHomeAdvMarker(marker);
-      } else {
-        homeAdvMarker.setPosition(userLocation);
+        setMarkers(prev => ({ ...prev, home: homeMarker }));
       }
-    }
-  }, [map, userLocation, homeAdvMarker]);
 
-  // Create or update the user pin marker using AdvancedMarkerElement
+      // Create pin marker if we have a user pin
+      if (userPin && !markers.pin) {
+        const pinMarker = new AdvancedMarkerElement({
+          map,
+          position: {
+            lat: userPin.location.coordinates.latitude,
+            lng: userPin.location.coordinates.longitude
+          },
+          title: userPin.title,
+          content: createMarkerElement('pin')
+        });
+        pinMarker.addListener('click', () => setSelectedPin(userPin));
+        setMarkers(prev => ({ ...prev, pin: pinMarker }));
+      }
+    };
+
+    setupMarkers();
+
+    return () => {
+      if (markers.home) markers.home.map = null;
+      if (markers.pin) markers.pin.map = null;
+    };
+  }, [map, userLocation, userPin]);
+
+  // Update marker positions when locations change
   useEffect(() => {
-    if (map && userPin && window.google && window.google.maps?.marker?.AdvancedMarkerElement) {
-      const pos = {
+    if (markers.home && userLocation) {
+      markers.home.position = userLocation;
+    }
+    if (markers.pin && userPin) {
+      markers.pin.position = {
         lat: userPin.location.coordinates.latitude,
         lng: userPin.location.coordinates.longitude
       };
-      const contentDiv = document.createElement('div');
-      contentDiv.style.fontSize = '24px';
-      contentDiv.innerText = '🐾';
-
-      if (!pinAdvMarker) {
-        const marker = new window.google.maps.marker.AdvancedMarkerElement({
-          map,
-          position: pos,
-          content: contentDiv
-        });
-        marker.addListener('click', () => setSelectedPin(userPin));
-        setPinAdvMarker(marker);
-      } else {
-        pinAdvMarker.setPosition(pos);
-      }
     }
-  }, [map, userPin, pinAdvMarker]);
-
-  // Clean up markers when they are no longer needed (e.g., on unmount)
-  useEffect(() => {
-    return () => {
-      if (homeAdvMarker) {
-        homeAdvMarker.setMap(null);
-      }
-      if (pinAdvMarker) {
-        pinAdvMarker.setMap(null);
-      }
-    };
-  }, [homeAdvMarker, pinAdvMarker]);
+  }, [userLocation, userPin, markers]);
 
   return (
     <div className="w-full h-full flex">
