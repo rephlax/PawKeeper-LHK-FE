@@ -4,22 +4,22 @@ export const setupSocketListeners = (socket, map, setUserLocation, loadUserPin, 
       return;
     }
   
-    console.log('Setting up socket listeners');
+    console.log('Setting up socket listeners with setShowPinForm:', !!setShowPinForm);
+
+    socket.on('toggle_pin_creation', (data) => {
+        console.log('Received toggle_pin_creation:', data);
+        if (setShowPinForm) {
+            setShowPinForm(data.isCreating);
+        } else {
+            console.warn('setShowPinForm not provided');
+        }
+    });
   
     socket.on('center_map', (location) => {
       console.log('Received center_map event:', location);
       if (location && location.lat && location.lng) {
         setUserLocation(location);
         map?.panTo(location);
-      }
-    });
-  
-    socket.on('toggle_pin_creation', (data) => {
-      console.log('Received toggle_pin_creation event:', data);
-      if (setShowPinForm) {
-        setShowPinForm(data.isCreating);
-      } else {
-        console.warn('setShowPinForm not provided to socket handlers');
       }
     });
   

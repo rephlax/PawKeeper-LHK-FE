@@ -32,51 +32,58 @@ const PinForm = ({ onClose }) => {
   };
 
   const handleSubmit = async () => {
-    if (!navigator.geolocation) {
-      alert('Geolocation is required to create a pin');
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const location = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        };
-
-        try {
-          const pinData = {
-            latitude: location.lat,
-            longitude: location.lng,
-            title: formData.title || `${user.username}'s Pet Sitting Location`,
-            description: formData.description || 'Available for pet sitting services',
-            services: formData.services,
-            availability: formData.availability,
-            hourlyRate: formData.hourlyRate
-          };
-
-          const response = await axios.post(
-            `${BACKEND_URL}/api/location-pins/create`,
-            pinData,
-            getAuthConfig()
-          );
-
-          if (socket) {
-            socket.emit('pin_created', response.data);
-            socket.emit('share_location', location);
-          }
-
-          onClose();
-        } catch (error) {
-          console.error('Error creating pin:', error);
-          alert('Failed to create pin. Please try again.');
+    try {
+        if (!navigator.geolocation) {
+            alert('Geolocation is required to create a pin');
+            return;
         }
-      },
-      (error) => {
-        alert('Unable to get your location. Please check your browser settings.');
-      }
-    );
-  };
+
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                console.log('Got position:', position);
+                const location = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                  };
+          
+                  try {
+                    const pinData = {
+                      latitude: location.lat,
+                      longitude: location.lng,
+                      title: formData.title || `${user.username}'s Pet Sitting Location`,
+                      description: formData.description || 'Available for pet sitting services',
+                      services: formData.services,
+                      availability: formData.availability,
+                      hourlyRate: formData.hourlyRate
+                    };
+          
+                    const response = await axios.post(
+                      `${BACKEND_URL}/api/location-pins/create`,
+                      pinData,
+                      getAuthConfig()
+                    );
+          
+                    if (socket) {
+                      socket.emit('pin_created', response.data);
+                      socket.emit('share_location', location);
+                    }
+          
+                    onClose();
+                  } catch (error) {
+                    console.error('Error creating pin:', error);
+                    alert('Failed to create pin. Please try again.');
+                  }
+            },
+            (error) => {
+                console.error('Geolocation error:', error);
+                alert('Unable to get your location. Please check your browser settings.');
+            }
+        );
+    } catch (error) {
+        console.error('Error in handleSubmit:', error);
+        alert('An error occurred. Please try again.');
+    }
+};
 
   return (
     <div className="p-6">

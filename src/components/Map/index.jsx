@@ -148,11 +148,17 @@ const MapComponent = () => {
       </GoogleMap>
       {showPinForm && (
         <Modal 
-          isOpen={showPinForm} 
-          onClose={() => setShowPinForm(false)}
-        >
-          <PinForm onClose={() => setShowPinForm(false)} />
-        </Modal>
+        isOpen={showPinForm} 
+        onClose={() => setShowPinForm(false)}
+    >
+        <PinForm 
+            onClose={() => setShowPinForm(false)} 
+            onSubmit={(data) => {
+                console.log('Form submitted:', data);
+                setShowPinForm(false);
+            }}
+        />
+    </Modal>
       )}
     </div>
   );
