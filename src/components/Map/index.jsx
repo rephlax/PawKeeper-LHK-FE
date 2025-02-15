@@ -4,7 +4,6 @@ import { useSocket } from '../../context/SocketContext';
 import { useAuth } from '../../context/AuthContext';
 import { setupAdvancedMarkers, updateMarkerPositions } from './utils/markers';
 import { DEFAULT_CENTER, getUserLocation } from './utils/location';
-import PinForm from '../Modal/PinForm';
 import axios from 'axios';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -17,8 +16,6 @@ const MapComponent = () => {
   const [userPin, setUserPin] = useState(null);
   const [selectedPin, setSelectedPin] = useState(null);
   const [locationError, setLocationError] = useState(null);
-  const [showPinForm, setShowPinForm] = useState(false);
-  const [showEditForm, setShowEditForm] = useState(false);
   const [mapVisible, setMapVisible] = useState(true);
   const [markers, setMarkers] = useState({
     home: null,
@@ -61,7 +58,6 @@ const MapComponent = () => {
       );
 
       setUserPin(response.data);
-      setShowEditForm(false);
       if (socket) {
         socket.emit('pin_updated', response.data);
       }
@@ -98,17 +94,6 @@ const MapComponent = () => {
 
     console.log('Setting up socket listeners');
 
-    const handlePinCreationToggle = data => {
-      console.log('Received toggle_pin_creation:', data);
-      setShowPinForm(data.isCreating);
-      setMapVisible(!data.isCreating);
-      console.log('Updated states:', {
-        showPinForm: data.isCreating,
-        mapVisible: !data.isCreating,
-      });
-    };
-
-    socket.on('toggle_pin_creation', handlePinCreationToggle);
     socket.on('center_map', location => {
       console.log('Received center_map event:', location);
       if (location && location.lat && location.lng) {
@@ -120,15 +105,18 @@ const MapComponent = () => {
     socket.on('pin_created', () => {
       console.log('Received pin_created event');
       loadUserPin();
-      setShowPinForm(false);
-      setMapVisible(true);
+    });
+
+    socket.on('pin_updated', () => {
+      console.log('Received pin_updated event');
+      loadUserPin();
     });
 
     return () => {
       console.log('Cleaning up socket listeners');
-      socket.off('toggle_pin_creation');
       socket.off('center_map');
       socket.off('pin_created');
+      socket.off('pin_updated');
     };
   }, [socket, map]);
 
@@ -149,32 +137,12 @@ const MapComponent = () => {
 
     const isOwnPin = selectedPin.user === user?._id;
 
-    // User is not a sitter clicking their home location
     if (!user?.sitter && isOwnPin) {
       return null;
     }
 
-    // User is a sitter but not registered
-    if (user?.sitter && isOwnPin && !userPin) {
-      return (
-        <div className="p-4">
-          <h3 className="font-bold text-lg">Register as a Sitter</h3>
-          <p className="mt-2">Create a pin to start offering your services!</p>
-          <button
-            onClick={() => {
-              setShowPinForm(true);
-              setSelectedPin(null);
-            }}
-            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
-            Register Now
-          </button>
-        </div>
-      );
-    }
-
-    // Registered sitter viewing their own pin
-    if (isOwnPin && userPin) {
+    // View of other sitter's pin
+    if (!isOwnPin) {
       return (
         <div className="p-4">
           <h3 className="font-bold text-lg">{selectedPin.title}</h3>
@@ -182,31 +150,22 @@ const MapComponent = () => {
           <p className="mt-1 text-gray-600">Availability: {selectedPin.availability}</p>
           <p className="mt-1 text-gray-600">Rate: ${selectedPin.hourlyRate}/hr</p>
           <button
-            onClick={() => {
-              setShowEditForm(true);
-              setSelectedPin(null);
-            }}
+            onClick={() => startChat(selectedPin.user)}
             className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
           >
-            Edit Information
+            Chat with Sitter
           </button>
         </div>
       );
     }
 
-    // View of other sitter's pin
+    // Registered sitter viewing their own pin
     return (
       <div className="p-4">
         <h3 className="font-bold text-lg">{selectedPin.title}</h3>
         <p className="mt-2">{selectedPin.description}</p>
         <p className="mt-1 text-gray-600">Availability: {selectedPin.availability}</p>
         <p className="mt-1 text-gray-600">Rate: ${selectedPin.hourlyRate}/hr</p>
-        <button
-          onClick={() => startChat(selectedPin.user)}
-          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Chat with Sitter
-        </button>
       </div>
     );
   };
@@ -246,36 +205,6 @@ const MapComponent = () => {
           )}
         </GoogleMap>
       </div>
-
-      <Modal
-        isOpen={showPinForm}
-        onClose={() => {
-          setShowPinForm(false);
-          setMapVisible(true);
-          if (socket) {
-            socket.emit('toggle_pin_creation', { isCreating: false });
-          }
-        }}
-      >
-        <PinForm
-          onClose={() => {
-            setShowPinForm(false);
-            setMapVisible(true);
-            if (socket) {
-              socket.emit('toggle_pin_creation', { isCreating: false });
-            }
-          }}
-        />
-      </Modal>
-
-      <Modal isOpen={showEditForm} onClose={() => setShowEditForm(false)}>
-        <PinForm
-          isEditing={true}
-          initialData={userPin}
-          onSubmit={handleEditPin}
-          onClose={() => setShowEditForm(false)}
-        />
-      </Modal>
     </div>
   );
 };
