@@ -8,11 +8,9 @@ export const setupSocketListeners = (socket, map, setUserLocation, loadUserPin, 
 
   socket.on('toggle_pin_creation', data => {
     console.log('Received toggle_pin_creation:', data);
-    if (setShowPinForm) {
-      setShowPinForm(data.isCreating);
-    } else {
-      console.warn('setShowPinForm not provided');
-    }
+    setShowPinForm(data.isCreating);
+    setMapVisible(!data.isCreating);
+    console.log('Map visibility set to:', !data.isCreating);
   });
 
   socket.on('center_map', location => {

@@ -99,12 +99,17 @@ const MapComponent = () => {
 
     console.log('Setting up socket listeners');
 
-    socket.on('toggle_pin_creation', data => {
+    const handlePinCreationToggle = data => {
       console.log('Received toggle_pin_creation:', data);
       setShowPinForm(data.isCreating);
-      setMapVisible(!data.isCreating); // This will hide/show the map
-    });
+      setMapVisible(!data.isCreating);
+      console.log('Updated states:', {
+        showPinForm: data.isCreating,
+        mapVisible: !data.isCreating,
+      });
+    };
 
+    socket.on('toggle_pin_creation', handlePinCreationToggle);
     socket.on('center_map', location => {
       console.log('Received center_map event:', location);
       if (location && location.lat && location.lng) {
@@ -120,17 +125,11 @@ const MapComponent = () => {
       setMapVisible(true);
     });
 
-    socket.on('pin_updated', () => {
-      console.log('Received pin_updated event');
-      loadUserPin();
-    });
-
     return () => {
       console.log('Cleaning up socket listeners');
-      socket.off('center_map');
       socket.off('toggle_pin_creation');
+      socket.off('center_map');
       socket.off('pin_created');
-      socket.off('pin_updated');
     };
   }, [socket, map]);
 
