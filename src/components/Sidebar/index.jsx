@@ -3,8 +3,8 @@ import { useAuth } from '../../context/AuthContext'
 import { useSocket } from '../../context/SocketContext'
 import { MapControls, RegularSidebar } from './components'
 
-const Sidebar = ({ userPin, selectedPin, startChat, map }) => {
-  const { user, isMapOpen } = useAuth()
+const Sidebar = ({ isMapPage, userPin, selectedPin, startChat, map }) => {
+  const { user } = useAuth()
   const { socket } = useSocket()
   const [isCreatingPin, setIsCreatingPin] = useState(false)
   const [isCreatingReview, setIsCreatingReview] = useState(false)
@@ -61,7 +61,7 @@ const Sidebar = ({ userPin, selectedPin, startChat, map }) => {
   }, [selectedPin])
 
   console.log('Sidebar render:', {
-    isMapOpen,
+    isMapPage,
     isCreatingPin,
     isCreatingReview,
     isEditing,
@@ -71,7 +71,7 @@ const Sidebar = ({ userPin, selectedPin, startChat, map }) => {
     selectedPin: !!selectedPin,
   })
 
-  return isMapOpen ? (
+  return isMapPage ? (
     <MapControls
       user={user}
       socket={socket}

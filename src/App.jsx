@@ -29,11 +29,9 @@ function App() {
       </nav>
 
       <div className='flex flex-1 relative z-10'>
-        {!isMapPage && (
-          <aside className='w-64 backdrop-blur-md bg-cream-50/50 border-r border-cream-accent text-cream-text'>
-            <Sidebar />
-          </aside>
-        )}
+        <aside className='w-64 backdrop-blur-md bg-cream-50/50 border-r border-cream-accent text-cream-text'>
+          <Sidebar isMapPage={isMapPage} />
+        </aside>
 
         <main className='flex-1 backdrop-blur-md bg-cream-50/50 p-6'>
           <Routes>
