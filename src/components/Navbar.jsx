@@ -46,14 +46,14 @@ const Navbar = () => {
             </button>
 
             <Link to={`/users/user/${user._id}`} className="navbar-link">
-              Profile
+            {t("navbar.profile")}
             </Link>
 
             <button 
               onClick={handleLogout} 
               className="navbar-link"
             >
-              Logout
+              {t("navbar.logout")}
             </button>
           </>
         )}

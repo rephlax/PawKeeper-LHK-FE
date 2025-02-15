@@ -4,7 +4,12 @@
   },
   "navbar": {
     "login": "Log in",
-    "signup": "Sign up"
+    "signup": "Sign up",
+    "profile": "Profile",
+    "logout": "Log out"
+  },
+  "footer" : {
+    "contact": "Contact us"
   },
   "signuppage": {
     "title": "Become a PawKeeper",
@@ -44,5 +49,53 @@
     "newpass": "Change password",
     "loading":"Loading user information"
 
+  },
+  "chat": {
+    "active": "Active chats",
+    "noactive": "No active chats",
+    "invite": "Chat invitation from",
+    "accept": "Accept",
+    "newcreate": "Create new chat",
+    "name": "Chat name",
+    "type": "Type",
+    "group": "Group chat",
+    "direct": "Direct message",
+    "participants": "Select participants",
+    "cancel": "Cancel",
+    "create": "Create"
+  },
+  "addpet": {
+    "name":"Pet's name",
+    "age":"Pet's age",
+    "species": "Pet's species",
+    "addpet": "Add pet"
+  },
+  "map": {
+    "createpin": "Create your pet sitter pin",
+    "startchat": "Start chat",
+    "": ""
+  },
+  "sendmessage": "Send",
+  "password": {
+    "current": "Current password",
+    "new": "New password",
+    "confirm": "Confirm password",
+    "change": "Change password"
+  },
+  "userupdate": {
+    "profilePictureLabel": "Profile picture",
+    "submitButton": "Submit",
+    "backbutton": "Back to profile"
+  },
+  "userlist": {
+    "available": "Available users",
+    "petsitter": "Pet sitter",
+    "chat": "Chat",
+    "nousers": "No users available"
+  },
+  "notfoundpage": {
+    "notfound": "Page is not found",
+    "backhome": "Back to homepage"
   }
+
 }

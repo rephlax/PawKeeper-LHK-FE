@@ -1,11 +1,13 @@
 import axios from "axios";
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const webToken = localStorage.getItem("authToken");
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005";
 
 const PasswordChange = () => {
+  const { t } = useTranslation();
   const { userId } = useParams();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -36,7 +38,7 @@ const PasswordChange = () => {
     <div>
       <form onSubmit={handlePasswordChange} className="form">
         <label>
-          Current Password:
+          {t('password.current')}
           <input
             type="password"
             value={currentPassword}
@@ -44,7 +46,7 @@ const PasswordChange = () => {
           />
         </label>
         <label>
-          New Password:
+        {t('password.new')}
           <input
             type="password"
             value={newPassword}
@@ -52,14 +54,14 @@ const PasswordChange = () => {
           />
         </label>
         <label>
-          Confirm New Password:
+        {t('password.confirm')}
           <input
             type="password"
             value={newPasswordConf}
             onChange={(e) => setNewPasswordConf(e.target.value)}
           />
         </label>
-        <button>Change Password</button>
+        <button>{t('password.change')}</button>
       </form>
     </div>
   );

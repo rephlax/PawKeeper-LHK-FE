@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useSocket } from '../context/SocketContext';
 import defaultUser from "../assets/defaultUser.png";
+import { useTranslation } from "react-i18next";
 
 const ActiveChats = () => {
+    const { t } = useTranslation();
     const [activeRooms, setActiveRooms] = useState([]);
     const { socket } = useSocket();
 
@@ -29,7 +31,7 @@ const ActiveChats = () => {
 
     return (
         <div className="p-4">
-            <h3 className="font-medium mb-4">Active Chats</h3>
+            <h3 className="font-medium mb-4">{t('chat.active')}</h3>
             <div className="space-y-2">
                 {activeRooms.map(room => (
                     <div 
@@ -72,7 +74,7 @@ const ActiveChats = () => {
                     </div>
                 ))}
                 {activeRooms.length === 0 && (
-                    <p className="text-cream-text text-center">No active chats</p>
+                    <p className="text-cream-text text-center">{t('chat.noactive')}</p>
                 )}
             </div>
         </div>

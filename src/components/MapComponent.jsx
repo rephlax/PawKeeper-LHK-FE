@@ -4,8 +4,10 @@ import { useSocket } from '../context/SocketContext';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { useTranslation } from "react-i18next";
 
 const MapComponent = () => {
+    const { t } = useTranslation();
     const { user, socket } = useAuth();
     const [map, setMap] = useState(null);
     const [userLocation, setUserLocation] = useState(null);
@@ -83,7 +85,7 @@ const MapComponent = () => {
         {/* Pin creation button */}
         {!userPin && userLocation && (
           <button onClick={createPin}>
-            Create Your Pet Sitter Pin
+            {t('map.createpin')}
           </button>
         )}
   
@@ -100,7 +102,7 @@ const MapComponent = () => {
               <p>{selectedPin.description}</p>
               {selectedPin.user !== user._id && (
                 <button onClick={() => startChat(selectedPin.user)}>
-                  Start Chat
+                {t('map.startchat')}
                 </button>
               )}
             </div>
