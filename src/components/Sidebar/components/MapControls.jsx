@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { Compass, MapPin, Search, X } from 'lucide-react'
 import { Autocomplete } from '@react-google-maps/api'
 import { handleLocationRequest } from '../utils/locationHandlers'
@@ -14,6 +14,7 @@ const MapControls = ({
   editData,
 }) => {
   const autocompleteRef = useRef(null)
+  const [searchLocation, setSearchLocation] = useState('')
 
   const handlePlaceSelect = () => {
     const place = autocompleteRef.current?.getPlace()
@@ -22,16 +23,27 @@ const MapControls = ({
       return
     }
 
+    // Get coordinates of the selected place
     const location = {
       lat: place.geometry.location.lat(),
       lng: place.geometry.location.lng(),
     }
 
+    setSearchLocation(place.formatted_address)
     console.log('Selected location:', location)
 
+    // Send the new location to center the map
     if (socket) {
       socket.emit('center_map', location)
       socket.emit('share_location', location)
+    }
+  }
+
+  const handlePlaceSearch = () => {
+    if (!searchLocation.trim()) return
+
+    if (autocompleteRef.current) {
+      autocompleteRef.current.getPlace()
     }
   }
 
@@ -86,23 +98,33 @@ const MapControls = ({
       <div className='space-y-2'>
         <div className='flex items-center space-x-2 p-3'>
           <Search className='h-5 w-5' />
-          <Autocomplete
-            onLoad={ref => {
-              console.log('Autocomplete loaded')
-              autocompleteRef.current = ref
-            }}
-            onPlaceChanged={handlePlaceSelect}
-            options={{
-              componentRestrictions: { country: 'us' },
-              fields: ['geometry.location', 'formatted_address', 'place_id'],
-            }}
-          >
-            <input
-              type='text'
-              placeholder='Search location...'
-              className='w-full p-2 border rounded'
-            />
-          </Autocomplete>
+          <div className='flex-1 relative'>
+            <Autocomplete
+              onLoad={ref => {
+                console.log('Autocomplete loaded')
+                autocompleteRef.current = ref
+              }}
+              onPlaceChanged={handlePlaceSelect}
+              options={{
+                componentRestrictions: { country: 'us' },
+                fields: ['geometry.location', 'formatted_address', 'place_id'],
+              }}
+            >
+              <input
+                type='text'
+                placeholder='Search location...'
+                className='w-full p-2 border rounded'
+                value={searchLocation}
+                onChange={e => setSearchLocation(e.target.value)}
+              />
+            </Autocomplete>
+            <button
+              onClick={handlePlaceSearch}
+              className='absolute right-2 top-1/2 -translate-y-1/2 bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600'
+            >
+              Go
+            </button>
+          </div>
         </div>
       </div>
 
