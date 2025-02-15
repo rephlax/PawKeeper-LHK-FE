@@ -8,6 +8,7 @@ import {
   Star,
   Edit,
 } from 'lucide-react'
+import { Autocomplete } from '@react-google-maps/api'
 import { handleLocationRequest } from '../utils/locationHandlers'
 import { handlePinCreation } from '../utils/pinHandlers'
 import PinForm from '../../Modal/PinForm'
@@ -27,29 +28,68 @@ const MapControls = ({
   isCreatingReview,
   setIsCreatingReview,
 }) => {
+  const autocompleteRef = useRef(null)
   const [searchLocation, setSearchLocation] = useState('')
 
-  const handleLocationSubmit = e => {
-    e.preventDefault()
+  const handlePlaceSelect = () => {
+    const place = autocompleteRef.current?.getPlace()
+    if (!place?.geometry) {
+      console.log('No location found for this place')
+      return
+    }
+
+    const location = {
+      lat: place.geometry.location.lat(),
+      lng: place.geometry.location.lng(),
+    }
+
+    setSearchLocation(place.formatted_address || '')
+    console.log('Selected location:', location)
+
+    if (map) {
+      map.panTo(location)
+      map.setZoom(14)
+    }
+
+    if (socket) {
+      socket.emit('center_map', location)
+    }
+  }
+
+  const handlePlaceSearch = () => {
     if (!searchLocation.trim() || !map) return
 
-    const geocoder = new google.maps.Geocoder()
-    geocoder.geocode({ address: searchLocation }, (results, status) => {
-      if (status === 'OK' && results[0]) {
-        const location = {
-          lat: results[0].geometry.location.lat(),
-          lng: results[0].geometry.location.lng(),
+    const placesService = new google.maps.places.PlacesService(map)
+
+    placesService.findPlaceFromQuery(
+      {
+        query: searchLocation,
+        fields: ['geometry', 'formatted_address'],
+      },
+      (results, status) => {
+        if (
+          status === google.maps.places.PlacesServiceStatus.OK &&
+          results[0]
+        ) {
+          const location = {
+            lat: results[0].geometry.location.lat(),
+            lng: results[0].geometry.location.lng(),
+          }
+
+          console.log('Found location:', location)
+          if (map) {
+            map.panTo(location)
+            map.setZoom(14)
+          }
+
+          if (socket) {
+            socket.emit('center_map', location)
+          }
+        } else {
+          alert('Location not found')
         }
-        console.log('Found location:', location)
-        map.panTo(location)
-        map.setZoom(14)
-        if (socket) {
-          socket.emit('center_map', location)
-        }
-      } else {
-        alert('Location not found')
-      }
-    })
+      },
+    )
   }
 
   const handleCloseForm = () => {
@@ -115,27 +155,36 @@ const MapControls = ({
       </div>
 
       <div className='space-y-2'>
-        <form
-          onSubmit={handleLocationSubmit}
-          className='flex items-center space-x-2 p-3'
-        >
+        <div className='flex items-center space-x-2 p-3'>
           <Search className='h-5 w-5' />
           <div className='flex-1 relative'>
-            <input
-              type='text'
-              placeholder='Search location...'
-              className='w-full p-2 border rounded'
-              value={searchLocation}
-              onChange={e => setSearchLocation(e.target.value)}
-            />
+            <Autocomplete
+              onLoad={ref => {
+                console.log('Autocomplete loaded')
+                autocompleteRef.current = ref
+              }}
+              onPlaceChanged={handlePlaceSelect}
+              options={{
+                componentRestrictions: { country: 'us' },
+                fields: ['geometry.location', 'formatted_address', 'place_id'],
+              }}
+            >
+              <input
+                type='text'
+                placeholder='Search location...'
+                className='w-full p-2 border rounded'
+                value={searchLocation}
+                onChange={e => setSearchLocation(e.target.value)}
+              />
+            </Autocomplete>
+            <button
+              onClick={handlePlaceSearch}
+              className='absolute right-2 top-1/2 -translate-y-1/2 bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600'
+            >
+              Go
+            </button>
           </div>
-          <button
-            type='submit'
-            className='bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600'
-          >
-            Search
-          </button>
-        </form>
+        </div>
       </div>
 
       {/* Show Create Pin only if user is sitter without a pin */}
