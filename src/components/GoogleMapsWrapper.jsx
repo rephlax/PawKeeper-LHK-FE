@@ -1,7 +1,7 @@
-import React from 'react';
-import { LoadScript } from '@react-google-maps/api';
+import React from 'react'
+import { LoadScript } from '@react-google-maps/api'
 
-const libraries = ['places', 'marker'];
+const libraries = ['places', 'marker', 'geometry']
 
 const GoogleMapsWrapper = ({ children }) => {
   return (
@@ -12,7 +12,7 @@ const GoogleMapsWrapper = ({ children }) => {
     >
       {children}
     </LoadScript>
-  );
-};
+  )
+}
 
-export default GoogleMapsWrapper;
+export default GoogleMapsWrapper
