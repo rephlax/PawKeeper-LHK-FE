@@ -140,17 +140,12 @@ const UpdateUserForm = () => {
         </label>
 
         <label>
-<<<<<<< HEAD
-          Profile Picture
-          <input type="file" accept="image/*" onChange={handleImageChange} />
-=======
           {t('userupdate.profilePictureLabel')} 
           <input
             type="file"
             accept="image/*"
             onChange={handleImageChange}
           />
->>>>>>> katya
         </label>
         <button type="button" onClick={handleUpload} disabled={uploading}>
           {uploading ? "Uploading..." : "Upload Image"}
@@ -200,12 +195,8 @@ const UpdateUserForm = () => {
 
         <button type="submit">{t('userupdate.submit')}</button>
         <Link to={`/users/user/${userId}`}>
-<<<<<<< HEAD
-          <button>Back to Profile</button>
-=======
 
         <button>{t('userupdate.backbutton')}</button>
->>>>>>> katya
         </Link>
       </form>
     </>

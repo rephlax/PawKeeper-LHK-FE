@@ -83,10 +83,9 @@ const UserPage = () => {
               alt="Default profile"
             />
           )}
-<<<<<<< HEAD
-          <h2>Welcome, {userInfo.username}!</h2>
-          <p>Email: {userInfo.email}</p>
-          <p>Rating: {userInfo.rating}</p>
+          <h2>{t('userpage.welcome')}, {userInfo.username}!</h2>
+          <p>{t('forms.emailLabel')}: {userInfo.email}</p>
+          <p>{t('userpage.rating')}: {userInfo.rating}</p>
 
           {/* Sitter Status Toggle */}
           {user && user._id === userId && (
@@ -103,11 +102,6 @@ const UserPage = () => {
             </div>
           )}
 
-=======
-          <h2>{t('userpage.welcome')}, {userInfo.username}!</h2>
-          <p>{t('forms.emailLabel')}: {userInfo.email}</p>
-          <p>{t('userpage.rating')}: {userInfo.rating}</p>
->>>>>>> katya
           <p>
             <strong>{t('signuppage.locationLabel')}:</strong>
           </p>
@@ -147,49 +141,36 @@ const UserPage = () => {
             ) : (
               <p>{t('userpage.pets.nopets')}.</p>
             )}
-<<<<<<< HEAD
             <Link
               to={`/pets/add-pet/${userId}`}
               className="inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mt-4"
             >
-              Add Pet
+              {t('userpage.pets.addpet')}
             </Link>
-=======
-            <Link to={`/pets/add-pet/${userId}`}>{t('userpage.pets.addpet')}</Link>
->>>>>>> katya
           </div>
 
           <div className="action-buttons mt-6 space-y-2">
             <Link to={`/users/update-user/${userId}`}>
-<<<<<<< HEAD
               <button className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                Update User Information
+              {t('userpage.update')}
               </button>
             </Link>
             <button
               onClick={handleDeleteUser}
               className="w-full bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
             >
-              Delete User
+              {t('userpage.deleteuser')}
             </button>
             <button
               onClick={handleLogout}
               className="w-full bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
             >
-              Logout
+              {t('userpage.logout')}
             </button>
             <Link to={`/users/update-user/${userId}/password-change`}>
               <button className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                Change Password
+              {t('userpage.newpass')}
               </button>
-=======
-              <button>{t('userpage.update')}</button>
-            </Link>
-            <button onClick={handleDeleteUser}>{t('userpage.deleteuser')}</button>
-            <button onClick={handleLogout}>{t('userpage.logout')}</button>
-            <Link to={`/users/update-user/${userId}/password-change`}>
-              <button>{t('userpage.newpass')}</button>
->>>>>>> katya
             </Link>
           </div>
         </div>

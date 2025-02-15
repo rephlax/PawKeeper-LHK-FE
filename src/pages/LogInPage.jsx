@@ -4,11 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { useTranslation } from "react-i18next";
 
-<<<<<<< HEAD
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005";
-=======
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005';
->>>>>>> katya
 
 const LogInPage = () => {
   const { t } = useTranslation();
@@ -17,13 +13,9 @@ const LogInPage = () => {
   const [error, setError] = useState("");
   const { authenticateUser, user, userId } = useContext(AuthContext);
   const nav = useNavigate();
-<<<<<<< HEAD
-
-=======
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const openEyesImg = "https://res.cloudinary.com/dmvawq2ak/image/upload/v1739475664/openeyes_snlduk.svg";
   const closedEyesImg = "https://res.cloudinary.com/dmvawq2ak/image/upload/v1739475660/closedeyes_jljsee.svg"
->>>>>>> katya
   async function handleLogin(e) {
     e.preventDefault();
 
