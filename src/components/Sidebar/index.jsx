@@ -18,6 +18,7 @@ const Sidebar = () => {
         console.log('Sidebar: Received pin_created event');
         setIsCreatingPin(false);
         setIsEditing(false);
+        setEditData(null);
       };
 
       const handleTogglePinCreation = data => {
@@ -25,20 +26,32 @@ const Sidebar = () => {
         setIsCreatingPin(data.isCreating);
         setIsEditing(data.isEditing || false);
         if (data.pinData) {
+          console.log('Received pin data for editing:', data.pinData);
           setEditData(data.pinData);
         }
       };
 
       socket.on('pin_created', handlePinCreated);
+      socket.on('pin_updated', handlePinCreated);
       socket.on('toggle_pin_creation', handleTogglePinCreation);
 
       return () => {
         console.log('Cleaning up sidebar socket listeners');
         socket.off('pin_created', handlePinCreated);
+        socket.off('pin_updated', handlePinCreated);
         socket.off('toggle_pin_creation', handleTogglePinCreation);
       };
     }
   }, [socket]);
+
+  console.log('Sidebar render:', {
+    isMapOpen,
+    isCreatingPin,
+    isEditing,
+    hasEditData: !!editData,
+    hasSocket: !!socket,
+    hasUser: !!user,
+  });
 
   return isMapOpen ? (
     <MapControls

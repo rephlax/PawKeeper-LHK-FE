@@ -164,11 +164,17 @@ const MapComponent = () => {
         <button
           onClick={() => {
             if (socket) {
-              socket.emit('toggle_pin_creation', {
-                isCreating: true,
+              console.log('Emitting edit request for pin:', selectedPin);
+              socket.emit('toggle_pin_creation', { 
+                isCreating: true, 
                 isEditing: true,
-                pinData: selectedPin,
+                pinData: {
+                  ...selectedPin,
+                  id: selectedPin._id,
+                  hourlyRate: parseFloat(selectedPin.hourlyRate)
+                }
               });
+              setSelectedPin(null);
             }
           }}
           className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
@@ -177,7 +183,6 @@ const MapComponent = () => {
         </button>
       </div>
     );
-  };
 
   return (
     <div className="w-full h-full">
