@@ -1,33 +1,40 @@
-export const handlePinCreation = (
-  isCreatingPin,
-  setIsCreatingPin,
-  socket,
-  pinData = null,
-) => {
-  console.log('Pin creation handler called with:', {
-    isCreatingPin,
-    socket: !!socket,
-    isEditing: !!pinData,
-  })
+export const handlePinCreation = (isCreatingPin, setIsCreatingPin, socket) => {
+  console.log('Pin creation handler called')
 
   try {
     setIsCreatingPin(!isCreatingPin)
 
     if (socket) {
-      console.log('Emitting toggle_pin_creation:', {
-        isCreating: !isCreatingPin,
-        isEditing: !!pinData,
-        pinData,
-      })
       socket.emit('toggle_pin_creation', {
         isCreating: !isCreatingPin,
-        isEditing: !!pinData,
-        pinData,
+        isEditing: false,
       })
-    } else {
-      console.warn('Socket not available for pin creation')
     }
   } catch (error) {
     console.error('Error in handlePinCreation:', error)
+  }
+}
+
+export const handlePinEdit = (
+  setIsCreatingPin,
+  setIsEditing,
+  socket,
+  pinData,
+) => {
+  console.log('Pin edit handler called')
+
+  try {
+    setIsCreatingPin(true)
+    setIsEditing(true)
+
+    if (socket) {
+      socket.emit('toggle_pin_creation', {
+        isCreating: true,
+        isEditing: true,
+        pinData,
+      })
+    }
+  } catch (error) {
+    console.error('Error in handlePinEdit:', error)
   }
 }
