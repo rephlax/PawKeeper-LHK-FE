@@ -12,7 +12,7 @@ import enTranslations from './locales/en.json'
 import ptTranslations from './locales/pt.json'
 import ukTranslations from './locales/uk.json'
 import { MapProvider } from './context/MapContext.jsx'
-import './styles/Map.css'
+import './styles/mapbox.css'
 
 // Initialize i18next
 i18n.use(initReactI18next).init({
