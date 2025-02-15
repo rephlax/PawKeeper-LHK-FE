@@ -1,20 +1,18 @@
-import axios from "axios";
-import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import axios from 'axios';
+import { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
-
-
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005";
-const webToken = localStorage.getItem("authToken");
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005';
+const webToken = localStorage.getItem('authToken');
 
 const AddPetForm = () => {
   const { t } = useTranslation();
   const { userId } = useParams();
-  const [petName, setPetName] = useState("");
+  const [petName, setPetName] = useState('');
   const [petAge, setPetAge] = useState(0);
-  const [petSpecies, setPetSpecies] = useState("");
-  const [petPicture, setPetPicture] = useState("");
+  const [petSpecies, setPetSpecies] = useState('');
+  const [petPicture, setPetPicture] = useState('');
   const [imageFile, setImageFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const nav = useNavigate();
@@ -37,7 +35,7 @@ const AddPetForm = () => {
           },
         });
 
-        alert("Pet Added Sucessfully!");
+        alert('Pet Added Sucessfully!');
         nav(`/users/user/${userId}`);
       } catch (error) {
         console.log(error);
@@ -45,7 +43,7 @@ const AddPetForm = () => {
     }
   }
 
-  const handleImageChange = (e) => {
+  const handleImageChange = e => {
     setImageFile(e.target.files[0]);
   };
 
@@ -55,19 +53,19 @@ const AddPetForm = () => {
     setUploading(true);
 
     const formData = new FormData();
-    formData.append("file", imageFile);
-    formData.append("upload_preset", "ml_default"); // Cloudinary upload preset
+    formData.append('file', imageFile);
+    formData.append('upload_preset', 'ml_default'); // Cloudinary upload preset
 
     try {
       const response = await axios.post(
-        "https://api.cloudinary.com/v1_1/dzdrwiugn/image/upload",
-        formData,
+        'https://api.cloudinary.com/v1_1/dzdrwiugn/image/upload',
+        formData
       );
 
       console.log(response);
       setPetPicture(response.data.secure_url);
     } catch (error) {
-      console.error("Error uploading image:", error);
+      console.error('Error uploading image:', error);
     } finally {
       setUploading(false);
     }
@@ -77,31 +75,31 @@ const AddPetForm = () => {
     <div>
       <form className="form" onSubmit={handleCreatePet}>
         <label>
-        {t('addpet.name')}:
+          {t('addpet.name')}:
           <input
             type="text"
             value={petName}
-            onChange={(e) => {
+            onChange={e => {
               setPetName(e.target.value);
             }}
           />
         </label>
         <label>
-        {t('addpet.age')}:
+          {t('addpet.age')}:
           <input
             type="number"
             value={petAge}
-            onChange={(e) => {
+            onChange={e => {
               setPetAge(e.target.value);
             }}
           />
         </label>
         <label>
-        {t('addpet.species')}:
+          {t('addpet.species')}:
           <input
             type="text"
             value={petSpecies}
-            onChange={(e) => {
+            onChange={e => {
               setPetSpecies(e.target.value);
             }}
           />
@@ -111,7 +109,7 @@ const AddPetForm = () => {
           <input type="file" accept="image/*" onChange={handleImageChange} />
         </label>
         <button type="button" onClick={handleUpload} disabled={uploading}>
-          {uploading ? "Uploading..." : "Upload Image"}
+          {uploading ? 'Uploading...' : 'Upload Image'}
         </button>
         <button>{t('addpet.addpet')}</button>
       </form>

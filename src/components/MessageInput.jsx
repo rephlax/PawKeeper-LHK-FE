@@ -1,32 +1,32 @@
-import { useState } from "react";
-import { useSocket } from "../context/SocketContext";
-import { useTranslation } from "react-i18next";
+import { useState } from 'react';
+import { useSocket } from '../context/SocketContext';
+import { useTranslation } from 'react-i18next';
 
 const MessageInput = ({ roomId }) => {
-    const { t } = useTranslation();
-    const [message, setMessage] = useState("");
-    const { socket } = useSocket();
+  const { t } = useTranslation();
+  const [message, setMessage] = useState('');
+  const { socket } = useSocket();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = e => {
     e.preventDefault();
     if (!message.trim() || !socket || !roomId) return;
     const messageContent = message.trim();
-    setMessage("");
+    setMessage('');
 
-    console.log("Sending message to room:", roomId);
+    console.log('Sending message to room:', roomId);
     socket.emit(
-      "send_message",
+      'send_message',
       {
         roomId,
         content: messageContent,
       },
-      (error) => {
+      error => {
         if (error) {
-          console.error("Error sending message:", error);
+          console.error('Error sending message:', error);
           setMessage(messageContent);
           return;
         }
-      },
+      }
     );
   };
 
@@ -35,7 +35,7 @@ const MessageInput = ({ roomId }) => {
       <input
         type="text"
         value={message}
-        onChange={(e) => setMessage(e.target.value)}
+        onChange={e => setMessage(e.target.value)}
         placeholder="Type a message..."
         className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cream-500"
       />

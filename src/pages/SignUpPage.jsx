@@ -1,21 +1,21 @@
-import axios from "axios";
-import { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { useAuth } from "../context/AuthContext";
-import { Autocomplete } from "@react-google-maps/api";
+import axios from 'axios';
+import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { useAuth } from '../context/AuthContext';
+import { Autocomplete } from '@react-google-maps/api';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005';
 
 const SignUpPage = () => {
   const { t } = useTranslation();
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [profilePicture, setProfilePicture] = useState("");
-  const [rate, setRate] = useState("");
-  const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [profilePicture, setProfilePicture] = useState('');
+  const [rate, setRate] = useState('');
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
   const [sitter, setSitter] = useState(false);
   const [rating, setRating] = useState(0);
   const [imageFile, setImageFile] = useState(null);
@@ -27,17 +27,17 @@ const SignUpPage = () => {
   const getCurrentLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        position => {
           setLatitude(position.coords.latitude);
           setLongitude(position.coords.longitude);
         },
-        (error) => {
-          console.error("Error getting location:", error);
-          alert("Unable to retrieve your location");
-        },
+        error => {
+          console.error('Error getting location:', error);
+          alert('Unable to retrieve your location');
+        }
       );
     } else {
-      alert("Geolocation is not supported by your browser");
+      alert('Geolocation is not supported by your browser');
     }
   };
 
@@ -53,7 +53,7 @@ const SignUpPage = () => {
     e.preventDefault();
 
     if (sitter && (!rate || !latitude || !longitude)) {
-      alert("Sitters must provide their rate and location");
+      alert('Sitters must provide their rate and location');
       return;
     }
 
@@ -71,145 +71,121 @@ const SignUpPage = () => {
 
     try {
       const existingUsers = await axios.get(`${BACKEND_URL}/users/`);
-      const userExists = existingUsers.data.some(
-        (user) => user.username === newUser.username,
-      );
-      const emailExists = existingUsers.data.some(
-        (user) => user.email === newUser.email,
-      );
+      const userExists = existingUsers.data.some(user => user.username === newUser.username);
+      const emailExists = existingUsers.data.some(user => user.email === newUser.email);
 
       if (userExists) {
-        alert("User already exists");
+        alert('User already exists');
       } else if (emailExists) {
-        alert("Email already exists");
+        alert('Email already exists');
       } else {
-        const response = await axios.post(
-          `${BACKEND_URL}/users/signup`,
-          newUser,
-        );
+        const response = await axios.post(`${BACKEND_URL}/users/signup`, newUser);
 
         if (response.data) {
-          alert("User created successfully");
+          alert('User created successfully');
           clearForm();
-          nav("/log-in");
+          nav('/log-in');
         }
       }
     } catch (error) {
-      console.error("Signup error:", error);
-      alert(error.response?.data?.message || "Error creating user");
+      console.error('Signup error:', error);
+      alert(error.response?.data?.message || 'Error creating user');
     }
   }
 
   const clearForm = () => {
-    setUsername("");
-    setEmail("");
-    setPassword("");
-    setProfilePicture("");
-    setLatitude("");
-    setLongitude("");
-    setRate("");
+    setUsername('');
+    setEmail('');
+    setPassword('');
+    setProfilePicture('');
+    setLatitude('');
+    setLongitude('');
+    setRate('');
     setSitter(false);
   };
 
   return (
     <div>
-      <h1>{t("signuppage.title")}</h1>
+      <h1>{t('signuppage.title')}</h1>
       <form onSubmit={handleSubmit} className="form">
         <label>
-          {t("forms.emailLabel")}
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+          {t('forms.emailLabel')}
+          <input type="email" value={email} onChange={e => setEmail(e.target.value)} required />
         </label>
 
         <label>
-          {t("forms.passwordLabel")}
+          {t('forms.passwordLabel')}
           <input
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
             required
           />
         </label>
 
         <label>
-          {t("signuppage.usernameLabel")}
+          {t('signuppage.usernameLabel')}
           <input
             type="text"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={e => setUsername(e.target.value)}
             required
           />
         </label>
 
         <label>
-          {t("signuppage.profilePictureLabel")}
+          {t('signuppage.profilePictureLabel')}
           <input type="file" accept="image/*" onChange={handleImageChange} />
         </label>
         <button type="button" onClick={handleUpload} disabled={uploading}>
-          {uploading ? "Uploading..." : "Upload Image"}
+          {uploading ? 'Uploading...' : 'Upload Image'}
         </button>
 
         <label>
-          {t("signuppage.sitterLabel")}
-          <input
-            type="checkbox"
-            checked={sitter}
-            onChange={(e) => setSitter(e.target.checked)}
-          />
+          {t('signuppage.sitterLabel')}
+          <input type="checkbox" checked={sitter} onChange={e => setSitter(e.target.checked)} />
         </label>
 
         {sitter && (
           <>
             <label>
-              {t("signuppage.rateLabel")}
+              {t('signuppage.rateLabel')}
               <input
                 type="number"
                 value={rate}
-                onChange={(e) => setRate(e.target.value)}
+                onChange={e => setRate(e.target.value)}
                 required={sitter}
                 min="0"
               />
             </label>
 
             <div className="location-section">
-              <label>{t("signuppage.locationLabel")}</label>
+              <label>{t('signuppage.locationLabel')}</label>
 
               <Autocomplete
-                onLoad={(ref) => (autocompleteRef.current = ref)}
+                onLoad={ref => (autocompleteRef.current = ref)}
                 onPlaceChanged={handlePlaceSelect}
               >
-                <input
-                  type="text"
-                  placeholder="Search for a city"
-                  className="location-search"
-                />
+                <input type="text" placeholder="Search for a city" className="location-search" />
               </Autocomplete>
 
-              <button
-                type="button"
-                onClick={getCurrentLocation}
-                className="get-location-btn"
-              >
+              <button type="button" onClick={getCurrentLocation} className="get-location-btn">
                 Get Current Location
               </button>
 
               <div className="coordinates-inputs">
                 <input
                   type="number"
-                  placeholder={t("signuppage.latitudePlaceholder")}
+                  placeholder={t('signuppage.latitudePlaceholder')}
                   value={latitude}
-                  onChange={(e) => setLatitude(e.target.value)}
+                  onChange={e => setLatitude(e.target.value)}
                   required={sitter}
                 />
                 <input
                   type="number"
-                  placeholder={t("signuppage.longitudePlaceholder")}
+                  placeholder={t('signuppage.longitudePlaceholder')}
                   value={longitude}
-                  onChange={(e) => setLongitude(e.target.value)}
+                  onChange={e => setLongitude(e.target.value)}
                   required={sitter}
                 />
               </div>
@@ -217,7 +193,7 @@ const SignUpPage = () => {
           </>
         )}
 
-        <button type="submit">{t("signuppage.signupButton")}</button>
+        <button type="submit">{t('signuppage.signupButton')}</button>
       </form>
     </div>
   );

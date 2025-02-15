@@ -1,9 +1,9 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import logo from "../assets/logo.png";
-import LanguageSwitcher from "./LanguageSwitcher";
-import { useTranslation } from "react-i18next";
-import { useAuth } from "../context/AuthContext";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import logo from '../assets/logo.png';
+import LanguageSwitcher from './LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
+import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
   const { t } = useTranslation();
@@ -19,35 +19,29 @@ const Navbar = () => {
 
       <div
         className="flex gap-4 justify-evenly items-center text-lg"
-        style={{ paddingRight: "10px" }}
+        style={{ paddingRight: '10px' }}
       >
         {!isSignedIn ? (
           <>
             <Link to="/sign-up" className="navbar-link">
-              {t("navbar.signup")}
+              {t('navbar.signup')}
             </Link>
             <Link to="/log-in" className="navbar-link">
-              {t("navbar.login")}
+              {t('navbar.login')}
             </Link>
           </>
         ) : (
           <>
-            <button
-              onClick={() => setIsMapOpen(!isMapOpen)}
-              className="navbar-link"
-            >
-              {isMapOpen ? "Close Map" : "Open Map"}
+            <button onClick={() => setIsMapOpen(!isMapOpen)} className="navbar-link">
+              {isMapOpen ? 'Close Map' : 'Open Map'}
             </button>
 
             <Link to={`/users/user/${user._id}`} className="navbar-link">
-            {t("navbar.profile")}
+              {t('navbar.profile')}
             </Link>
 
-            <button 
-              onClick={handleLogout} 
-              className="navbar-link"
-            >
-              {t("navbar.logout")}
+            <button onClick={handleLogout} className="navbar-link">
+              {t('navbar.logout')}
             </button>
           </>
         )}

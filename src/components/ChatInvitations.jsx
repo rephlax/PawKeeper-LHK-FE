@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { useSocket } from "../context/SocketContext";
-import { useTranslation } from "react-i18next";
+import { useState, useEffect } from 'react';
+import { useSocket } from '../context/SocketContext';
+import { useTranslation } from 'react-i18next';
 
 const ChatInvitations = () => {
   const { t } = useTranslation();
@@ -10,26 +10,24 @@ const ChatInvitations = () => {
   useEffect(() => {
     if (!socket) return;
 
-    socket.on("chat_invitation", (invitation) => {
-      console.log("Received invitation:", invitation);
-      setInvitations((prev) => [...prev, invitation]);
+    socket.on('chat_invitation', invitation => {
+      console.log('Received invitation:', invitation);
+      setInvitations(prev => [...prev, invitation]);
     });
 
     return () => {
-      socket?.off("chat_invitation");
+      socket?.off('chat_invitation');
     };
   }, [socket]);
 
-  const acceptInvitation = (invitation) => {
+  const acceptInvitation = invitation => {
     if (!socket) return;
 
     try {
-      socket.emit("join_room", invitation.roomId);
-      setInvitations((prev) =>
-        prev.filter((inv) => inv.roomId !== invitation.roomId),
-      );
+      socket.emit('join_room', invitation.roomId);
+      setInvitations(prev => prev.filter(inv => inv.roomId !== invitation.roomId));
     } catch (error) {
-      console.error("Error accepting invitation:", error);
+      console.error('Error accepting invitation:', error);
     }
   };
 
@@ -43,7 +41,7 @@ const ChatInvitations = () => {
           className="border p-2 rounded mb-2 flex justify-between items-center bg-blue-50"
         >
           <span className="text-sm">
-          {t('chat.invite')} {invitation.invitedBy}
+            {t('chat.invite')} {invitation.invitedBy}
           </span>
           <button
             onClick={() => acceptInvitation(invitation)}

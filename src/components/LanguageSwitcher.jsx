@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 function LanguageSwitcher() {
   const { i18n } = useTranslation();
@@ -7,7 +7,7 @@ function LanguageSwitcher() {
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
-  const changeLanguage = (lng) => {
+  const changeLanguage = lng => {
     i18n.changeLanguage(lng);
     setMenuOpen(false); // Close the menu after selecting a language
   };
@@ -35,9 +35,9 @@ function LanguageSwitcher() {
 
       {menuOpen && (
         <div className="language-menu">
-          <button onClick={() => changeLanguage("en")}>English</button>
-          <button onClick={() => changeLanguage("pt")}>Português</button>
-          <button onClick={() => changeLanguage("uk")}>Українська</button>
+          <button onClick={() => changeLanguage('en')}>English</button>
+          <button onClick={() => changeLanguage('pt')}>Português</button>
+          <button onClick={() => changeLanguage('uk')}>Українська</button>
         </div>
       )}
     </div>

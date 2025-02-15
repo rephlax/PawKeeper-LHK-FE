@@ -1,20 +1,20 @@
-import HomePage from "./pages/HomePage";
-import LogInPage from "./pages/LogInPage";
-import SignUpPage from "./pages/SignUpPage";
-import UserPage from "./pages/UserPage";
-import NotFoundPage from "./pages/NotFoundPage";
-import Footer from "./components/Footer";
-import Navbar from "./components/Navbar";
-import { Routes, Route } from "react-router-dom";
-import ChatWidget from "./components/ChatWidget";
-import PrivateRoute from "./context/PrivateRoute";
-import UpdateUserForm from "./components/UpdateUserForm";
-import PasswordChange from "./components/PasswordChange";
-import AddPetForm from "./components/AddPetForm";
-import { useAuth } from "./context/AuthContext";
-import UpdatePetForm from "./components/UpdatePetForm";
-import MapComponent from "./components/Map";
-import Sidebar from "./components/Sidebar";
+import HomePage from './pages/HomePage';
+import LogInPage from './pages/LogInPage';
+import SignUpPage from './pages/SignUpPage';
+import UserPage from './pages/UserPage';
+import NotFoundPage from './pages/NotFoundPage';
+import Footer from './components/Footer';
+import Navbar from './components/Navbar';
+import { Routes, Route } from 'react-router-dom';
+import ChatWidget from './components/ChatWidget';
+import PrivateRoute from './context/PrivateRoute';
+import UpdateUserForm from './components/UpdateUserForm';
+import PasswordChange from './components/PasswordChange';
+import AddPetForm from './components/AddPetForm';
+import { useAuth } from './context/AuthContext';
+import UpdatePetForm from './components/UpdatePetForm';
+import MapComponent from './components/Map';
+import Sidebar from './components/Sidebar';
 
 function App() {
   const { isMapOpen } = useAuth();

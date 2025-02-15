@@ -5,7 +5,7 @@ import { handleLocationRequest } from '../utils/locationHandlers';
 import { handlePinCreation } from '../utils/pinHandlers';
 import PinForm from '../../Modal/PinForm';
 
-const MapControls = ({ user, socket, isCreatingPin, setIsCreatingPin }) => {
+const MapControls = ({ user, socket, isCreatingPin, setIsCreatingPin, isEditing, editData }) => {
   const autocompleteRef = useRef(null);
 
   const handlePlaceSelect = () => {
@@ -30,12 +30,19 @@ const MapControls = ({ user, socket, isCreatingPin, setIsCreatingPin }) => {
     return (
       <div className="space-y-4 p-4">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Create Location Pin</h2>
+          <h2 className="text-xl font-semibold">
+            {isEditing ? 'Edit Location Pin' : 'Create Location Pin'}
+          </h2>
           <button onClick={handleCloseForm} className="p-1 hover:bg-gray-100 rounded-full">
             <X className="h-5 w-5" />
           </button>
         </div>
-        <PinForm onClose={handleCloseForm} containerClass="border-none shadow-none p-0" />
+        <PinForm
+          onClose={handleCloseForm}
+          containerClass="border-none shadow-none p-0"
+          isEditing={isEditing}
+          initialData={editData}
+        />
       </div>
     );
   }

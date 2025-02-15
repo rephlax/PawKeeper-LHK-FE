@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom"
-import { useTranslation } from "react-i18next";
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Footer = () => {
   const { t } = useTranslation();
@@ -10,10 +10,7 @@ const Footer = () => {
         {/* Contact Section */}
         <div className="flex items-center gap-4">
           <span className="font-semibold">{t('footer.contact')}</span>
-          <a 
-            href="mailto:PawKeeper@FakeEmail.com" 
-            className="hover:text-cream-800"
-          >
+          <a href="mailto:PawKeeper@FakeEmail.com" className="hover:text-cream-800">
             ✉️ PawKeeper@FakeEmail.com
           </a>
           <a href="tel:00000000" className="hover:text-cream-800">

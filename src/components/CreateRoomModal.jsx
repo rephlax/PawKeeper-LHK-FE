@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
-import { X, Check } from "lucide-react";
-import { useSocket } from "../context/SocketContext";
-import { useTranslation } from "react-i18next";
+import { useState, useEffect } from 'react';
+import { X, Check } from 'lucide-react';
+import { useSocket } from '../context/SocketContext';
+import { useTranslation } from 'react-i18next';
 
 const CreateRoomModal = ({ onClose, onCreateRoom }) => {
   const { t } = useTranslation();
-  const [roomName, setRoomName] = useState("");
-  const [type, setType] = useState("group");
+  const [roomName, setRoomName] = useState('');
+  const [type, setType] = useState('group');
   const [users, setUsers] = useState([]);
   const [selectedParticipants, setSelectedParticipants] = useState([]);
   const { socket } = useSocket();
@@ -17,49 +17,47 @@ const CreateRoomModal = ({ onClose, onCreateRoom }) => {
       try {
         const response = await fetch(`${BACKEND_URL}/users/`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           },
         });
         if (response.ok) {
           const data = await response.json();
-          setUsers(data.filter((user) => user._id !== socket?.user?._id));
+          setUsers(data.filter(user => user._id !== socket?.user?._id));
         }
       } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error('Error fetching users:', error);
       }
     };
 
     fetchUsers();
   }, [socket, BACKEND_URL]);
 
-  const toggleParticipant = (user) => {
-    setSelectedParticipants((prev) =>
-      prev.some((p) => p._id === user._id)
-        ? prev.filter((p) => p._id !== user._id)
-        : [...prev, user],
+  const toggleParticipant = user => {
+    setSelectedParticipants(prev =>
+      prev.some(p => p._id === user._id) ? prev.filter(p => p._id !== user._id) : [...prev, user]
     );
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = e => {
     e.preventDefault();
 
     if (!roomName.trim()) {
-      alert("Please enter a room name");
+      alert('Please enter a room name');
       return;
     }
 
-    if (type === "group" && selectedParticipants.length === 0) {
-      alert("Please select at least one participant for a group chat");
+    if (type === 'group' && selectedParticipants.length === 0) {
+      alert('Please select at least one participant for a group chat');
       return;
     }
 
     const roomData = {
       name: roomName,
       type,
-      participants: selectedParticipants.map((p) => p._id),
+      participants: selectedParticipants.map(p => p._id),
     };
 
-    console.log("Creating room with data:", roomData);
+    console.log('Creating room with data:', roomData);
     onCreateRoom(roomData);
     onClose();
   };
@@ -79,7 +77,7 @@ const CreateRoomModal = ({ onClose, onCreateRoom }) => {
             <input
               type="text"
               value={roomName}
-              onChange={(e) => setRoomName(e.target.value)}
+              onChange={e => setRoomName(e.target.value)}
               className="w-full p-2 border rounded-lg"
               placeholder="Enter chat name..."
               required
@@ -89,26 +87,24 @@ const CreateRoomModal = ({ onClose, onCreateRoom }) => {
             <label className="block text-sm font-medium mb-1">{t('chat.type')}</label>
             <select
               value={type}
-              onChange={(e) => setType(e.target.value)}
+              onChange={e => setType(e.target.value)}
               className="w-full p-2 border rounded-lg"
             >
               <option value="group">{t('chat.group')}</option>
               <option value="direct">{t('chat.direct')}</option>
             </select>
           </div>
-          {type === "group" && (
+          {type === 'group' && (
             <div className="mb-4 flex-1 overflow-y-auto">
-              <label className="block text-sm font-medium mb-1">
-              {t('chat.participants')}
-              </label>
+              <label className="block text-sm font-medium mb-1">{t('chat.participants')}</label>
               <div className="space-y-2">
-                {users.map((user) => (
+                {users.map(user => (
                   <div
                     key={user._id}
                     className={`flex items-center p-2 rounded-lg cursor-pointer ${
-                      selectedParticipants.some((p) => p._id === user._id)
-                        ? "bg-blue-100"
-                        : "hover:bg-gray-50"
+                      selectedParticipants.some(p => p._id === user._id)
+                        ? 'bg-blue-100'
+                        : 'hover:bg-gray-50'
                     }`}
                     onClick={() => toggleParticipant(user)}
                   >
@@ -131,7 +127,7 @@ const CreateRoomModal = ({ onClose, onCreateRoom }) => {
                         )}
                       </div>
                     </div>
-                    {selectedParticipants.some((p) => p._id === user._id) && (
+                    {selectedParticipants.some(p => p._id === user._id) && (
                       <Check className="text-blue-500 h-5 w-5" />
                     )}
                   </div>
@@ -140,17 +136,10 @@ const CreateRoomModal = ({ onClose, onCreateRoom }) => {
             </div>
           )}
           <div className="flex justify-end gap-2 mt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 border rounded-lg"
-            >
+            <button type="button" onClick={onClose} className="px-4 py-2 border rounded-lg">
               {t('chat.cancel')}
             </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg"
-            >
+            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg">
               {t('chat.create')}
             </button>
           </div>

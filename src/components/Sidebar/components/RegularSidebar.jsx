@@ -1,6 +1,6 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { Home, User } from "lucide-react";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Home, User } from 'lucide-react';
 
 const RegularSidebar = ({ user }) => (
   <div className="space-y-6 p-4">
