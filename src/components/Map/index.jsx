@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext'
 import { setupAdvancedMarkers, updateMarkerPositions } from './utils/markers'
 import { DEFAULT_CENTER, getUserLocation } from './utils/location'
 import axios from 'axios'
+import { Star, UserCircle } from 'lucide-react'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
@@ -21,6 +22,7 @@ const MapComponent = () => {
     home: null,
     pin: null,
   })
+  const [reviews, setReviews] = useState([])
 
   const getAuthConfig = useCallback(
     () => ({
@@ -30,6 +32,19 @@ const MapComponent = () => {
     }),
     [],
   )
+
+  const fetchReviews = async userId => {
+    try {
+      const response = await axios.get(
+        `${BACKEND_URL}/reviews/reviews/${userId}`,
+        getAuthConfig(),
+      )
+      setReviews(response.data.allReviews || [])
+    } catch (error) {
+      console.error('Error fetching reviews:', error)
+      setReviews([])
+    }
+  }
 
   const loadUserPin = async () => {
     if (!user?._id) return
@@ -125,6 +140,57 @@ const MapComponent = () => {
     updateMarkerPositions(markers, userLocation, userPin)
   }, [userLocation, userPin, markers])
 
+  useEffect(() => {
+    if (selectedPin) {
+      fetchReviews(selectedPin.user)
+    }
+  }, [selectedPin])
+
+  const renderAverageRating = () => {
+    if (reviews.length === 0) return null
+
+    const averageRating =
+      reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
+
+    return (
+      <div className='flex items-center text-yellow-500'>
+        {[...Array(5)].map((_, index) => (
+          <Star
+            key={index}
+            className={`h-4 w-4 ${index < Math.round(averageRating) ? 'fill-current' : 'stroke-current'}`}
+          />
+        ))}
+        <span className='ml-2 text-sm text-gray-600'>
+          ({averageRating.toFixed(1)}, {reviews.length} reviews)
+        </span>
+      </div>
+    )
+  }
+
+  const renderReviews = () => {
+    if (reviews.length === 0) return null
+
+    return (
+      <div className='mt-4 max-h-48 overflow-y-auto'>
+        <h4 className='text-sm font-semibold mb-2'>Recent Reviews</h4>
+        {reviews.slice(0, 3).map(review => (
+          <div key={review._id} className='border-t py-2'>
+            <div className='flex items-center space-x-2 mb-1'>
+              <UserCircle className='h-5 w-5 text-gray-500' />
+              <span className='font-medium text-sm'>{review.title}</span>
+              <div className='flex text-yellow-500'>
+                {[...Array(review.rating)].map((_, index) => (
+                  <Star key={index} className='h-3 w-3 fill-current' />
+                ))}
+              </div>
+            </div>
+            <p className='text-xs text-gray-600'>{review.description}</p>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
   const renderInfoWindowContent = () => {
     if (!selectedPin) return null
 
@@ -148,57 +214,30 @@ const MapComponent = () => {
       )
     }
 
-    // View of other sitter's pin
-    if (!isOwnPin) {
-      return (
-        <div className='p-4'>
-          <h3 className='font-bold text-lg'>{selectedPin.title}</h3>
-          <p className='mt-2'>{selectedPin.description}</p>
-          <p className='mt-1 text-gray-600'>
-            Availability: {selectedPin.availability}
-          </p>
-          <p className='mt-1 text-gray-600'>
-            Rate: ${selectedPin.hourlyRate}/hr
-          </p>
-          <button
-            onClick={() => startChat(selectedPin.user)}
-            className='mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600'
-          >
-            Chat with Sitter
-          </button>
-        </div>
-      )
-    }
-
-    // Registered sitter viewing their own pin
+    // View of any pin
     return (
-      <div className='p-4'>
+      <div className='p-4 w-72'>
         <h3 className='font-bold text-lg'>{selectedPin.title}</h3>
         <p className='mt-2'>{selectedPin.description}</p>
         <p className='mt-1 text-gray-600'>
           Availability: {selectedPin.availability}
         </p>
         <p className='mt-1 text-gray-600'>Rate: ${selectedPin.hourlyRate}/hr</p>
-        <button
-          onClick={() => {
-            if (socket) {
-              console.log('Emitting edit request for pin:', selectedPin)
-              socket.emit('toggle_pin_creation', {
-                isCreating: true,
-                isEditing: true,
-                pinData: {
-                  ...selectedPin,
-                  id: selectedPin._id,
-                  hourlyRate: parseFloat(selectedPin.hourlyRate),
-                },
-              })
-              setSelectedPin(null)
-            }
-          }}
-          className='mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600'
-        >
-          Edit Information
-        </button>
+
+        {renderAverageRating()}
+
+        {isOwnPin && (
+          <p className='mt-2 text-sm text-blue-600'>
+            Use the sidebar button to edit your pin
+          </p>
+        )}
+        {!isOwnPin && (
+          <p className='mt-2 text-sm text-blue-600'>
+            Use the sidebar button to chat with this sitter
+          </p>
+        )}
+
+        {renderReviews()}
       </div>
     )
   }

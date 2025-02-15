@@ -1,9 +1,18 @@
 import React, { useRef, useState } from 'react'
-import { Compass, MapPin, Search, X } from 'lucide-react'
+import {
+  Compass,
+  MapPin,
+  Search,
+  X,
+  MessageCircle,
+  Star,
+  Edit,
+} from 'lucide-react'
 import { Autocomplete } from '@react-google-maps/api'
 import { handleLocationRequest } from '../utils/locationHandlers'
 import { handlePinCreation } from '../utils/pinHandlers'
 import PinForm from '../../Modal/PinForm'
+import ReviewForm from '../../Modal/ReviewForm'
 
 const MapControls = ({
   user,
@@ -12,6 +21,12 @@ const MapControls = ({
   setIsCreatingPin,
   isEditing,
   editData,
+  userPin,
+  selectedPin,
+  startChat,
+  map,
+  isCreatingReview,
+  setIsCreatingReview,
 }) => {
   const autocompleteRef = useRef(null)
   const [searchLocation, setSearchLocation] = useState('')
@@ -23,7 +38,6 @@ const MapControls = ({
       return
     }
 
-    // Get coordinates of the selected place
     const location = {
       lat: place.geometry.location.lat(),
       lng: place.geometry.location.lng(),
@@ -32,23 +46,43 @@ const MapControls = ({
     setSearchLocation(place.formatted_address)
     console.log('Selected location:', location)
 
-    // Send the new location to center the map
     if (socket) {
       socket.emit('center_map', location)
-      socket.emit('share_location', location)
     }
   }
 
   const handlePlaceSearch = () => {
-    if (!searchLocation.trim()) return
+    if (!searchLocation.trim() || !map) return
 
-    if (autocompleteRef.current) {
-      autocompleteRef.current.getPlace()
-    }
+    const placesService = new google.maps.places.PlacesService(map)
+
+    placesService.findPlaceFromQuery(
+      {
+        query: searchLocation,
+        fields: ['geometry', 'formatted_address'],
+      },
+      (results, status) => {
+        if (
+          status === google.maps.places.PlacesServiceStatus.OK &&
+          results[0]
+        ) {
+          const location = {
+            lat: results[0].geometry.location.lat(),
+            lng: results[0].geometry.location.lng(),
+          }
+
+          console.log('Found location:', location)
+          if (socket) {
+            socket.emit('center_map', location)
+          }
+        }
+      },
+    )
   }
 
   const handleCloseForm = () => {
     setIsCreatingPin(false)
+    setIsCreatingReview(false)
     if (socket) {
       socket.emit('toggle_pin_creation', {
         isCreating: false,
@@ -57,12 +91,17 @@ const MapControls = ({
     }
   }
 
-  if (isCreatingPin) {
+  // Show form if creating/editing pin or writing review
+  if (isCreatingPin || isCreatingReview) {
     return (
       <div className='space-y-4 p-4'>
         <div className='flex justify-between items-center mb-4'>
           <h2 className='text-xl font-semibold'>
-            {isEditing ? 'Edit Location Pin' : 'Create Location Pin'}
+            {isCreatingReview
+              ? 'Write a Review'
+              : isEditing
+                ? 'Edit Location Pin'
+                : 'Create Location Pin'}
           </h2>
           <button
             onClick={handleCloseForm}
@@ -71,12 +110,20 @@ const MapControls = ({
             <X className='h-5 w-5' />
           </button>
         </div>
-        <PinForm
-          onClose={handleCloseForm}
-          containerClass='border-none shadow-none p-0'
-          isEditing={isEditing}
-          initialData={editData}
-        />
+        {isCreatingReview ? (
+          <ReviewForm
+            onClose={handleCloseForm}
+            targetUserId={selectedPin.user}
+            sitterName={selectedPin.title}
+          />
+        ) : (
+          <PinForm
+            onClose={handleCloseForm}
+            containerClass='border-none shadow-none p-0'
+            isEditing={isEditing}
+            initialData={editData}
+          />
+        )}
       </div>
     )
   }
@@ -128,7 +175,8 @@ const MapControls = ({
         </div>
       </div>
 
-      {user?.sitter && (
+      {/* Show Create Pin only if user is sitter without a pin */}
+      {user?.sitter && !userPin && (
         <div className='space-y-2'>
           <button
             onClick={() =>
@@ -142,6 +190,46 @@ const MapControls = ({
         </div>
       )}
 
+      {/* Show Edit button only when viewing own registered pin */}
+      {selectedPin && selectedPin.user === user?._id && userPin && (
+        <div className='space-y-2'>
+          <button
+            onClick={() =>
+              handlePinCreation(
+                isCreatingPin,
+                setIsCreatingPin,
+                socket,
+                userPin,
+              )
+            }
+            className='flex items-center space-x-2 w-full p-3 text-left transition-colors hover:bg-blue-100 rounded-lg text-blue-600'
+          >
+            <Edit className='h-5 w-5' />
+            <span>Edit Your Pin</span>
+          </button>
+        </div>
+      )}
+
+      {/* Show Review and Chat buttons when viewing other's pin */}
+      {selectedPin && selectedPin.user !== user?._id && (
+        <div className='space-y-2'>
+          <button
+            onClick={() => startChat(selectedPin.user)}
+            className='flex items-center space-x-2 w-full p-3 text-left transition-colors hover:bg-blue-100 rounded-lg text-blue-600'
+          >
+            <MessageCircle className='h-5 w-5' />
+            <span>Chat with Sitter</span>
+          </button>
+          <button
+            onClick={() => setIsCreatingReview(true)}
+            className='flex items-center space-x-2 w-full p-3 text-left transition-colors hover:bg-blue-100 rounded-lg text-blue-600'
+          >
+            <Star className='h-5 w-5' />
+            <span>Leave a Review</span>
+          </button>
+        </div>
+      )}
+
       <div className='mt-8 p-3 text-sm text-gray-500 border-t'>
         <p>Debug Info:</p>
         <p>User logged in: {user ? 'Yes' : 'No'}</p>
@@ -149,6 +237,8 @@ const MapControls = ({
         <p>Socket connected: {socket ? 'Yes' : 'No'}</p>
         <p>Creating pin: {isCreatingPin ? 'Yes' : 'No'}</p>
         <p>Editing mode: {isEditing ? 'Yes' : 'No'}</p>
+        <p>Has pin: {userPin ? 'Yes' : 'No'}</p>
+        <p>Selected pin: {selectedPin ? 'Yes' : 'No'}</p>
       </div>
     </div>
   )
