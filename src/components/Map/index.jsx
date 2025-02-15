@@ -164,7 +164,11 @@ const MapComponent = () => {
         <button
           onClick={() => {
             if (socket) {
-              socket.emit('toggle_pin_creation', { isCreating: true, isEditing: true });
+              socket.emit('toggle_pin_creation', {
+                isCreating: true,
+                isEditing: true,
+                pinData: selectedPin,
+              });
             }
           }}
           className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
