@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { GoogleMap, InfoWindow } from '@react-google-maps/api'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
+import { GoogleMap, InfoWindow, Marker } from '@react-google-maps/api'
 import { useSocket } from '../../context/SocketContext'
 import { useAuth } from '../../context/AuthContext'
-import { setupAdvancedMarkers, updateMarkerPositions } from './utils/markers'
 import { DEFAULT_CENTER, getUserLocation } from './utils/location'
 import axios from 'axios'
 import { Star, UserCircle } from 'lucide-react'
@@ -12,16 +11,13 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 const MapComponent = () => {
   const { user } = useAuth()
   const { socket } = useSocket()
-  const [map, setMap] = useState(null)
+  const mapRef = useRef(null)
   const [userLocation, setUserLocation] = useState(DEFAULT_CENTER)
   const [userPin, setUserPin] = useState(null)
+  const [allPins, setAllPins] = useState([])
   const [selectedPin, setSelectedPin] = useState(null)
   const [locationError, setLocationError] = useState(null)
   const [mapVisible, setMapVisible] = useState(true)
-  const [markers, setMarkers] = useState({
-    home: null,
-    pin: null,
-  })
   const [reviews, setReviews] = useState([])
 
   const getAuthConfig = useCallback(
@@ -46,11 +42,22 @@ const MapComponent = () => {
     }
   }
 
+  const fetchAllPins = async () => {
+    try {
+      const response = await axios.get(
+        `${BACKEND_URL}/api/location-pins/all-pins`,
+        getAuthConfig(),
+      )
+      setAllPins(response.data)
+    } catch (error) {
+      console.error('Error fetching all pins:', error)
+    }
+  }
+
   const loadUserPin = async () => {
     if (!user?._id) return
 
     try {
-      console.log('Loading pin for user:', user._id)
       const response = await axios.get(
         `${BACKEND_URL}/api/location-pins/search`,
         {
@@ -67,79 +74,61 @@ const MapComponent = () => {
     }
   }
 
+  const handleMapLoad = map => {
+    mapRef.current = map
+  }
+
+  const centerMap = location => {
+    if (mapRef.current) {
+      mapRef.current.panTo(location)
+      mapRef.current.setZoom(14)
+    }
+  }
+
   const startChat = pinOwner => {
     if (socket) {
       socket.emit('start_private_chat', { targetUserId: pinOwner })
     }
   }
 
+  // Socket and location setup effects
   useEffect(() => {
+    if (!user?._id) return
+
+    fetchAllPins()
     loadUserPin()
-  }, [user])
 
-  useEffect(() => {
-    getUserLocation(setUserLocation, setLocationError, map, socket)
-    const locationInterval = setInterval(
-      () => getUserLocation(setUserLocation, setLocationError, map, socket),
-      60000,
-    )
+    const locationHandler = () => {
+      getUserLocation(setUserLocation, setLocationError, mapRef.current, socket)
+    }
+
+    locationHandler()
+    const locationInterval = setInterval(locationHandler, 60000)
+
     return () => clearInterval(locationInterval)
-  }, [socket, map])
+  }, [user, socket])
 
+  // Socket listeners for pin updates
   useEffect(() => {
-    if (!socket) {
-      console.warn('Socket not available for setup')
-      return
+    if (!socket) return
+
+    const handlePinUpdate = () => {
+      fetchAllPins()
+      loadUserPin()
     }
 
-    console.log('Setting up socket listeners')
-
-    socket.on('center_map', location => {
-      console.log('Received center_map event:', location)
-      if (location && location.lat && location.lng) {
-        setUserLocation(location)
-        map?.panTo(location)
-      }
-    })
-
-    socket.on('pin_created', () => {
-      console.log('Received pin_created event')
-      loadUserPin()
-    })
-
-    socket.on('pin_updated', () => {
-      console.log('Received pin_updated event')
-      loadUserPin()
-    })
+    socket.on('pin_created', handlePinUpdate)
+    socket.on('pin_updated', handlePinUpdate)
+    socket.on('center_map', centerMap)
 
     return () => {
-      console.log('Cleaning up socket listeners')
-      socket.off('center_map')
-      socket.off('pin_created')
-      socket.off('pin_updated')
+      socket.off('pin_created', handlePinUpdate)
+      socket.off('pin_updated', handlePinUpdate)
+      socket.off('center_map', centerMap)
     }
-  }, [socket, map])
+  }, [socket])
 
-  useEffect(() => {
-    setupAdvancedMarkers(
-      map,
-      userLocation,
-      userPin,
-      markers,
-      setMarkers,
-      setSelectedPin,
-      user,
-    )
-    return () => {
-      if (markers.home) markers.home.map = null
-      if (markers.pin) markers.pin.map = null
-    }
-  }, [map, userLocation, userPin])
-
-  useEffect(() => {
-    updateMarkerPositions(markers, userLocation, userPin)
-  }, [userLocation, userPin, markers])
-
+  // Review fetching effect
   useEffect(() => {
     if (selectedPin) {
       fetchReviews(selectedPin.user)
@@ -232,9 +221,17 @@ const MapComponent = () => {
           </p>
         )}
         {!isOwnPin && (
-          <p className='mt-2 text-sm text-blue-600'>
-            Use the sidebar button to chat with this sitter
-          </p>
+          <div>
+            <p className='mt-2 text-sm text-blue-600'>
+              Use the sidebar button to chat with this sitter
+            </p>
+            <button
+              onClick={() => startChat(selectedPin.user)}
+              className='mt-2 w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600'
+            >
+              Start Chat
+            </button>
+          </div>
         )}
 
         {renderReviews()}
@@ -262,8 +259,25 @@ const MapComponent = () => {
             zoomControl: true,
             streetViewControl: true,
           }}
-          onLoad={setMap}
+          onLoad={handleMapLoad}
         >
+          {allPins.map(pin => (
+            <Marker
+              key={pin._id}
+              position={{
+                lat: pin.location.coordinates[1],
+                lng: pin.location.coordinates[0],
+              }}
+              onClick={() => setSelectedPin(pin)}
+              title={pin.title}
+              icon={
+                pin.user === user?._id
+                  ? '/path/to/your-pin-icon.png'
+                  : '/path/to/other-pin-icon.png'
+              }
+            />
+          ))}
+
           {selectedPin && (
             <InfoWindow
               position={{

@@ -43,8 +43,13 @@ const MapControls = ({
       lng: place.geometry.location.lng(),
     }
 
-    setSearchLocation(place.formatted_address)
+    setSearchLocation(place.formatted_address || '')
     console.log('Selected location:', location)
+
+    if (map) {
+      map.panTo(location)
+      map.setZoom(14)
+    }
 
     if (socket) {
       socket.emit('center_map', location)
@@ -55,31 +60,36 @@ const MapControls = ({
     if (!searchLocation.trim() || !map) return
 
     const placesService = new google.maps.places.PlacesService(map)
-    const request = {
-      query: searchLocation,
-      fields: ['name', 'geometry'],
-    }
 
-    placesService.textSearch(request, (results, status) => {
-      if (
-        status === google.maps.places.PlacesServiceStatus.OK &&
-        results?.[0]
-      ) {
-        const location = {
-          lat: results[0].geometry.location.lat(),
-          lng: results[0].geometry.location.lng(),
-        }
-        console.log('Found location:', location)
-        setSearchLocation(results[0].name)
+    placesService.findPlaceFromQuery(
+      {
+        query: searchLocation,
+        fields: ['geometry', 'formatted_address'],
+      },
+      (results, status) => {
+        if (
+          status === google.maps.places.PlacesServiceStatus.OK &&
+          results[0]
+        ) {
+          const location = {
+            lat: results[0].geometry.location.lat(),
+            lng: results[0].geometry.location.lng(),
+          }
 
-        if (socket) {
-          socket.emit('center_map', location)
+          console.log('Found location:', location)
+          if (map) {
+            map.panTo(location)
+            map.setZoom(14)
+          }
+
+          if (socket) {
+            socket.emit('center_map', location)
+          }
+        } else {
+          alert('Location not found')
         }
-        map.panTo(location)
-      } else {
-        console.log('Location search failed:', status)
-      }
-    })
+      },
+    )
   }
 
   const handleCloseForm = () => {
@@ -136,7 +146,7 @@ const MapControls = ({
 
       <div className='space-y-2'>
         <button
-          onClick={() => handleLocationRequest(socket)}
+          onClick={() => handleLocationRequest(socket, map)}
           className='flex items-center space-x-2 w-full p-3 text-left transition-colors hover:bg-cream-100 rounded-lg'
         >
           <Compass className='h-5 w-5' />
@@ -180,40 +190,37 @@ const MapControls = ({
       {/* Show Create Pin only if user is sitter without a pin */}
       {user?.sitter && (
         <div className='space-y-2'>
-          <button
-            onClick={() =>
-              handlePinCreation(
-                isCreatingPin,
-                setIsCreatingPin,
-                socket,
-                userPin,
-              )
-            }
-            className='flex items-center space-x-2 w-full p-3 text-left transition-colors hover:bg-cream-100 rounded-lg'
-          >
-            <MapPin className='h-5 w-5' />
-            <span>{userPin ? 'Edit Location Pin' : 'Create Location Pin'}</span>
-          </button>
-        </div>
-      )}
-
-      {/* Show Edit button only when viewing own registered pin */}
-      {selectedPin && selectedPin.user === user?._id && userPin && (
-        <div className='space-y-2'>
-          <button
-            onClick={() =>
-              handlePinCreation(
-                isCreatingPin,
-                setIsCreatingPin,
-                socket,
-                userPin,
-              )
-            }
-            className='flex items-center space-x-2 w-full p-3 text-left transition-colors hover:bg-blue-100 rounded-lg text-blue-600'
-          >
-            <Edit className='h-5 w-5' />
-            <span>Edit Your Pin</span>
-          </button>
+          {userPin ? (
+            // Edit Pin Button
+            <button
+              onClick={() => {
+                setIsCreatingPin(true)
+                setIsEditing(true)
+                if (socket) {
+                  socket.emit('toggle_pin_creation', {
+                    isCreating: true,
+                    isEditing: true,
+                    pinData: userPin,
+                  })
+                }
+              }}
+              className='flex items-center space-x-2 w-full p-3 text-left transition-colors hover:bg-blue-100 rounded-lg text-blue-600'
+            >
+              <Edit className='h-5 w-5' />
+              <span>Edit Location Pin</span>
+            </button>
+          ) : (
+            // Create Pin Button
+            <button
+              onClick={() =>
+                handlePinCreation(isCreatingPin, setIsCreatingPin, socket)
+              }
+              className='flex items-center space-x-2 w-full p-3 text-left transition-colors hover:bg-cream-100 rounded-lg'
+            >
+              <MapPin className='h-5 w-5' />
+              <span>Create Location Pin</span>
+            </button>
+          )}
         </div>
       )}
 

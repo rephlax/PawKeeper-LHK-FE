@@ -79,7 +79,7 @@
   },
   "userupdate": {
     "profilePictureLabel": "Foto de perfil",
-    "submitButton": "Enviar",
+    "submit": "Enviar",
     "backbutton": "Voltar ao perfil"
   },
   "userlist": {
