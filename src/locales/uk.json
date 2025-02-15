@@ -79,7 +79,7 @@
   },
   "userupdate": {
     "profilePictureLabel": "Фото профілю",
-    "submitButton": "Відправити",
+    "submit": "Відправити",
     "backbutton": "Назад до профілю"
   },
   "userlist": {
