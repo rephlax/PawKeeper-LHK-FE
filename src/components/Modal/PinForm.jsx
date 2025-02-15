@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { useSocket } from '../../context/SocketContext'
+import { useMap } from '../../context/MapContext'
 import axios from 'axios'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
@@ -9,11 +10,11 @@ const PinForm = ({
   onClose,
   isEditing = false,
   initialData = null,
-  onSubmit = null,
   containerClass = '',
 }) => {
   const { user } = useAuth()
   const { socket } = useSocket()
+  const { map } = useMap()
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     title: initialData?.title || '',
@@ -56,84 +57,57 @@ const PinForm = ({
 
   const handleSubmit = async () => {
     try {
-      if (!validateForm()) {
-        return
-      }
-
-      if (!navigator.geolocation) {
-        alert('Geolocation is required to create a pin')
-        return
-      }
+      if (!validateForm()) return
 
       setIsLoading(true)
 
-      navigator.geolocation.getCurrentPosition(
-        async position => {
-          try {
-            const location = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            }
+      // Get current map center for pin location
+      const center = map.current.getCenter()
+      const location = {
+        lng: center.lng,
+        lat: center.lat,
+      }
 
-            const pinData = {
-              latitude: location.lat,
-              longitude: location.lng,
-              title: formData.title,
-              description: formData.description,
-              services: formData.services,
-              availability: formData.availability,
-              hourlyRate: parseFloat(formData.hourlyRate),
-              serviceRadius: 10,
-            }
+      const pinData = {
+        longitude: location.lng,
+        latitude: location.lat,
+        title: formData.title,
+        description: formData.description,
+        services: formData.services,
+        availability: formData.availability,
+        hourlyRate: parseFloat(formData.hourlyRate),
+        serviceRadius: 10,
+      }
 
-            let response
-            if (isEditing && onSubmit) {
-              response = await onSubmit({
-                ...pinData,
-                id: initialData._id,
-              })
-            } else {
-              response = await axios.post(
-                `${BACKEND_URL}/api/location-pins/create`,
-                pinData,
-                getAuthConfig(),
-              )
-            }
+      let response
+      if (isEditing) {
+        response = await axios.put(
+          `${BACKEND_URL}/api/location-pins/update`,
+          { ...pinData, id: initialData._id },
+          getAuthConfig(),
+        )
+      } else {
+        response = await axios.post(
+          `${BACKEND_URL}/api/location-pins/create`,
+          pinData,
+          getAuthConfig(),
+        )
+      }
 
-            if (socket) {
-              socket.emit(
-                isEditing ? 'pin_updated' : 'pin_created',
-                response.data,
-              )
-              socket.emit('share_location', location)
-            }
+      if (socket) {
+        socket.emit(isEditing ? 'pin_updated' : 'pin_created', response.data)
+        socket.emit('share_location', location)
+      }
 
-            onClose()
-          } catch (error) {
-            console.error('Error with pin operation:', error)
-            alert(
-              error.response?.data?.message ||
-                `Failed to ${isEditing ? 'update' : 'create'} pin. Please try again.`,
-            )
-          } finally {
-            setIsLoading(false)
-          }
-        },
-        error => {
-          setIsLoading(false)
-          alert(
-            'Unable to get your location. Please check your browser settings and try again.',
-          )
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 5000,
-          maximumAge: 0,
-        },
-      )
+      onClose()
     } catch (error) {
+      console.error('Error with pin operation:', error)
+      alert(
+        error.response?.data?.message ||
+          `Failed to ${isEditing ? 'update' : 'create'} pin. Please try again.`,
+      )
+    } finally {
       setIsLoading(false)
-      alert('An unexpected error occurred. Please try again.')
     }
   }
 
@@ -163,6 +137,27 @@ const PinForm = ({
           placeholder='Describe your services...'
           disabled={isLoading}
         />
+      </div>
+
+      <div>
+        <label className='block text-sm font-medium mb-1'>Services</label>
+        <select
+          name='services'
+          multiple
+          value={formData.services}
+          onChange={handleInputChange}
+          className='w-full p-2 border rounded'
+          disabled={isLoading}
+        >
+          <option value='Dog Walking'>Dog Walking</option>
+          <option value='Cat Sitting'>Cat Sitting</option>
+          <option value='Pet Boarding'>Pet Boarding</option>
+          <option value='Pet Grooming'>Pet Grooming</option>
+          <option value='Dog Training'>Dog Training</option>
+        </select>
+        <p className='text-sm text-gray-500 mt-1'>
+          Hold Ctrl/Cmd to select multiple services
+        </p>
       </div>
 
       <div>
@@ -196,7 +191,7 @@ const PinForm = ({
         />
       </div>
 
-      <div className='flex gap-3 pt-4'>
+      <div className='pt-4 flex gap-3'>
         <button
           onClick={onClose}
           className={`flex-1 px-4 py-2 border border-gray-300 rounded text-gray-700 
@@ -208,11 +203,12 @@ const PinForm = ({
         <button
           onClick={handleSubmit}
           disabled={isLoading}
-          className={`flex-1 px-4 py-2 text-white rounded ${
-            isLoading
-              ? 'bg-blue-300 cursor-not-allowed'
-              : 'bg-blue-500 hover:bg-blue-600'
-          }`}
+          className={`flex-1 px-4 py-2 text-white rounded
+            ${
+              isLoading
+                ? 'bg-blue-300 cursor-not-allowed'
+                : 'bg-blue-500 hover:bg-blue-600'
+            }`}
         >
           {isLoading
             ? 'Processing...'
@@ -220,6 +216,11 @@ const PinForm = ({
               ? 'Update Pin'
               : 'Create Pin'}
         </button>
+      </div>
+
+      <div className='mt-4 text-sm text-gray-500'>
+        <p>📍 Pin will be placed at the current map center</p>
+        <p>🔍 Drag the map to adjust the pin location before saving</p>
       </div>
     </div>
   )
