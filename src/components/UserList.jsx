@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useState, useEffect } from "react";
 import { useSocket } from "../context/SocketContext";
 
@@ -5,6 +6,17 @@ const UserList = () => {
   const [users, setUsers] = useState([]);
   const { socket, isUserOnline, user } = useSocket();
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+=======
+import { useState, useEffect } from 'react';
+import { useSocket } from '../context/SocketContext';
+import { useTranslation } from "react-i18next";
+
+const UserList = () => {
+    const { t } = useTranslation();
+    const [users, setUsers] = useState([]);
+    const { socket, isUserOnline, user } = useSocket();
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+>>>>>>> katya
 
   useEffect(() => {
     if (!socket) return;
@@ -25,6 +37,7 @@ const UserList = () => {
       }
     };
 
+<<<<<<< HEAD
     fetchUsers();
 
     const events = ["users_online", "user_connected", "user_disconnected"];
@@ -67,6 +80,68 @@ const UserList = () => {
                   <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
                     {user.username[0].toUpperCase()}
                   </div>
+=======
+    return (
+        <div className="p-4">
+            <h3 className="font-medium mb-4">{t('userlist.available')}</h3>
+            <div className="space-y-2">
+                {users.map(user => (
+                    <div 
+                        key={user._id} 
+                        className="flex justify-between items-center p-2 hover:bg-gray-50 rounded border"
+                    >
+                        <div className="flex items-center gap-2">
+                            <div className="relative">
+                                {user.profilePicture ? (
+                                    <img 
+                                        src={user.profilePicture} 
+                                        alt={user.username} 
+                                        className="w-8 h-8 rounded-full object-cover"
+                                    />
+                                ) : (
+                                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                                        {user.username[0].toUpperCase()}
+                                    </div>
+                                )}
+                                {/* Online status indicator */}
+                                <div 
+                                    className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full ${
+                                        isUserOnline(user._id) 
+                                            ? 'bg-green-500' 
+                                            : 'bg-gray-300'
+                                    } border-2 border-white`}
+                                />
+                            </div>
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <p className="font-medium">{user.username}</p>
+                                    <span className={`text-xs ${
+                                        isUserOnline(user._id) 
+                                            ? 'text-green-500' 
+                                            : 'text-gray-400'
+                                    }`}>
+                                        {isUserOnline(user._id) ? 'Online' : 'Offline'}
+                                    </span>
+                                </div>
+                                {user.sitter && <p className="text-xs text-gray-500">{t('userlist.petsitter')}</p>}
+                            </div>
+                        </div>
+                        <button 
+                            onClick={() => startPrivateChat(user._id)}
+                            className={`px-3 py-1 rounded ${
+                                isUserOnline(user._id)
+                                    ? 'bg-blue-500 hover:bg-blue-600 text-white'
+                                    : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                            }`}
+                            disabled={!isUserOnline(user._id)}
+                        >
+                            {t('userlist.chat')}
+                        </button>
+                    </div>
+                ))}
+                {users.length === 0 && (
+                    <p className="text-gray-500 text-center">{t('userlist.nousers')}</p>
+>>>>>>> katya
                 )}
                 {/* Online status indicator */}
                 <div

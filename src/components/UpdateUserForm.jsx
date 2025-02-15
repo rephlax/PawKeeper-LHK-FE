@@ -2,12 +2,13 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005";
 
 const UpdateUserForm = () => {
+  const { t } = useTranslation();
   const { user, userId } = useContext(AuthContext);
-
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [profilePicture, setProfilePicture] = useState("");
@@ -117,7 +118,7 @@ const UpdateUserForm = () => {
     <>
       <form onSubmit={handleUpdateUser} className="form">
         <label>
-          Email
+          {t('forms.emailLabel')}
           <input
             type="email"
             value={email}
@@ -128,7 +129,7 @@ const UpdateUserForm = () => {
         </label>
 
         <label>
-          Username
+          {t('signuppage.usernameLabel')}
           <input
             type="text"
             value={username}
@@ -139,15 +140,24 @@ const UpdateUserForm = () => {
         </label>
 
         <label>
+<<<<<<< HEAD
           Profile Picture
           <input type="file" accept="image/*" onChange={handleImageChange} />
+=======
+          {t('userupdate.profilePictureLabel')} 
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+          />
+>>>>>>> katya
         </label>
         <button type="button" onClick={handleUpload} disabled={uploading}>
           {uploading ? "Uploading..." : "Upload Image"}
         </button>
 
         <label>
-          Rate
+          {t('signuppage.rateLabel')}
           <input
             type="number"
             value={rate}
@@ -158,10 +168,10 @@ const UpdateUserForm = () => {
         </label>
 
         <label>
-          Location
+          {t('signuppage.locationLabel')}
           <input
             type="number"
-            placeholder="Latitude"
+            placeholder={t('signuppage.latitudePlaceholder')}
             value={latitude}
             onChange={(e) => {
               setLatitude(e.target.value);
@@ -169,7 +179,7 @@ const UpdateUserForm = () => {
           />
           <input
             type="number"
-            placeholder="Longitude"
+            placeholder={t('signuppage.longitudePlaceholder')}
             value={longitude}
             onChange={(e) => {
               setLongitude(e.target.value);
@@ -178,7 +188,7 @@ const UpdateUserForm = () => {
         </label>
 
         <label>
-          Are you a pet sitter?
+        {t('signuppage.sitterLabel')}
           <input
             type="checkbox"
             checked={sitter}
@@ -188,9 +198,14 @@ const UpdateUserForm = () => {
           />
         </label>
 
-        <button type="submit">Submit</button>
+        <button type="submit">{t('userupdate.submit')}</button>
         <Link to={`/users/user/${userId}`}>
+<<<<<<< HEAD
           <button>Back to Profile</button>
+=======
+
+        <button>{t('userupdate.backbutton')}</button>
+>>>>>>> katya
         </Link>
       </form>
     </>

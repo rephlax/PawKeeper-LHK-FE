@@ -40,11 +40,19 @@ const Navbar = () => {
             </button>
 
             <Link to={`/users/user/${user._id}`} className="navbar-link">
-              Profile
+            {t("navbar.profile")}
             </Link>
 
+<<<<<<< HEAD
             <button onClick={handleLogout} className="navbar-link">
               Logout
+=======
+            <button 
+              onClick={handleLogout} 
+              className="navbar-link"
+            >
+              {t("navbar.logout")}
+>>>>>>> katya
             </button>
           </>
         )}

@@ -3,12 +3,14 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
+
+
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005";
 const webToken = localStorage.getItem("authToken");
 
 const AddPetForm = () => {
-  const { userId } = useParams();
   const { t } = useTranslation();
+  const { userId } = useParams();
   const [petName, setPetName] = useState("");
   const [petAge, setPetAge] = useState(0);
   const [petSpecies, setPetSpecies] = useState("");
@@ -75,7 +77,7 @@ const AddPetForm = () => {
     <div>
       <form className="form" onSubmit={handleCreatePet}>
         <label>
-          Pet Name:
+        {t('addpet.name')}:
           <input
             type="text"
             value={petName}
@@ -85,7 +87,7 @@ const AddPetForm = () => {
           />
         </label>
         <label>
-          Pet Age:
+        {t('addpet.age')}:
           <input
             type="number"
             value={petAge}
@@ -95,7 +97,7 @@ const AddPetForm = () => {
           />
         </label>
         <label>
-          Pet Species:
+        {t('addpet.species')}:
           <input
             type="text"
             value={petSpecies}
@@ -105,13 +107,13 @@ const AddPetForm = () => {
           />
         </label>
         <label>
-          Pet Picture:
+          {t('addpet.petpicture')}:
           <input type="file" accept="image/*" onChange={handleImageChange} />
         </label>
         <button type="button" onClick={handleUpload} disabled={uploading}>
           {uploading ? "Uploading..." : "Upload Image"}
         </button>
-        <button>Add Pet</button>
+        <button>{t('addpet.addpet')}</button>
       </form>
     </div>
   );
