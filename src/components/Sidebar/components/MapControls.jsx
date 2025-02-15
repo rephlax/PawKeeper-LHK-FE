@@ -52,7 +52,7 @@ const MapControls = ({
     }
 
     if (socket) {
-      socket.emit('center_map', location)
+      socket.emit('center_user_map', location)
     }
   }
 
@@ -83,7 +83,7 @@ const MapControls = ({
           }
 
           if (socket) {
-            socket.emit('center_map', location)
+            socket.emit('center_user_map', location)
           }
         } else {
           alert('Location not found')

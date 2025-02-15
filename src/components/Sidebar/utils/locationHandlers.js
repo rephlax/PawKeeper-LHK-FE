@@ -16,7 +16,7 @@ export const handleLocationRequest = (socket, map) => {
       }
       if (socket) {
         console.log('Sending location to server:', location)
-        socket.emit('center_map', location)
+        socket.emit('center_user_map', location)
         socket.emit('share_location', location)
       }
     },

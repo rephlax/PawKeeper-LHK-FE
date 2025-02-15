@@ -117,14 +117,21 @@ const MapComponent = () => {
       loadUserPin()
     }
 
+    const handleUserMapCenter = location => {
+      if (mapRef.current) {
+        mapRef.current.panTo(location)
+        mapRef.current.setZoom(14)
+      }
+    }
+
     socket.on('pin_created', handlePinUpdate)
     socket.on('pin_updated', handlePinUpdate)
-    socket.on('center_map', centerMap)
+    socket.on('user_map_center', handleUserMapCenter)
 
     return () => {
       socket.off('pin_created', handlePinUpdate)
       socket.off('pin_updated', handlePinUpdate)
-      socket.off('center_map', centerMap)
+      socket.off('user_map_center', handleUserMapCenter)
     }
   }, [socket])
 
