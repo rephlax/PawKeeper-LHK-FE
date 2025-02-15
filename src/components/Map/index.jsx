@@ -49,24 +49,6 @@ const MapComponent = () => {
     }
   };
 
-  const handleEditPin = async updatedData => {
-    try {
-      const response = await axios.put(
-        `${BACKEND_URL}/api/location-pins/update`,
-        updatedData,
-        getAuthConfig()
-      );
-
-      setUserPin(response.data);
-      if (socket) {
-        socket.emit('pin_updated', response.data);
-      }
-    } catch (error) {
-      console.error('Error updating pin:', error);
-      alert('Failed to update pin information');
-    }
-  };
-
   const startChat = pinOwner => {
     if (socket) {
       socket.emit('start_private_chat', { targetUserId: pinOwner });
@@ -137,8 +119,21 @@ const MapComponent = () => {
 
     const isOwnPin = selectedPin.user === user?._id;
 
+    // User is not a sitter clicking their home location
     if (!user?.sitter && isOwnPin) {
       return null;
+    }
+
+    // User is a sitter but hasn't registered a pin
+    if (user?.sitter && isOwnPin && !userPin) {
+      return (
+        <div className="p-4">
+          <h3 className="font-bold text-lg">Register Your Pin First</h3>
+          <p className="mt-2">
+            Use the sidebar "Create Location Pin" button to register your services.
+          </p>
+        </div>
+      );
     }
 
     // View of other sitter's pin
@@ -166,6 +161,16 @@ const MapComponent = () => {
         <p className="mt-2">{selectedPin.description}</p>
         <p className="mt-1 text-gray-600">Availability: {selectedPin.availability}</p>
         <p className="mt-1 text-gray-600">Rate: ${selectedPin.hourlyRate}/hr</p>
+        <button
+          onClick={() => {
+            if (socket) {
+              socket.emit('toggle_pin_creation', { isCreating: true, isEditing: true });
+            }
+          }}
+          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Edit Information
+        </button>
       </div>
     );
   };
