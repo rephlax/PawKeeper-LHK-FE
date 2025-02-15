@@ -1,15 +1,17 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"
+import { useTranslation } from "react-i18next";
 
 const Footer = () => {
+  const { t } = useTranslation();
   return (
     <footer className="h-full text-cream-text relative">
       {/* Main footer container */}
       <div className="h-full flex items-center justify-between px-8">
         {/* Contact Section */}
         <div className="flex items-center gap-4">
-          <span className="font-semibold">Contact us:</span>
-          <a
-            href="mailto:PawKeeper@FakeEmail.com"
+          <span className="font-semibold">{t('footer.contact')}</span>
+          <a 
+            href="mailto:PawKeeper@FakeEmail.com" 
             className="hover:text-cream-800"
           >
             ✉️ PawKeeper@FakeEmail.com

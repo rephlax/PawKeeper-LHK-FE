@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useSocket } from "../context/SocketContext";
+import { useTranslation } from "react-i18next";
 
 const MessageInput = ({ roomId }) => {
-  const [message, setMessage] = useState("");
-  const { socket } = useSocket();
+    const { t } = useTranslation();
+    const [message, setMessage] = useState("");
+    const { socket } = useSocket();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -42,7 +44,7 @@ const MessageInput = ({ roomId }) => {
         disabled={!message.trim() || !socket}
         className="bg-cream-background text-cream-text px-4 py-2 rounded-lg hover:bg-cream-surface transition-colors disabled:opacity-50"
       >
-        Send
+        {t('sendmessage')}
       </button>
     </form>
   );

@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { useSocket } from "../context/SocketContext";
+import { useTranslation } from "react-i18next";
 
 const UserList = () => {
+  const { t } = useTranslation();
   const [users, setUsers] = useState([]);
   const { socket, isUserOnline, user } = useSocket();
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -48,7 +50,7 @@ const UserList = () => {
 
   return (
     <div className="p-4">
-      <h3 className="font-medium mb-4">Available Users</h3>
+      <h3 className="font-medium mb-4">{t('userlist.available')}</h3>
       <div className="space-y-2">
         {users.map((user) => (
           <div
@@ -89,7 +91,7 @@ const UserList = () => {
                   </span>
                 </div>
                 {user.sitter && (
-                  <p className="text-xs text-gray-500">Pet Sitter</p>
+                  <p className="text-xs text-gray-500">{t('userlist.petsitter')}</p>
                 )}
               </div>
             </div>
@@ -102,12 +104,12 @@ const UserList = () => {
               }`}
               disabled={!isUserOnline(user._id)}
             >
-              Chat
+              {t('userlist.chat')}
             </button>
           </div>
         ))}
         {users.length === 0 && (
-          <p className="text-gray-500 text-center">No users available</p>
+          <p className="text-gray-500 text-center">{t('userlist.nousers')}</p>
         )}
       </div>
     </div>

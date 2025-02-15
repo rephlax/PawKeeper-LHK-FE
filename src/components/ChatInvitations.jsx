@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { useSocket } from "../context/SocketContext";
+import { useTranslation } from "react-i18next";
 
 const ChatInvitations = () => {
+  const { t } = useTranslation();
   const [invitations, setInvitations] = useState([]);
   const { socket } = useSocket();
 
@@ -41,13 +43,13 @@ const ChatInvitations = () => {
           className="border p-2 rounded mb-2 flex justify-between items-center bg-blue-50"
         >
           <span className="text-sm">
-            Chat invitation from {invitation.invitedBy}
+          {t('chat.invite')} {invitation.invitedBy}
           </span>
           <button
             onClick={() => acceptInvitation(invitation)}
             className="px-2 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
           >
-            Accept
+            {t('chat.accept')}
           </button>
         </div>
       ))}

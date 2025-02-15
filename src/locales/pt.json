@@ -24,5 +24,72 @@
   "forms": {
     "emailLabel": "Email",
     "passwordLabel": "Senha"
+  },
+  "userpage": {
+    "title": "Página do Usuário",
+    "welcome": "Bem-vindo",
+    "rating": "Avaliação",
+    "pets": {
+      "allpets": "Animais de estimação",
+      "name": "Nome",
+      "age": "Idade",
+      "species": "Espécie",
+      "deletepet": "Excluir animal",
+      "nopets": "Nenhum animal de estimação",
+      "addpet": "Adicionar animal"
+    },
+    "update": "Atualizar informações do usuário",
+    "deleteuser": "Excluir usuário",
+    "logout": "Sair",
+    "newpass": "Alterar senha",
+    "loading": "Carregando informações do usuário"
+  },
+  "chat": {
+    "active": "Chats ativos",
+    "noactive": "Nenhum chat ativo",
+    "invite": "Convite de chat de",
+    "accept": "Aceitar",
+    "newcreate": "Criar novo chat",
+    "name": "Nome do chat",
+    "type": "Tipo",
+    "group": "Chat em grupo",
+    "direct": "Mensagem direta",
+    "participants": "Selecionar participantes",
+    "cancel": "Cancelar",
+    "create": "Criar"
+  },
+  "addpet": {
+    "name": "Nome do animal",
+    "age": "Idade do animal",
+    "species": "Espécie do animal",
+    "addpet": "Adicionar animal",
+    "petpicture": "Foto do animal"
+  },
+  "map": {
+    "createpin": "Crie seu pin de pet sitter",
+    "startchat": "Iniciar chat",
+    "": ""
+  },
+  "sendmessage": "Enviar",
+  "password": {
+    "current": "Senha atual",
+    "new": "Nova senha",
+    "confirm": "Confirmar senha",
+    "change": "Alterar senha"
+  },
+  "userupdate": {
+    "profilePictureLabel": "Foto de perfil",
+    "submitButton": "Enviar",
+    "backbutton": "Voltar ao perfil"
+  },
+  "userlist": {
+    "available": "Usuários disponíveis",
+    "petsitter": "Cuidadores de animais",
+    "chat": "Chat",
+    "nousers": "Nenhum usuário disponível"
+  },
+  "notfoundpage": {
+    "notfound": "Página não encontrada",
+    "backhome": "Voltar para a página inicial"
   }
 }

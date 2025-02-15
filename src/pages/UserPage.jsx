@@ -6,8 +6,10 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005";
+import { useTranslation } from "react-i18next";
 
 const UserPage = () => {
+  const { t } = useTranslation();
   const [userInfo, setUserInfo] = useState({});
   const [pets, setPets] = useState([]);
   const { user, handleLogout, handleDeleteUser, isSitter, updateSitterStatus } =
@@ -65,7 +67,7 @@ const UserPage = () => {
 
   return (
     <div>
-      <h1>User Page</h1>
+      <h1>{t('userpage.title')}</h1>
       {userInfo && userInfo ? (
         <div>
           {userInfo.profilePicture ? (
@@ -81,9 +83,9 @@ const UserPage = () => {
               alt="Default profile"
             />
           )}
-          <h2>Welcome, {userInfo.username}!</h2>
-          <p>Email: {userInfo.email}</p>
-          <p>Rating: {userInfo.rating}</p>
+          <h2>{t('userpage.welcome')}, {userInfo.username}!</h2>
+          <p>{t('forms.emailLabel')}: {userInfo.email}</p>
+          <p>{t('userpage.rating')}: {userInfo.rating}</p>
 
           {/* Sitter Status Toggle */}
           {user && user._id === userId && (
@@ -101,34 +103,34 @@ const UserPage = () => {
           )}
 
           <p>
-            <strong>Location:</strong>
+            <strong>{t('signuppage.locationLabel')}:</strong>
           </p>
           <p>
-            Latitude:{" "}
+          {t('signuppage.latitudePlaceholder')}:{" "}
             {userInfo.location?.coordinates?.latitude || "Not available"}
           </p>
           <p>
-            Longitude:{" "}
+          {t('signuppage.longitudePlaceholder')}:{" "}
             {userInfo.location?.coordinates?.longitude || "Not available"}
           </p>
 
           <div className="pets">
-            <p>Owned Pets</p>
+            <p>{t('userpage.pets.allpets')}</p>
             {pets.length > 0 ? (
               pets.map((pet, index) => (
                 <div key={pet._id || index}>
                   <p>
-                    <strong>Name:</strong> {pet.petName}
+                    <strong>{t('userpage.pets.name')}:</strong> {pet.petName}
                   </p>
                   <p>
-                    <strong>Age:</strong> {pet.petAge}
+                    <strong>{t('userpage.pets.age')}:</strong> {pet.petAge}
                   </p>
                   <p>
-                    <strong>Species:</strong> {pet.petSpecies}
+                    <strong>{t('userpage.pets.species')}:</strong> {pet.petSpecies}
                   </p>
                   {/* {pet.petPicture ? <img src={pet.petPicture} alt=""/>: <img src={defaultUser} alt=""/>} */}
                   <button onClick={() => handleDeletePet(pet._id)}>
-                    Delete Pet
+                  {t('userpage.pets.deletepet')}
                   </button>
                   <Link to={`/pets/update-pet/${userId}/${pet._id}`}>
                     <button>Update Pet Info</button>
@@ -137,43 +139,43 @@ const UserPage = () => {
                 </div>
               ))
             ) : (
-              <p>No pets owned.</p>
+              <p>{t('userpage.pets.nopets')}.</p>
             )}
             <Link
               to={`/pets/add-pet/${userId}`}
               className="inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mt-4"
             >
-              Add Pet
+              {t('userpage.pets.addpet')}
             </Link>
           </div>
 
           <div className="action-buttons mt-6 space-y-2">
             <Link to={`/users/update-user/${userId}`}>
               <button className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                Update User Information
+              {t('userpage.update')}
               </button>
             </Link>
             <button
               onClick={handleDeleteUser}
               className="w-full bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
             >
-              Delete User
+              {t('userpage.deleteuser')}
             </button>
             <button
               onClick={handleLogout}
               className="w-full bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
             >
-              Logout
+              {t('userpage.logout')}
             </button>
             <Link to={`/users/update-user/${userId}/password-change`}>
               <button className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                Change Password
+              {t('userpage.newpass')}
               </button>
             </Link>
           </div>
         </div>
       ) : (
-        <p>Loading user information...</p>
+        <p>{t('userpage.loading')}...</p>
       )}
     </div>
   );
