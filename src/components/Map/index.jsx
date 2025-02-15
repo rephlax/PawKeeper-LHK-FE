@@ -5,7 +5,6 @@ import { useAuth } from '../../context/AuthContext';
 import { setupAdvancedMarkers, updateMarkerPositions } from './utils/markers';
 import { DEFAULT_CENTER, getUserLocation } from './utils/location';
 import PinForm from '../Modal/PinForm';
-import Modal from '../Modal';
 import axios from 'axios';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
