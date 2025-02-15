@@ -4,6 +4,7 @@ import logo from '../assets/logo.png'
 import LanguageSwitcher from './LanguageSwitcher'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
+import { MapPin } from 'lucide-react'
 
 const Navbar = () => {
   const { t } = useTranslation()
