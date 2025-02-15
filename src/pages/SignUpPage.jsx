@@ -49,6 +49,35 @@ const SignUpPage = () => {
     }
   };
 
+  const handleImageChange = e => {
+    setImageFile(e.target.files[0]);
+  };
+
+  const handleUpload = async () => {
+    if (!imageFile) return;
+
+    setUploading(true);
+
+    const formData = new FormData();
+    formData.append('file', imageFile);
+    formData.append('upload_preset', 'ml_default'); // Cloudinary upload preset
+
+    try {
+      const response = await axios.post(
+        'https://api.cloudinary.com/v1_1/dzdrwiugn/image/upload',
+        formData
+      );
+
+      console.log(response);
+      setProfilePicture(response.data.secure_url);
+      console.log(profilePicture); // Save Cloudinary image URL in state
+    } catch (error) {
+      console.error('Error uploading image:', error);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   async function handleSubmit(e) {
     e.preventDefault();
 
