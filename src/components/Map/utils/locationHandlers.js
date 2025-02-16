@@ -10,22 +10,34 @@ export const handleLocationRequest = (socket, map) => {
         lat: position.coords.latitude,
         lng: position.coords.longitude,
       }
+      console.log('Got position:', location)
+
       if (map) {
-        map.setCenter({
-          center: [location.lng, location.lat],
-          zoom: 14,
-        })
+        console.log('Updating map position')
+        map.setCenter([location.lng, location.lat])
+        map.setZoom(14)
       }
+
       if (socket && socket.emit) {
-        console.log('Sending location to server:', location)
+        console.log('Socket state:', {
+          isConnected: socket.connected,
+          socketId: socket.id,
+          socketUser: socket.user,
+        })
+
         socket.emit('share_location', location, response => {
           if (response?.error) {
-            console.error('Location sharing error:', response.error)
+            console.error('Location sharing error:', {
+              error: response.error,
+              location,
+              response,
+            })
           } else {
             console.log('Location shared successfully:', response)
           }
         })
-        socket.emit('center_user_map', location)
+      } else {
+        console.error('Socket not available:', { socket })
       }
     },
     error => {

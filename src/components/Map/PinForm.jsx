@@ -25,8 +25,8 @@ const PinForm = ({
   })
 
   useEffect(() => {
-    if (isEditing && initialData && map?.current && isMapLoaded) {
-      map.current.flyTo({
+    if (isEditing && initialData && map && isMapLoaded) {
+      map.flyTo({
         center: initialData.location.coordinates,
         zoom: 15,
         essential: true,
@@ -56,7 +56,7 @@ const PinForm = ({
     if (formData.hourlyRate <= 0) {
       errors.push('Hourly rate must be greater than 0')
     }
-    if (!map?.current || !isMapLoaded) {
+    if (!map || !isMapLoaded) {
       errors.push('Map is not ready. Please try again.')
     }
 
