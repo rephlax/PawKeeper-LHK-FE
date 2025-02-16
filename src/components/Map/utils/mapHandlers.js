@@ -5,8 +5,9 @@ export const DEFAULT_CENTER = [-0.118092, 51.509865]
 export const createMarker = (coordinates, options = {}) => {
   const { map, type = 'default', onClick, className = '' } = options
 
+  // Create marker element with better styling
   const el = document.createElement('div')
-
+  
   el.className = `
     w-10 h-10 
     rounded-full 
