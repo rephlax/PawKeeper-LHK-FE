@@ -128,10 +128,17 @@ export const setupMapInteractions = (map, options = {}) => {
   if (onViewportChange) {
     map.on('moveend', () => {
       const center = map.getCenter()
+      const bounds = map.getBounds()
       onViewportChange({
         longitude: center.lng,
         latitude: center.lat,
         zoom: map.getZoom(),
+        bounds: {
+          north: bounds.getNorth(),
+          south: bounds.getSouth(),
+          east: bounds.getEast(),
+          west: bounds.getWest(),
+        },
       })
     })
     cleanup.push(() => map.off('moveend'))

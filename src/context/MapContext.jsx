@@ -72,7 +72,7 @@ export const MapProvider = ({ children }) => {
       newMap.on('moveend', () => {
         const center = newMap.getCenter()
         const bounds = newMap.getBounds()
-        setViewport({
+        const newViewport = {
           longitude: center.lng,
           latitude: center.lat,
           zoom: newMap.getZoom(),
@@ -82,7 +82,13 @@ export const MapProvider = ({ children }) => {
             east: bounds.getEast(),
             west: bounds.getWest(),
           },
-        })
+        }
+
+        setViewport(newViewport)
+
+        if (socket && socket.emit) {
+          socket.emit('viewport_update', newViewport)
+        }
       })
 
       newMap.addControl(new mapboxgl.NavigationControl(), 'top-right')
@@ -125,15 +131,29 @@ export const MapProvider = ({ children }) => {
       setLocationError(null)
 
       if (map && isMapLoaded) {
-        flyTo([location.lng, location.lat])
-      }
+        // Get bounds after moving
+        map.flyTo({
+          center: [location.lng, location.lat],
+          zoom: 14,
+          essential: true,
+        })
 
-      if (socket) {
-        socket.emit('share_location', location)
-        socket.emit('center_user_map', location)
-        socket.emit('viewport_update', {
-          ...viewport,
-          location,
+        // Wait for move to finish
+        map.once('moveend', () => {
+          const bounds = map.getBounds()
+          if (socket && socket.emit) {
+            socket.emit('viewport_update', {
+              longitude: location.lng,
+              latitude: location.lat,
+              zoom: 14,
+              bounds: {
+                north: bounds.getNorth(),
+                south: bounds.getSouth(),
+                east: bounds.getEast(),
+                west: bounds.getWest(),
+              },
+            })
+          }
         })
       }
 
@@ -148,7 +168,6 @@ export const MapProvider = ({ children }) => {
     }
   }
 
-  // Add cleanup
   useEffect(() => {
     return () => {
       if (map) {
