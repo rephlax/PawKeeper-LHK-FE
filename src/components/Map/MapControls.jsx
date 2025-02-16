@@ -10,8 +10,7 @@ import {
 } from 'lucide-react'
 import { useMap } from '../../context/MapContext'
 import PinForm from './PinForm'
-import ReviewForm from '../../Modal/ReviewForm'
-import debounce from 'lodash/debounce'
+import { debounce } from 'lodash'
 import { handleLocationRequest } from './utils/locationHandlers'
 import { handlePinCreation, handlePinEdit } from './utils/pinHandlers'
 
