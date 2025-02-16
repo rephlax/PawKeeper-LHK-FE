@@ -43,6 +43,8 @@ export const MapProvider = ({ children }) => {
     container => {
       if (map) return
 
+      console.log('Initializing map...')
+
       const newMap = new mapboxgl.Map({
         container,
         style: 'mapbox://styles/mapbox/streets-v12',
@@ -52,6 +54,7 @@ export const MapProvider = ({ children }) => {
 
       // Add map load handler
       newMap.on('load', () => {
+        console.log('Map loaded successfully')
         setIsMapLoaded(true)
         newMap.resize()
         if (userLocation) {
@@ -92,6 +95,7 @@ export const MapProvider = ({ children }) => {
       )
 
       setMap(newMap)
+      console.log('Map instance created')
       return newMap
     },
     [map, userLocation, viewport],

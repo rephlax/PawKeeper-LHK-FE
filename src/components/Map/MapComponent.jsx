@@ -40,6 +40,16 @@ const MapComponent = () => {
   const [selectedPin, setSelectedPin] = useState(null)
   const [currentPopup, setCurrentPopup] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [initError, setInitError] = useState(null)
+
+  useEffect(() => {
+    console.log('Map loading state:', {
+      isLoading,
+      hasMap: !!map,
+      isMapLoaded,
+      hasSocket: !!socket,
+    })
+  }, [isLoading, map, isMapLoaded, socket])
 
   const getAuthConfig = useCallback(
     () => ({
@@ -224,10 +234,15 @@ const MapComponent = () => {
 
     const initMap = async () => {
       try {
+        setIsLoading(true)
+        setInitError(null)
         await initializeMap(mapContainer.current)
       } catch (error) {
         console.error('Map initialization error:', error)
+        setInitError('Failed to initialize map')
         setLocationError('Failed to initialize map')
+      } finally {
+        setIsLoading(false)
       }
     }
 
@@ -315,11 +330,20 @@ const MapComponent = () => {
             <p>{locationError}</p>
           </div>
         )}
-        {isLoading && (
+        {isLoading ? (
           <div className='absolute inset-0 bg-white/50 flex items-center justify-center z-20'>
-            <div className='bg-white p-4 rounded-lg shadow'>Loading map...</div>
+            <div className='bg-white p-4 rounded-lg shadow flex flex-col items-center gap-2'>
+              <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500'></div>
+              <p>Loading map...</p>
+            </div>
           </div>
-        )}
+        ) : initError ? (
+          <div className='absolute inset-0 flex items-center justify-center'>
+            <div className='bg-red-50 p-4 rounded-lg shadow text-red-600'>
+              {initError}
+            </div>
+          </div>
+        ) : null}
         <div ref={mapContainer} className='w-full h-full' />
         <Sidebar
           isMapPage={true}
