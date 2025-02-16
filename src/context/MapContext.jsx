@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 
@@ -13,6 +19,12 @@ export const MapProvider = ({ children }) => {
   const [userLocation, setUserLocation] = useState(null)
   const [locationError, setLocationError] = useState(null)
   const [isMapVisible, setIsMapVisible] = useState(true)
+  const [isMapLoaded, setIsMapLoaded] = useState(false)
+  const [viewport, setViewport] = useState({
+    longitude: -74.5,
+    latitude: 40,
+    zoom: 9,
+  })
 
   const rateLimiter = {
     lastCall: 0,
@@ -27,27 +39,63 @@ export const MapProvider = ({ children }) => {
     },
   }
 
-  const initializeMap = container => {
-    if (map) return
+  const initializeMap = useCallback(
+    container => {
+      if (map) return
 
-    const newMap = new mapboxgl.Map({
-      container,
-      style: 'mapbox://styles/mapbox/streets-v12',
-      center: [-74.5, 40],
-      zoom: 9,
-    })
+      const newMap = new mapboxgl.Map({
+        container,
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: [viewport.longitude, viewport.latitude],
+        zoom: viewport.zoom,
+      })
 
-    newMap.addControl(new mapboxgl.NavigationControl(), 'top-right')
-    newMap.addControl(
-      new mapboxgl.GeolocateControl({
-        positionOptions: { enableHighAccuracy: true },
-        trackUserLocation: true,
-      }),
-    )
+      // Add map load handler
+      newMap.on('load', () => {
+        setIsMapLoaded(true)
+        newMap.resize()
+        if (userLocation) {
+          flyTo([userLocation.lng, userLocation.lat])
+        }
+      })
 
-    setMap(newMap)
-    return newMap
-  }
+      // Add error handler
+      newMap.on('error', e => {
+        console.error('Map error:', e)
+        setLocationError('Error loading map. Please refresh the page.')
+      })
+
+      // Add viewport change handler
+      newMap.on('moveend', () => {
+        const center = newMap.getCenter()
+        const bounds = newMap.getBounds()
+        setViewport({
+          longitude: center.lng,
+          latitude: center.lat,
+          zoom: newMap.getZoom(),
+          bounds: {
+            north: bounds.getNorth(),
+            south: bounds.getSouth(),
+            east: bounds.getEast(),
+            west: bounds.getWest(),
+          },
+        })
+      })
+
+      newMap.addControl(new mapboxgl.NavigationControl(), 'top-right')
+      newMap.addControl(
+        new mapboxgl.GeolocateControl({
+          positionOptions: { enableHighAccuracy: true },
+          trackUserLocation: true,
+          showAccuracyCircle: true,
+        }),
+      )
+
+      setMap(newMap)
+      return newMap
+    },
+    [map, userLocation, viewport],
+  )
 
   const getUserLocation = async socket => {
     if (!navigator.geolocation) {
@@ -72,13 +120,17 @@ export const MapProvider = ({ children }) => {
       setUserLocation(location)
       setLocationError(null)
 
-      if (map) {
-        flyTo(location)
+      if (map && isMapLoaded) {
+        flyTo([location.lng, location.lat])
       }
 
       if (socket) {
         socket.emit('share_location', location)
         socket.emit('center_user_map', location)
+        socket.emit('viewport_update', {
+          ...viewport,
+          location,
+        })
       }
 
       return location
@@ -92,74 +144,98 @@ export const MapProvider = ({ children }) => {
     }
   }
 
-  const setupSocketListeners = (socket, loadUserPin) => {
-    if (!socket) return null
-
-    const handlePinCreation = data => {
-      if (loadUserPin) loadUserPin()
-    }
-
-    const handleMapCenter = location => {
-      if (location && location.lat && location.lng) {
-        setUserLocation(location)
-        if (map) flyTo([location.lng, location.lat])
-      }
-    }
-
-    socket.on('pin_created', handlePinCreation)
-    socket.on('pin_updated', handlePinCreation)
-    socket.on('center_map', handleMapCenter)
-
-    // Return cleanup function
+  // Add cleanup
+  useEffect(() => {
     return () => {
-      socket.off('pin_created', handlePinCreation)
-      socket.off('pin_updated', handlePinCreation)
-      socket.off('center_map', handleMapCenter)
+      if (map) {
+        map.remove()
+        setMap(null)
+        setIsMapLoaded(false)
+      }
+      markers.forEach(marker => marker.remove())
+      setMarkers(new Map())
     }
-  }
+  }, [])
 
-  const addMarker = (id, lngLat, options = {}) => {
-    if (!map || !rateLimiter.checkLimit()) return
+  const setupSocketListeners = useCallback(
+    (socket, loadUserPin) => {
+      if (!socket) return null
 
-    const el = document.createElement('div')
-    el.className = `marker ${options.className || ''}`
-    el.innerHTML = options.html || '📍'
+      const handlePinCreation = data => {
+        if (loadUserPin) loadUserPin()
+      }
 
-    const marker = new mapboxgl.Marker(el).setLngLat(lngLat).addTo(map)
+      const handleMapCenter = location => {
+        if (location && location.lat && location.lng) {
+          setUserLocation(location)
+          if (map && isMapLoaded) flyTo([location.lng, location.lat])
+        }
+      }
 
-    if (options.popup) {
-      marker.setPopup(options.popup)
-    }
+      socket.on('pin_created', handlePinCreation)
+      socket.on('pin_updated', handlePinCreation)
+      socket.on('center_map', handleMapCenter)
 
-    if (options.onClick) {
-      el.addEventListener('click', options.onClick)
-    }
+      return () => {
+        socket.off('pin_created', handlePinCreation)
+        socket.off('pin_updated', handlePinCreation)
+        socket.off('center_map', handleMapCenter)
+      }
+    },
+    [map, isMapLoaded],
+  )
 
-    setMarkers(prev => new Map(prev.set(id, marker)))
-    return marker
-  }
+  const addMarker = useCallback(
+    (id, lngLat, options = {}) => {
+      if (!map || !isMapLoaded || !rateLimiter.checkLimit()) return
 
-  const removeMarker = id => {
-    const marker = markers.get(id)
-    if (marker) {
-      marker.remove()
-      setMarkers(prev => {
-        const newMarkers = new Map(prev)
-        newMarkers.delete(id)
-        return newMarkers
+      const el = document.createElement('div')
+      el.className = `marker ${options.className || ''}`
+      el.innerHTML = options.html || '📍'
+
+      const marker = new mapboxgl.Marker(el).setLngLat(lngLat).addTo(map)
+
+      if (options.popup) {
+        marker.setPopup(options.popup)
+      }
+
+      if (options.onClick) {
+        el.addEventListener('click', options.onClick)
+      }
+
+      setMarkers(prev => new Map(prev.set(id, marker)))
+      return marker
+    },
+    [map, isMapLoaded],
+  )
+
+  const removeMarker = useCallback(
+    id => {
+      const marker = markers.get(id)
+      if (marker) {
+        marker.remove()
+        setMarkers(prev => {
+          const newMarkers = new Map(prev)
+          newMarkers.delete(id)
+          return newMarkers
+        })
+      }
+    },
+    [markers],
+  )
+
+  const flyTo = useCallback(
+    (lngLat, zoom = 14) => {
+      if (!map || !isMapLoaded || !rateLimiter.checkLimit()) return
+
+      map.flyTo({
+        center: lngLat,
+        zoom,
+        essential: true,
       })
-    }
-  }
-
-  const flyTo = (lngLat, zoom = 14) => {
-    if (!map || !rateLimiter.checkLimit()) return
-
-    map.flyTo({
-      center: lngLat,
-      zoom,
-      essential: true,
-    })
-  }
+    },
+    [map, isMapLoaded],
+  )
 
   const value = {
     map,
@@ -178,6 +254,9 @@ export const MapProvider = ({ children }) => {
     setupSocketListeners,
     isMapVisible,
     setIsMapVisible,
+    isMapLoaded,
+    viewport,
+    setViewport,
   }
 
   return <MapContext.Provider value={value}>{children}</MapContext.Provider>

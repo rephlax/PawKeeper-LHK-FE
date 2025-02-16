@@ -12,8 +12,9 @@ import UpdateUserForm from './components/UpdateUserForm'
 import PasswordChange from './components/PasswordChange'
 import AddPetForm from './components/AddPetForm'
 import UpdatePetForm from './components/UpdatePetForm'
-import MapComponent from './components/Map'
+import MapComponent from './components/Map/MapComponent'
 import Sidebar from './components/Sidebar'
+import MapErrorBoundary from './components/Map/MapErrorBoundary'
 
 function App() {
   const location = useLocation()
@@ -36,7 +37,14 @@ function App() {
         <main className='flex-1 backdrop-blur-md bg-cream-50/50 p-6'>
           <Routes>
             <Route path='/' element={<HomePage />} />
-            <Route path='/map' element={<MapComponent />} />
+            <Route
+              path='/map'
+              element={
+                <MapErrorBoundary>
+                  <MapComponent />
+                </MapErrorBoundary>
+              }
+            />
             <Route
               path='/users/user/:userId'
               element={

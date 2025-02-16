@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { useSocket } from '../../context/SocketContext'
 import { useMap } from '../../context/MapContext'
@@ -14,7 +14,7 @@ const PinForm = ({
 }) => {
   const { user } = useAuth()
   const { socket } = useSocket()
-  const { map } = useMap()
+  const { map, isMapLoaded } = useMap()
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     title: initialData?.title || '',
@@ -24,6 +24,16 @@ const PinForm = ({
     hourlyRate: initialData?.hourlyRate || 0,
   })
 
+  useEffect(() => {
+    if (isEditing && initialData && map?.current && isMapLoaded) {
+      map.current.flyTo({
+        center: initialData.location.coordinates,
+        zoom: 15,
+        essential: true,
+      })
+    }
+  }, [isEditing, initialData, map, isMapLoaded])
+
   const getAuthConfig = () => ({
     headers: {
       Authorization: `Bearer ${localStorage.getItem('authToken')}`,
@@ -32,16 +42,26 @@ const PinForm = ({
   })
 
   const validateForm = () => {
+    const errors = []
+
     if (!formData.title.trim()) {
-      alert('Title is required')
-      return false
+      errors.push('Title is required')
     }
     if (!formData.description.trim()) {
-      alert('Description is required')
-      return false
+      errors.push('Description is required')
+    }
+    if (!formData.services.length) {
+      errors.push('At least one service must be selected')
     }
     if (formData.hourlyRate <= 0) {
-      alert('Please enter a valid hourly rate')
+      errors.push('Hourly rate must be greater than 0')
+    }
+    if (!map?.current || !isMapLoaded) {
+      errors.push('Map is not ready. Please try again.')
+    }
+
+    if (errors.length) {
+      alert(errors.join('\n'))
       return false
     }
     return true
@@ -55,22 +75,21 @@ const PinForm = ({
     }))
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
+    if (!map?.current || !isMapLoaded) {
+      alert('Map is not ready. Please try again.')
+      return
+    }
+
+    if (!validateForm()) return
+
     try {
-      if (!validateForm()) return
-
       setIsLoading(true)
-
-      // Get current map center for pin location
       const center = map.current.getCenter()
-      const location = {
-        lng: center.lng,
-        lat: center.lat,
-      }
 
       const pinData = {
-        longitude: location.lng,
-        latitude: location.lat,
+        longitude: center.lng,
+        latitude: center.lat,
         title: formData.title,
         description: formData.description,
         services: formData.services,
@@ -79,24 +98,23 @@ const PinForm = ({
         serviceRadius: 10,
       }
 
-      let response
-      if (isEditing) {
-        response = await axios.put(
-          `${BACKEND_URL}/api/location-pins/update`,
-          { ...pinData, id: initialData._id },
-          getAuthConfig(),
-        )
-      } else {
-        response = await axios.post(
-          `${BACKEND_URL}/api/location-pins/create`,
-          pinData,
-          getAuthConfig(),
-        )
-      }
+      const response = await axios.post(
+        `${BACKEND_URL}/api/location-pins/${isEditing ? 'update' : 'create'}`,
+        isEditing ? { ...pinData, id: initialData._id } : pinData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      )
 
       if (socket) {
         socket.emit(isEditing ? 'pin_updated' : 'pin_created', response.data)
-        socket.emit('share_location', location)
+        socket.emit('share_location', {
+          lng: center.lng,
+          lat: center.lat,
+        })
       }
 
       onClose()
@@ -104,12 +122,12 @@ const PinForm = ({
       console.error('Error with pin operation:', error)
       alert(
         error.response?.data?.message ||
-          `Failed to ${isEditing ? 'update' : 'create'} pin. Please try again.`,
+          'Failed to save pin. Please try again.',
       )
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [map, isMapLoaded, formData, isEditing, initialData, socket])
 
   return (
     <div className={`space-y-4 ${containerClass}`}>
@@ -218,9 +236,13 @@ const PinForm = ({
         </button>
       </div>
 
-      <div className='mt-4 text-sm text-gray-500'>
-        <p>📍 Pin will be placed at the current map center</p>
-        <p>🔍 Drag the map to adjust the pin location before saving</p>
+      <div className='mt-4 space-y-2 p-4 bg-blue-50 rounded-lg'>
+        <h3 className='font-medium text-blue-700'>Pin Location Instructions</h3>
+        <ul className='list-disc pl-5 text-sm text-blue-600 space-y-1'>
+          <li>Your pin will be placed at the center of the map</li>
+          <li>Move the map to adjust the pin location before saving</li>
+          <li>Use the zoom controls to get a precise location</li>
+        </ul>
       </div>
     </div>
   )

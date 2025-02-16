@@ -9,7 +9,7 @@ import {
   Edit,
 } from 'lucide-react'
 import { useMap } from '../../context/MapContext'
-import PinForm from '../../Modal/PinForm'
+import PinForm from './PinForm'
 import ReviewForm from '../../Modal/ReviewForm'
 import debounce from 'lodash/debounce'
 
