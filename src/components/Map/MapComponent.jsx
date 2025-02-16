@@ -41,15 +41,10 @@ const MapComponent = () => {
   const [currentPopup, setCurrentPopup] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [initError, setInitError] = useState(null)
-
-  useEffect(() => {
-    console.log('Map loading state:', {
-      isLoading,
-      hasMap: !!map,
-      isMapLoaded,
-      hasSocket: !!socket,
-    })
-  }, [isLoading, map, isMapLoaded, socket])
+  const [isCreatingPin, setIsCreatingPin] = useState(false)
+  const [isCreatingReview, setIsCreatingReview] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editData, setEditData] = useState(null)
 
   const getAuthConfig = useCallback(
     () => ({
@@ -61,12 +56,16 @@ const MapComponent = () => {
   )
 
   const clearAllMarkers = useCallback(() => {
-    markersRef.current.forEach(marker => marker.remove())
+    markersRef.current.forEach(marker => {
+      if (marker && marker.remove) {
+        marker.remove()
+      }
+    })
     markersRef.current.clear()
   }, [])
 
   const addPinMarker = useCallback(
-    pin => {
+    (pin, index) => {
       if (!map || !isMapLoaded) return
 
       // Remove existing marker if it exists
@@ -75,72 +74,23 @@ const MapComponent = () => {
         existingMarker.remove()
       }
 
+      // Create new marker
       const marker = createMarker(
         [pin.location.coordinates[0], pin.location.coordinates[1]],
         {
           map,
           type: pin.user === user?._id ? 'user' : 'sitter',
           className: pin.user === user?._id ? 'user-marker' : 'sitter-marker',
-          onClick: () => handlePinClick(pin),
+          onClick: () => setSelectedPin(pin),
+          index,
         },
       )
+
+      // Store the new marker
       markersRef.current.set(pin._id, marker)
       return marker
     },
     [map, user, isMapLoaded],
-  )
-
-  const startChat = useCallback(
-    userId => {
-      if (socket) {
-        socket.emit('start_private_chat', { targetUserId: userId })
-      }
-    },
-    [socket],
-  )
-
-  const handlePinClick = useCallback(
-    pin => {
-      if (currentPopup) {
-        currentPopup.remove()
-      }
-
-      setSelectedPin(pin)
-
-      const popup = createPinPopup(pin, user, {
-        onChat: userId => {
-          if (socket) {
-            socket.emit('start_private_chat', { targetUserId: userId })
-          }
-        },
-        onReview: pin => {
-          if (socket) {
-            socket.emit('toggle_review_creation', {
-              isCreating: true,
-              targetPin: pin,
-            })
-          }
-        },
-        onEdit: pin => {
-          if (socket) {
-            socket.emit('toggle_pin_creation', {
-              isCreating: true,
-              isEditing: true,
-              pinData: pin,
-            })
-          }
-        },
-      })
-
-      popup.setLngLat(pin.location.coordinates).addTo(map)
-      setCurrentPopup(popup)
-
-      popup.on('close', () => {
-        setSelectedPin(null)
-        setCurrentPopup(null)
-      })
-    },
-    [socket, user, currentPopup, map],
   )
 
   const fetchPinsInBounds = useCallback(
@@ -154,6 +104,21 @@ const MapComponent = () => {
           },
         )
 
+        if (isMapLoaded) {
+          // Clear existing markers that are not in the new data
+          markersRef.current.forEach((marker, pinId) => {
+            if (!response.data.find(pin => pin._id === pinId)) {
+              marker.remove()
+              markersRef.current.delete(pinId)
+            }
+          })
+
+          // Add new markers or update existing ones
+          response.data.forEach((pin, index) => {
+            addPinMarker(pin, index)
+          })
+        }
+
         setAllPins(prevPins => {
           const newPins = response.data
           const pinsOutsideBounds = prevPins.filter(pin => {
@@ -165,25 +130,8 @@ const MapComponent = () => {
               lat <= bounds.north
             )
           })
-
           return [...pinsOutsideBounds, ...newPins]
         })
-
-        if (isMapLoaded) {
-          // Update markers
-          response.data.forEach(pin => {
-            if (!markersRef.current.has(pin._id)) {
-              addPinMarker(pin)
-            }
-          })
-
-          markersRef.current.forEach((marker, pinId) => {
-            if (!response.data.find(pin => pin._id === pinId)) {
-              marker.remove()
-              markersRef.current.delete(pinId)
-            }
-          })
-        }
       } catch (error) {
         console.error('Error fetching pins in bounds:', error)
       }
@@ -194,30 +142,21 @@ const MapComponent = () => {
   const fetchAllPins = useCallback(async () => {
     try {
       setIsLoading(true)
-      console.log('Fetching pins with auth:', getAuthConfig())
-
       const response = await axios.get(
         `${BACKEND_URL}/api/location-pins/all-pins`,
         getAuthConfig(),
       )
 
-      console.log('Received pins:', response.data)
-
       setAllPins(response.data)
       clearAllMarkers()
 
       if (isMapLoaded) {
-        response.data.forEach(pin => {
-          addPinMarker(pin)
+        response.data.forEach((pin, index) => {
+          addPinMarker(pin, index)
         })
       }
     } catch (error) {
-      console.error('Error fetching pins:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-      })
-
+      console.error('Error fetching pins:', error)
       alert('Failed to load pins. Please try refreshing the page.')
     } finally {
       setIsLoading(false)
@@ -275,10 +214,7 @@ const MapComponent = () => {
 
     const cleanup = setupMapInteractions(map, {
       onMapClick: () => {
-        if (currentPopup) {
-          currentPopup.remove()
-          setCurrentPopup(null)
-        }
+        setSelectedPin(null)
       },
       onViewportChange: newViewport => {
         setViewport(newViewport)
@@ -298,7 +234,7 @@ const MapComponent = () => {
     })
 
     return cleanup
-  }, [map, isMapLoaded, currentPopup, fetchPinsInBounds])
+  }, [map, isMapLoaded, fetchPinsInBounds])
 
   // Load initial pins
   useEffect(() => {
@@ -314,6 +250,9 @@ const MapComponent = () => {
 
     const handlePinUpdate = data => {
       console.log('Received pin update:', data)
+
+      // Clear markers and refetch all pins to ensure clean state
+      clearAllMarkers()
       fetchAllPins()
       loadUserPin()
 
@@ -328,6 +267,7 @@ const MapComponent = () => {
 
     socket.on('pin_created', handlePinUpdate)
     socket.on('pin_updated', handlePinUpdate)
+    socket.on('pin_deleted', handlePinUpdate)
     socket.on('center_map', location => {
       if (location && map) {
         setUserLocation(location)
@@ -343,9 +283,18 @@ const MapComponent = () => {
     return () => {
       socket.off('pin_created', handlePinUpdate)
       socket.off('pin_updated', handlePinUpdate)
+      socket.off('pin_deleted', handlePinUpdate)
       socket.off('center_map')
     }
-  }, [socket, map, isMapLoaded, fetchAllPins, loadUserPin, viewport])
+  }, [
+    socket,
+    map,
+    isMapLoaded,
+    fetchAllPins,
+    loadUserPin,
+    clearAllMarkers,
+    viewport,
+  ])
 
   return (
     <MapErrorBoundary>
@@ -374,7 +323,17 @@ const MapComponent = () => {
           isMapPage={true}
           userPin={userPin}
           selectedPin={selectedPin}
-          startChat={startChat}
+          allPins={allPins}
+          onPinSelect={setSelectedPin}
+          user={user}
+          socket={socket}
+          isCreatingPin={isCreatingPin}
+          setIsCreatingPin={setIsCreatingPin}
+          isCreatingReview={isCreatingReview}
+          setIsCreatingReview={setIsCreatingReview}
+          isEditing={isEditing}
+          setIsEditing={setIsEditing}
+          editData={editData}
           map={map}
         />
       </div>

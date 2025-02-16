@@ -4,15 +4,57 @@ import { useSocket } from '../../context/SocketContext'
 import { RegularSidebar } from './components'
 import { MapControls } from '../Map'
 import { useMap } from '../../context/MapContext'
+import PinList from './PinList'
 
-const Sidebar = ({ isMapPage, userPin, selectedPin, startChat, map }) => {
-  const { user } = useAuth()
-  const { socket } = useSocket()
-  const [isCreatingPin, setIsCreatingPin] = useState(false)
-  const [isCreatingReview, setIsCreatingReview] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
-  const [editData, setEditData] = useState(null)
+const Sidebar = ({
+  isMapPage,
+  userPin,
+  allPins,
+  selectedPin,
+  onPinSelect,
+  user,
+  socket,
+  isCreatingPin,
+  setIsCreatingPin,
+  isCreatingReview,
+  setIsCreatingReview,
+  isEditing,
+  setIsEditing,
+  editData,
+  startChat,
+  map,
+}) => {
   const { isMapLoaded } = useMap()
+  const [editData, setEditData] = useState(null)
+
+  const handleStartChat = userId => {
+    if (socket) {
+      socket.emit('start_private_chat', { targetUserId: userId })
+    }
+  }
+
+  const handleReview = pin => {
+    if (socket) {
+      socket.emit('toggle_review_creation', {
+        isCreating: true,
+        targetPin: pin,
+      })
+      setIsCreatingReview(true)
+    }
+  }
+
+  const handleEdit = pin => {
+    if (socket) {
+      socket.emit('toggle_pin_creation', {
+        isCreating: true,
+        isEditing: true,
+        pinData: pin,
+      })
+      setIsCreatingPin(true)
+      setIsEditing(true)
+      setEditData(pin)
+    }
+  }
 
   useEffect(() => {
     if (socket) {
@@ -72,26 +114,43 @@ const Sidebar = ({ isMapPage, userPin, selectedPin, startChat, map }) => {
     hasSocket: !!socket,
     hasUser: !!user,
     selectedPin: !!selectedPin,
+    totalPins: allPins?.length,
   })
 
-  return isMapPage ? (
-    <MapControls
-      isMapLoaded={isMapLoaded}
-      user={user}
-      socket={socket}
-      isCreatingPin={isCreatingPin}
-      setIsCreatingPin={setIsCreatingPin}
-      isCreatingReview={isCreatingReview}
-      setIsCreatingReview={setIsCreatingReview}
-      isEditing={isEditing}
-      editData={editData}
-      userPin={userPin}
-      selectedPin={selectedPin}
-      startChat={startChat}
-      map={map}
-    />
-  ) : (
-    <RegularSidebar user={user} />
+  if (!isMapPage) {
+    return <RegularSidebar user={user} />
+  }
+
+  return (
+    <div className='w-80 h-full bg-white shadow-lg flex flex-col'>
+      <MapControls
+        user={user}
+        socket={socket}
+        isCreatingPin={isCreatingPin}
+        setIsCreatingPin={setIsCreatingPin}
+        isCreatingReview={isCreatingReview}
+        setIsCreatingReview={setIsCreatingReview}
+        isEditing={isEditing}
+        editData={editData}
+        userPin={userPin}
+        selectedPin={selectedPin}
+        startChat={startChat}
+        map={map}
+        isMapLoaded={isMapLoaded}
+      />
+
+      <div className='flex-1 overflow-hidden'>
+        <PinList
+          pins={allPins}
+          user={user}
+          selectedPin={selectedPin}
+          onPinSelect={onPinSelect}
+          onStartChat={handleStartChat}
+          onReview={handleReview}
+          onEdit={handleEdit}
+        />
+      </div>
+    </div>
   )
 }
 
