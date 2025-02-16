@@ -11,15 +11,21 @@ export const handleLocationRequest = (socket, map) => {
         lng: position.coords.longitude,
       }
       if (map) {
-        map.flyTo({
+        map.setCenter({
           center: [location.lng, location.lat],
           zoom: 14,
         })
       }
       if (socket && socket.emit) {
         console.log('Sending location to server:', location)
+        socket.emit('share_location', location, response => {
+          if (response?.error) {
+            console.error('Location sharing error:', response.error)
+          } else {
+            console.log('Location shared successfully:', response)
+          }
+        })
         socket.emit('center_user_map', location)
-        socket.emit('share_location', location)
       }
     },
     error => {

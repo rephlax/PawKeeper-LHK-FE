@@ -76,7 +76,9 @@ const PinForm = ({
   }
 
   const handleSubmit = useCallback(async () => {
-    if (!map?.current || !isMapLoaded) {
+    console.log('Map state:', { map, isMapLoaded })
+
+    if (!map || !isMapLoaded) {
       alert('Map is not ready. Please try again.')
       return
     }
@@ -85,7 +87,7 @@ const PinForm = ({
 
     try {
       setIsLoading(true)
-      const center = map.current.getCenter()
+      const center = map.getCenter()
 
       const pinData = {
         longitude: center.lng,
