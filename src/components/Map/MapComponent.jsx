@@ -188,10 +188,14 @@ const MapComponent = () => {
   const fetchAllPins = useCallback(async () => {
     try {
       setIsLoading(true)
+      console.log('Fetching pins with auth:', getAuthConfig())
+
       const response = await axios.get(
         `${BACKEND_URL}/api/location-pins/all-pins`,
         getAuthConfig(),
       )
+
+      console.log('Received pins:', response.data)
 
       setAllPins(response.data)
       clearAllMarkers()
@@ -202,7 +206,13 @@ const MapComponent = () => {
         })
       }
     } catch (error) {
-      console.error('Error fetching pins:', error)
+      console.error('Error fetching pins:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      })
+
+      alert('Failed to load pins. Please try refreshing the page.')
     } finally {
       setIsLoading(false)
     }

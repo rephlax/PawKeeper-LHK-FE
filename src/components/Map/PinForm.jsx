@@ -76,7 +76,12 @@ const PinForm = ({
   }
 
   const handleSubmit = useCallback(async () => {
-    console.log('Map state:', { map, isMapLoaded })
+    console.log('Submitting pin with data:', {
+      map,
+      isMapLoaded,
+      formData,
+      authToken: localStorage.getItem('authToken'),
+    })
 
     if (!map || !isMapLoaded) {
       alert('Map is not ready. Please try again.')
@@ -100,6 +105,8 @@ const PinForm = ({
         serviceRadius: 10,
       }
 
+      console.log('Sending pin data:', pinData)
+
       const response = await axios.post(
         `${BACKEND_URL}/api/location-pins/${isEditing ? 'update' : 'create'}`,
         isEditing ? { ...pinData, id: initialData._id } : pinData,
@@ -111,6 +118,8 @@ const PinForm = ({
         },
       )
 
+      console.log('Pin creation response:', response.data)
+
       if (socket) {
         socket.emit(isEditing ? 'pin_updated' : 'pin_created', response.data)
         socket.emit('share_location', {
@@ -121,7 +130,11 @@ const PinForm = ({
 
       onClose()
     } catch (error) {
-      console.error('Error with pin operation:', error)
+      console.error('Error with pin operation:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      })
       alert(
         error.response?.data?.message ||
           'Failed to save pin. Please try again.',
