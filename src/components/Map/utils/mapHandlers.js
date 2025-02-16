@@ -6,8 +6,21 @@ export const createMarker = (coordinates, options = {}) => {
   const { map, type = 'default', onClick, className = '' } = options
 
   const el = document.createElement('div')
-  el.className = `marker ${className}`
-  el.innerHTML = type === 'user' ? '📍' : type === 'sitter' ? '🐾' : '📌'
+
+  el.className = `
+      w-10 h-10 
+      rounded-full 
+      flex items-center justify-center 
+      text-2xl 
+      cursor-pointer 
+      shadow-md 
+      border-2 border-white 
+      transform transition-transform hover:scale-110
+      ${type === 'user' ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-green-500 text-white hover:bg-green-600'}
+      ${className}
+    `
+
+  el.innerHTML = type === 'user' ? '🏠' : type === 'sitter' ? '🐾' : '📌'
 
   const marker = new mapboxgl.Marker(el).setLngLat(coordinates)
 
