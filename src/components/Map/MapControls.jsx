@@ -13,6 +13,7 @@ import PinForm from './PinForm'
 import { debounce } from 'lodash'
 import { handleLocationRequest } from './utils/locationHandlers'
 import { handlePinCreation, handlePinEdit } from './utils/pinHandlers'
+import mapboxgl from 'mapbox-gl'
 
 const MapControls = ({
   user,
@@ -117,7 +118,7 @@ const MapControls = ({
 
       <div className='space-y-2'>
         <button
-          onClick={handleLocationRequest}
+          onClick={() => handleLocationRequest(socket, map?.current)}
           className='flex items-center space-x-2 w-full p-3 text-left transition-colors hover:bg-cream-100 rounded-lg'
         >
           <Compass className='h-5 w-5' />
