@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { useSocket } from '../../context/SocketContext'
-import { MapControls, RegularSidebar } from './components'
+import { RegularSidebar } from './components'
+import { MapControls } from '../Map'
 
 const Sidebar = ({ isMapPage, userPin, selectedPin, startChat, map }) => {
   const { user } = useAuth()

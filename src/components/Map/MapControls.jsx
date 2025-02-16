@@ -12,6 +12,8 @@ import { useMap } from '../../context/MapContext'
 import PinForm from './PinForm'
 import ReviewForm from '../../Modal/ReviewForm'
 import debounce from 'lodash/debounce'
+import { handleLocationRequest } from './utils/locationHandlers'
+import { handlePinCreation, handlePinEdit } from './utils/pinHandlers'
 
 const MapControls = ({
   user,
@@ -56,32 +58,6 @@ const MapControls = ({
   useEffect(() => {
     searchPlaces(searchQuery)
   }, [searchQuery])
-
-  const handleLocationRequest = () => {
-    if (!navigator.geolocation) {
-      alert('Geolocation is not supported by your browser')
-      return
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      position => {
-        const location = {
-          lng: position.coords.longitude,
-          lat: position.coords.latitude,
-        }
-        flyTo(location)
-        if (socket) {
-          socket.emit('share_location', location)
-        }
-      },
-      error => {
-        console.error('Location error:', error)
-        alert(
-          'Unable to get your location. Please check your browser settings.',
-        )
-      },
-    )
-  }
 
   const handleSearchItemClick = place => {
     flyTo(place.center)
@@ -182,17 +158,9 @@ const MapControls = ({
         <div className='space-y-2'>
           {userPin ? (
             <button
-              onClick={() => {
-                setIsCreatingPin(true)
-                setIsEditing(true)
-                if (socket) {
-                  socket.emit('toggle_pin_creation', {
-                    isCreating: true,
-                    isEditing: true,
-                    pinData: userPin,
-                  })
-                }
-              }}
+              onClick={() =>
+                handlePinEdit(setIsCreatingPin, setIsEditing, socket, userPin)
+              }
               className='flex items-center space-x-2 w-full p-3 text-left transition-colors hover:bg-blue-100 rounded-lg text-blue-600'
             >
               <Edit className='h-5 w-5' />
@@ -200,15 +168,9 @@ const MapControls = ({
             </button>
           ) : (
             <button
-              onClick={() => {
-                setIsCreatingPin(true)
-                if (socket) {
-                  socket.emit('toggle_pin_creation', {
-                    isCreating: true,
-                    isEditing: false,
-                  })
-                }
-              }}
+              onClick={() =>
+                handlePinCreation(isCreatingPin, setIsCreatingPin, socket)
+              }
               className='flex items-center space-x-2 w-full p-3 text-left transition-colors hover:bg-cream-100 rounded-lg'
             >
               <MapPin className='h-5 w-5' />
