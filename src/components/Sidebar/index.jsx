@@ -4,7 +4,7 @@ import { useSocket } from '../../context/SocketContext'
 import { RegularSidebar } from './components'
 import { MapControls } from '../Map'
 import { useMap } from '../../context/MapContext'
-import PinList from './PinList'
+import PinList from '../Map/PinList'
 
 const Sidebar = ({
   isMapPage,
