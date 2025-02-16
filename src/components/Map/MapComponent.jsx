@@ -67,12 +67,18 @@ const MapComponent = () => {
 
   const addPinMarker = useCallback(
     pin => {
-      if (!map?.current || !isMapLoaded) return
+      if (!map || !isMapLoaded) return
+
+      // Remove existing marker if it exists
+      const existingMarker = markersRef.current.get(pin._id)
+      if (existingMarker) {
+        existingMarker.remove()
+      }
 
       const marker = createMarker(
         [pin.location.coordinates[0], pin.location.coordinates[1]],
         {
-          map: map.current,
+          map,
           type: pin.user === user?._id ? 'user' : 'sitter',
           className: pin.user === user?._id ? 'user-marker' : 'sitter-marker',
           onClick: () => handlePinClick(pin),
@@ -126,7 +132,7 @@ const MapComponent = () => {
         },
       })
 
-      popup.setLngLat(pin.location.coordinates).addTo(map.current)
+      popup.setLngLat(pin.location.coordinates).addTo(map)
       setCurrentPopup(popup)
 
       popup.on('close', () => {
@@ -265,9 +271,9 @@ const MapComponent = () => {
 
   // Set up map interactions
   useEffect(() => {
-    if (!map?.current || !isMapLoaded) return
+    if (!map || !isMapLoaded) return
 
-    const cleanup = setupMapInteractions(map.current, {
+    const cleanup = setupMapInteractions(map, {
       onMapClick: () => {
         if (currentPopup) {
           currentPopup.remove()
@@ -277,7 +283,7 @@ const MapComponent = () => {
       onViewportChange: newViewport => {
         setViewport(newViewport)
 
-        const bounds = map.current.getBounds()
+        const bounds = map.getBounds()
         const boundingBox = {
           north: bounds.getNorth(),
           south: bounds.getSouth(),
@@ -296,7 +302,7 @@ const MapComponent = () => {
 
   // Load initial pins
   useEffect(() => {
-    if (map?.current && isMapLoaded) {
+    if (map && isMapLoaded) {
       fetchAllPins()
       loadUserPin()
     }
@@ -306,17 +312,26 @@ const MapComponent = () => {
   useEffect(() => {
     if (!socket || !isMapLoaded) return
 
-    const handlePinUpdate = () => {
+    const handlePinUpdate = data => {
+      console.log('Received pin update:', data)
       fetchAllPins()
       loadUserPin()
+
+      if (data?.location?.coordinates && map) {
+        map.flyTo({
+          center: data.location.coordinates,
+          zoom: 14,
+          essential: true,
+        })
+      }
     }
 
     socket.on('pin_created', handlePinUpdate)
     socket.on('pin_updated', handlePinUpdate)
     socket.on('center_map', location => {
-      if (location && map?.current) {
+      if (location && map) {
         setUserLocation(location)
-        map.current.flyTo({
+        map.flyTo({
           center: [location.lng, location.lat],
           zoom: 14,
         })
@@ -360,7 +375,7 @@ const MapComponent = () => {
           userPin={userPin}
           selectedPin={selectedPin}
           startChat={startChat}
-          map={map?.current}
+          map={map}
         />
       </div>
     </MapErrorBoundary>
