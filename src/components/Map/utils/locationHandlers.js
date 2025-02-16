@@ -15,14 +15,17 @@ export const handleLocationRequest = (socket, map) => {
       if (map) {
         console.log('Panning map to:', location)
         try {
-          // Center the map
           map.setCenter([location.lng, location.lat])
-          // Set zoom
-          map.flyTo({
+
+          //flyTo for smooth zoom
+          const options = {
             center: [location.lng, location.lat],
             zoom: 14,
             essential: true,
-          })
+          }
+
+          const boundFlyTo = () => map.flyTo(options)
+          boundFlyTo()
         } catch (error) {
           console.error('Error moving map:', error)
         }
