@@ -5,9 +5,8 @@ export const DEFAULT_CENTER = [-0.118092, 51.509865]
 export const createMarker = (coordinates, options = {}) => {
   const { map, type = 'default', onClick, className = '' } = options
 
-  // Create marker element with better styling
   const el = document.createElement('div')
-  
+
   el.className = `
     w-10 h-10 
     rounded-full 
@@ -24,10 +23,13 @@ export const createMarker = (coordinates, options = {}) => {
   const icon = type === 'user' ? '🏠' : type === 'sitter' ? '🐾' : '📌'
   el.innerHTML = `<span style="font-size: 1.5rem;">${icon}</span>`
 
-  // Create and configure the marker
+  // Create marker with improved z-index handling
   const marker = new mapboxgl.Marker({
     element: el,
     anchor: 'bottom',
+    offset: [0, 0],
+    // Higher z-index for user's own pin
+    zIndexOffset: type === 'user' ? 1000 : 0,
     draggable: false,
   }).setLngLat(coordinates)
 
@@ -37,7 +39,7 @@ export const createMarker = (coordinates, options = {}) => {
 
   if (onClick) {
     el.addEventListener('click', e => {
-      e.stopPropagation() // Prevent map click event
+      e.stopPropagation()
       onClick()
     })
   }
@@ -52,7 +54,7 @@ export const createPinPopup = (pin, user, options = {}) => {
 
   const isOwnPin = pin.user === user?._id
 
-  // Enhanced popup content with more details
+  // Show different content based on user type and ownership
   popupContent.innerHTML = `
     <div class="space-y-3">
       <h3 class="font-bold text-lg">${pin.title}</h3>
@@ -63,33 +65,37 @@ export const createPinPopup = (pin, user, options = {}) => {
         <p class="font-medium mt-2">Availability:</p>
         <p class="ml-2">${pin.availability}</p>
         <p class="font-medium mt-2">Rate:</p>
-        <p class="ml-2">$-${pin.hourlyRate}/hr</p>
+        <p class="ml-2">$${pin.hourlyRate}/hr</p>
       </div>
       <div class="pt-2">
         ${
           isOwnPin
-            ? '<button class="edit-pin-btn w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">Edit Pin</button>'
-            : `
-              <button class="chat-btn w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 mb-2 transition-colors">
-                Chat with Sitter
-              </button>
-              <button class="review-btn w-full px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors">
-                Leave Review
-              </button>
-            `
+            ? user?.sitter
+              ? '<button class="edit-pin-btn w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">Edit Pin</button>'
+              : ''
+            : user
+              ? `
+                <button class="chat-btn w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 mb-2 transition-colors">
+                  Chat with Sitter
+                </button>
+                <button class="review-btn w-full px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors">
+                  Leave Review
+                </button>
+              `
+              : '<p class="text-sm text-gray-500 text-center">Please log in to interact with sitters</p>'
         }
       </div>
     </div>
   `
 
-  // Add event listeners
-  if (!isOwnPin) {
+  // Only add event listeners if not owner's pin and user is logged in
+  if (!isOwnPin && user) {
     const chatBtn = popupContent.querySelector('.chat-btn')
     const reviewBtn = popupContent.querySelector('.review-btn')
 
     chatBtn?.addEventListener('click', () => onChat?.(pin.user))
     reviewBtn?.addEventListener('click', () => onReview?.(pin))
-  } else {
+  } else if (isOwnPin && user?.sitter) {
     const editBtn = popupContent.querySelector('.edit-pin-btn')
     editBtn?.addEventListener('click', () => onEdit?.(pin))
   }
@@ -99,12 +105,11 @@ export const createPinPopup = (pin, user, options = {}) => {
     closeOnClick: false,
     maxWidth: '300px',
     className: 'pin-popup',
-    offset: [0, -20], // Offset to account for marker height
+    offset: [0, -20],
   }).setDOMContent(popupContent)
 }
 
 export const setupMapControls = map => {
-  // Add navigation controls
   map.addControl(
     new mapboxgl.NavigationControl({
       showCompass: true,
@@ -114,7 +119,6 @@ export const setupMapControls = map => {
     'top-right',
   )
 
-  // Add geolocation control with tracking
   map.addControl(
     new mapboxgl.GeolocateControl({
       positionOptions: {
@@ -126,7 +130,6 @@ export const setupMapControls = map => {
     'top-right',
   )
 
-  // Add scale control
   map.addControl(new mapboxgl.ScaleControl(), 'bottom-left')
 }
 
@@ -153,10 +156,8 @@ export const handleMapSearch = async query => {
 
 export const setupMapInteractions = (map, options = {}) => {
   const { onMapClick, onViewportChange } = options
-
   const cleanup = []
 
-  // Handle map clicks
   if (onMapClick) {
     const clickHandler = e => {
       if (!e.originalEvent.target.className.includes('marker')) {
@@ -167,7 +168,6 @@ export const setupMapInteractions = (map, options = {}) => {
     cleanup.push(() => map.off('click', clickHandler))
   }
 
-  // Handle viewport changes
   if (onViewportChange) {
     const moveEndHandler = () => {
       const center = map.getCenter()
@@ -190,6 +190,5 @@ export const setupMapInteractions = (map, options = {}) => {
 
   setupMapControls(map)
 
-  // Return cleanup function
   return () => cleanup.forEach(fn => fn())
 }

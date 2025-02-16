@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { useMap } from '../../context/MapContext'
 import PinForm from './PinForm'
+import ReviewForm from './ReviewForm'
 import { debounce } from 'lodash'
 import { handleLocationRequest } from './utils/locationHandlers'
 import { handlePinCreation, handlePinEdit } from './utils/pinHandlers'
@@ -85,7 +86,7 @@ const MapControls = ({
             {isCreatingReview
               ? 'Write a Review'
               : isEditing
-                ? 'Edit Location Pin'
+                ? 'Edit Your Pin'
                 : 'Create Location Pin'}
           </h2>
           <button
@@ -119,14 +120,7 @@ const MapControls = ({
 
       <div className='space-y-2'>
         <button
-          onClick={() => {
-            console.log('Map controls state:', {
-              hasMap: !!map,
-              hasSocket: !!socket,
-              isMapLoaded,
-            })
-            handleLocationRequest(socket, map)
-          }}
+          onClick={() => handleLocationRequest(socket, map)}
           className='flex items-center space-x-2 w-full p-3 text-left transition-colors hover:bg-cream-100 rounded-lg'
         >
           <Compass className='h-5 w-5' />
@@ -172,7 +166,7 @@ const MapControls = ({
               className='flex items-center space-x-2 w-full p-3 text-left transition-colors hover:bg-blue-100 rounded-lg text-blue-600'
             >
               <Edit className='h-5 w-5' />
-              <span>Edit Location Pin</span>
+              <span>Edit Your Pin</span>
             </button>
           ) : (
             <button
@@ -188,7 +182,7 @@ const MapControls = ({
         </div>
       )}
 
-      {selectedPin && selectedPin.user !== user?._id && (
+      {selectedPin && selectedPin.user !== user?._id && user && (
         <div className='space-y-2'>
           <button
             onClick={() => startChat(selectedPin.user)}
