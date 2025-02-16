@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext'
 import { useSocket } from '../../context/SocketContext'
 import { RegularSidebar } from './components'
 import { MapControls } from '../Map'
+import { useMap } from '../../context/MapContext'
 
 const Sidebar = ({ isMapPage, userPin, selectedPin, startChat, map }) => {
   const { user } = useAuth()
@@ -11,6 +12,7 @@ const Sidebar = ({ isMapPage, userPin, selectedPin, startChat, map }) => {
   const [isCreatingReview, setIsCreatingReview] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [editData, setEditData] = useState(null)
+  const { isMapLoaded } = useMap()
 
   useEffect(() => {
     if (socket) {
