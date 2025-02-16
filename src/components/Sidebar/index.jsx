@@ -74,6 +74,7 @@ const Sidebar = ({ isMapPage, userPin, selectedPin, startChat, map }) => {
 
   return isMapPage ? (
     <MapControls
+      isMapLoaded={isMapLoaded}
       user={user}
       socket={socket}
       isCreatingPin={isCreatingPin}

@@ -29,6 +29,7 @@ const MapControls = ({
   startChat,
 }) => {
   const [searchQuery, setSearchQuery] = useState('')
+  const { isMapLoaded } = useMap()
   const [searchResults, setSearchResults] = useState([])
   const [isSearching, setIsSearching] = useState(false)
   const { map, flyTo } = useMap()
