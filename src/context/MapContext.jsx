@@ -52,7 +52,7 @@ export const MapProvider = ({ children }) => {
         zoom: viewport.zoom,
       })
 
-      // Add map load handler
+      // Map load handler
       newMap.on('load', () => {
         console.log('Map loaded successfully')
         setIsMapLoaded(true)
@@ -62,13 +62,13 @@ export const MapProvider = ({ children }) => {
         }
       })
 
-      // Add error handler
+      // Error handler
       newMap.on('error', e => {
         console.error('Map error:', e)
         setLocationError('Error loading map. Please refresh the page.')
       })
 
-      // Add viewport change handler
+      // Viewport change handler
       newMap.on('moveend', () => {
         const center = newMap.getCenter()
         const bounds = newMap.getBounds()
@@ -85,10 +85,6 @@ export const MapProvider = ({ children }) => {
         }
 
         setViewport(newViewport)
-
-        if (socket && socket.emit) {
-          socket.emit('viewport_update', newViewport)
-        }
       })
 
       newMap.addControl(new mapboxgl.NavigationControl(), 'top-right')
@@ -251,11 +247,43 @@ export const MapProvider = ({ children }) => {
     (lngLat, zoom = 14) => {
       if (!map || !isMapLoaded || !rateLimiter.checkLimit()) return
 
-      map.flyTo({
-        center: lngLat,
-        zoom,
-        essential: true,
-      })
+      console.log('Flying to:', { lngLat, zoom, mapInstance: map })
+
+      try {
+        map.off('moveend')
+
+        map.flyTo({
+          center: lngLat,
+          zoom,
+          essential: true,
+          duration: 2000,
+        })
+
+        map.once('moveend', () => {
+          const bounds = map.getBounds()
+          setViewport({
+            longitude: lngLat[0],
+            latitude: lngLat[1],
+            zoom,
+            bounds: {
+              north: bounds.getNorth(),
+              south: bounds.getSouth(),
+              east: bounds.getEast(),
+              west: bounds.getWest(),
+            },
+          })
+        })
+      } catch (error) {
+        console.error('FlyTo error:', error)
+        try {
+          map.jumpTo({
+            center: lngLat,
+            zoom,
+          })
+        } catch (fallbackError) {
+          console.error('JumpTo fallback error:', fallbackError)
+        }
+      }
     },
     [map, isMapLoaded],
   )

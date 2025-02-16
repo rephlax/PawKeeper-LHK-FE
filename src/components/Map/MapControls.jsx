@@ -119,8 +119,12 @@ const MapControls = ({
       <div className='space-y-2'>
         <button
           onClick={() => {
-            console.log('Map instance:', map)
-            handleLocationRequest(socket, map?.current || map)
+            console.log('Map controls state:', {
+              hasMap: !!map,
+              hasSocket: !!socket,
+              isMapLoaded,
+            })
+            handleLocationRequest(socket, map)
           }}
           className='flex items-center space-x-2 w-full p-3 text-left transition-colors hover:bg-cream-100 rounded-lg'
         >

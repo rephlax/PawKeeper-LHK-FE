@@ -4,6 +4,8 @@ export const handleLocationRequest = (socket, map) => {
     return
   }
 
+  console.log('Location request initiated with:', { hasMap: !!map })
+
   navigator.geolocation.getCurrentPosition(
     position => {
       const location = {
@@ -13,32 +15,30 @@ export const handleLocationRequest = (socket, map) => {
       console.log('Got position:', location)
 
       if (map) {
-        console.log('Panning map to:', location)
+        console.log('Updating map position')
         try {
-          map.setCenter([location.lng, location.lat])
-
-          //flyTo for smooth zoom
-          const options = {
+          map.flyTo({
             center: [location.lng, location.lat],
             zoom: 14,
             essential: true,
-          }
-
-          const boundFlyTo = () => map.flyTo(options)
-          boundFlyTo()
+            duration: 2000,
+          })
         } catch (error) {
-          console.error('Error moving map:', error)
+          console.error('Map movement error:', error)
+          // Fallback
+          try {
+            map.jumpTo({
+              center: [location.lng, location.lat],
+              zoom: 14,
+            })
+          } catch (fallbackError) {
+            console.error('Fallback movement error:', fallbackError)
+          }
         }
-      } else {
-        console.error('Map instance not available')
       }
 
       if (socket && socket.emit) {
-        console.log('Socket state:', {
-          isConnected: socket.connected,
-          socketId: socket.id,
-        })
-
+        console.log('Emitting location update')
         socket.emit('share_location', location, response => {
           if (response?.error) {
             console.error('Location sharing error:', response.error)

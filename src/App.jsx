@@ -40,9 +40,11 @@ function App() {
             <Route
               path='/map'
               element={
-                <MapErrorBoundary>
-                  <MapComponent />
-                </MapErrorBoundary>
+                <PrivateRoute>
+                  <MapErrorBoundary>
+                    <MapComponent />
+                  </MapErrorBoundary>
+                </PrivateRoute>
               }
             />
             <Route
