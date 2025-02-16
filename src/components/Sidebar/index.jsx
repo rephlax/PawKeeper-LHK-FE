@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { useSocket } from '../../context/SocketContext'
 import { RegularSidebar } from './components'
@@ -21,11 +21,11 @@ const Sidebar = ({
   isEditing,
   setIsEditing,
   editData,
+  setEditData,
   startChat,
   map,
 }) => {
   const { isMapLoaded } = useMap()
-  const [editData, setEditData] = useState(null)
 
   const handleStartChat = userId => {
     if (socket) {
@@ -95,7 +95,7 @@ const Sidebar = ({
         socket.off('review_created', handleReviewCreated)
       }
     }
-  }, [socket])
+  }, [socket, setIsCreatingPin, setIsEditing, setEditData, setIsCreatingReview])
 
   useEffect(() => {
     if (!selectedPin) {
@@ -103,7 +103,7 @@ const Sidebar = ({
       setIsEditing(false)
       setEditData(null)
     }
-  }, [selectedPin])
+  }, [selectedPin, setIsCreatingReview, setIsEditing, setEditData])
 
   console.log('Sidebar render:', {
     isMapPage,
