@@ -118,7 +118,10 @@ const MapControls = ({
 
       <div className='space-y-2'>
         <button
-          onClick={() => handleLocationRequest(socket, map?.current)}
+          onClick={() => {
+            console.log('Map instance:', map)
+            handleLocationRequest(socket, map?.current || map)
+          }}
           className='flex items-center space-x-2 w-full p-3 text-left transition-colors hover:bg-cream-100 rounded-lg'
         >
           <Compass className='h-5 w-5' />
