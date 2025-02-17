@@ -35,6 +35,24 @@ const MapComponent = () => {
     latitude: DEFAULT_CENTER[1],
     zoom: 9,
   })
+
+  const isValidViewport = viewport => {
+    return (
+      viewport &&
+      typeof viewport.longitude === 'number' &&
+      !isNaN(viewport.longitude) &&
+      viewport.longitude >= -180 &&
+      viewport.longitude <= 180 &&
+      typeof viewport.latitude === 'number' &&
+      !isNaN(viewport.latitude) &&
+      viewport.latitude >= -90 &&
+      viewport.latitude <= 90 &&
+      typeof viewport.zoom === 'number' &&
+      !isNaN(viewport.zoom) &&
+      viewport.zoom >= 0
+    )
+  }
+
   const [userPin, setUserPin] = useState(null)
   const [allPins, setAllPins] = useState([])
   const [selectedPin, setSelectedPin] = useState(null)
@@ -287,6 +305,11 @@ const MapComponent = () => {
         }
       },
       onViewportChange: newViewport => {
+        if (!isValidViewport(newViewport)) {
+          console.warn('Invalid viewport data:', newViewport)
+          return
+        }
+
         setViewport(newViewport)
 
         if (debounceTimeout) {
@@ -294,16 +317,38 @@ const MapComponent = () => {
         }
 
         debounceTimeout = setTimeout(() => {
-          const bounds = map.getBounds()
-          const boundingBox = {
-            north: bounds.getNorth(),
-            south: bounds.getSouth(),
-            east: bounds.getEast(),
-            west: bounds.getWest(),
-          }
+          try {
+            const bounds = map.getBounds()
+            if (!bounds) {
+              console.warn('Unable to get map bounds')
+              return
+            }
 
-          if (newViewport.zoom >= 9) {
-            fetchPinsInBounds(boundingBox)
+            const boundingBox = {
+              north: bounds.getNorth(),
+              south: bounds.getSouth(),
+              east: bounds.getEast(),
+              west: bounds.getWest(),
+            }
+
+            // Validate bounds before fetching
+            if (Object.values(boundingBox).some(val => !val && val !== 0)) {
+              console.warn('Invalid bounds values:', boundingBox)
+              return
+            }
+
+            if (newViewport.zoom >= 9) {
+              fetchPinsInBounds(boundingBox)
+
+              if (socket) {
+                socket.emit('viewport_update', {
+                  ...newViewport,
+                  bounds: boundingBox,
+                })
+              }
+            }
+          } catch (error) {
+            console.error('Error handling viewport change:', error)
           }
         }, 500)
       },
@@ -315,7 +360,7 @@ const MapComponent = () => {
         clearTimeout(debounceTimeout)
       }
     }
-  }, [map, isMapLoaded, currentPopup, fetchPinsInBounds])
+  }, [map, isMapLoaded, currentPopup, fetchPinsInBounds, socket])
 
   // Load initial pins
   useEffect(() => {
