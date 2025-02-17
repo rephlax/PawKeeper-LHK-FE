@@ -444,23 +444,6 @@ const MapComponent = () => {
           </div>
         ) : null}
         <div ref={mapContainer} className='w-full h-full' />
-        <Sidebar
-          isMapPage={true}
-          userPin={userPin}
-          selectedPin={selectedPin}
-          allPins={allPins}
-          onPinSelect={setSelectedPin}
-          user={user}
-          socket={socket}
-          isCreatingPin={isCreatingPin}
-          setIsCreatingPin={setIsCreatingPin}
-          isCreatingReview={isCreatingReview}
-          setIsCreatingReview={setIsCreatingReview}
-          isEditing={isEditing}
-          setIsEditing={setIsEditing}
-          editData={editData}
-          map={map}
-        />
       </div>
     </MapErrorBoundary>
   )

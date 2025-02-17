@@ -31,7 +31,23 @@ function App() {
 
       <div className='flex flex-1 relative z-10'>
         <aside className='w-64 backdrop-blur-md bg-cream-50/50 border-r border-cream-accent text-cream-text'>
-          <Sidebar isMapPage={isMapPage} />
+          <Sidebar
+            isMapPage={isMapPage}
+            userPin={userPin}
+            selectedPin={selectedPin}
+            allPins={allPins}
+            onPinSelect={setSelectedPin}
+            user={user}
+            socket={socket}
+            isCreatingPin={isCreatingPin}
+            setIsCreatingPin={setIsCreatingPin}
+            isCreatingReview={isCreatingReview}
+            setIsCreatingReview={setIsCreatingReview}
+            isEditing={isEditing}
+            setIsEditing={setIsEditing}
+            editData={editData}
+            map={map}
+          />
         </aside>
 
         <main className='flex-1 backdrop-blur-md bg-cream-50/50 p-6'>
