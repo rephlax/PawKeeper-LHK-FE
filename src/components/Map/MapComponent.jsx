@@ -96,44 +96,55 @@ const MapComponent = () => {
   const fetchPinsInBounds = useCallback(
     async bounds => {
       try {
+        const normalizedBounds = {
+          north: Number(bounds.north.toFixed(6)),
+          south: Number(bounds.south.toFixed(6)),
+          east: Number(bounds.east.toFixed(6)),
+          west: Number(bounds.west.toFixed(6)),
+        }
+
+        console.log('Fetching pins with bounds:', normalizedBounds)
+
         const response = await axios.get(
           `${BACKEND_URL}/api/location-pins/in-bounds`,
           {
-            params: bounds,
+            params: normalizedBounds,
             ...getAuthConfig(),
           },
         )
 
-        if (isMapLoaded) {
-          // Clear existing markers that are not in the new data
-          markersRef.current.forEach((marker, pinId) => {
-            if (!response.data.find(pin => pin._id === pinId)) {
-              marker.remove()
-              markersRef.current.delete(pinId)
-            }
+        if (response.data) {
+          setAllPins(prevPins => {
+            const existingPinsMap = new Map(prevPins.map(pin => [pin._id, pin]))
+
+            response.data.forEach(pin => {
+              existingPinsMap.set(pin._id, pin)
+            })
+
+            return Array.from(existingPinsMap.values())
           })
 
-          // Add new markers or update existing ones
-          response.data.forEach((pin, index) => {
-            addPinMarker(pin, index)
-          })
+          if (isMapLoaded) {
+            markersRef.current.forEach((marker, pinId) => {
+              if (!response.data.find(pin => pin._id === pinId)) {
+                marker.remove()
+                markersRef.current.delete(pinId)
+              }
+            })
+            response.data.forEach((pin, index) => {
+              if (!markersRef.current.has(pin._id)) {
+                addPinMarker(pin, index)
+              }
+            })
+          }
         }
-
-        setAllPins(prevPins => {
-          const newPins = response.data
-          const pinsOutsideBounds = prevPins.filter(pin => {
-            const [lng, lat] = pin.location.coordinates
-            return !(
-              lng >= bounds.west &&
-              lng <= bounds.east &&
-              lat >= bounds.south &&
-              lat <= bounds.north
-            )
-          })
-          return [...pinsOutsideBounds, ...newPins]
-        })
       } catch (error) {
-        console.error('Error fetching pins in bounds:', error)
+        console.error('Error fetching pins in bounds:', error.response || error)
+        if (error.response?.status === 500) {
+          console.warn(
+            'Server error when fetching pins, retaining existing pins',
+          )
+        }
       }
     },
     [getAuthConfig, addPinMarker, isMapLoaded],
@@ -147,17 +158,27 @@ const MapComponent = () => {
         getAuthConfig(),
       )
 
-      setAllPins(response.data)
-      clearAllMarkers()
+      if (response.data) {
+        setAllPins(response.data)
 
-      if (isMapLoaded) {
-        response.data.forEach((pin, index) => {
-          addPinMarker(pin, index)
-        })
+        if (isMapLoaded) {
+          clearAllMarkers()
+
+          response.data.forEach((pin, index) => {
+            addPinMarker(pin, index)
+          })
+        }
       }
     } catch (error) {
-      console.error('Error fetching pins:', error)
-      alert('Failed to load pins. Please try refreshing the page.')
+      console.error('Error fetching pins:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      })
+
+      if (error.response?.status !== 500) {
+        alert('Failed to load pins. Please try refreshing the page.')
+      }
     } finally {
       setIsLoading(false)
     }
@@ -208,33 +229,48 @@ const MapComponent = () => {
     }
   }, [])
 
-  // Set up map interactions
   useEffect(() => {
     if (!map || !isMapLoaded) return
 
+    let debounceTimeout
+
     const cleanup = setupMapInteractions(map, {
       onMapClick: () => {
-        setSelectedPin(null)
+        if (currentPopup) {
+          currentPopup.remove()
+          setCurrentPopup(null)
+        }
       },
       onViewportChange: newViewport => {
         setViewport(newViewport)
 
-        const bounds = map.getBounds()
-        const boundingBox = {
-          north: bounds.getNorth(),
-          south: bounds.getSouth(),
-          east: bounds.getEast(),
-          west: bounds.getWest(),
+        if (debounceTimeout) {
+          clearTimeout(debounceTimeout)
         }
 
-        if (newViewport.zoom >= 9) {
-          fetchPinsInBounds(boundingBox)
-        }
+        debounceTimeout = setTimeout(() => {
+          const bounds = map.getBounds()
+          const boundingBox = {
+            north: bounds.getNorth(),
+            south: bounds.getSouth(),
+            east: bounds.getEast(),
+            west: bounds.getWest(),
+          }
+
+          if (newViewport.zoom >= 9) {
+            fetchPinsInBounds(boundingBox)
+          }
+        }, 500)
       },
     })
 
-    return cleanup
-  }, [map, isMapLoaded, fetchPinsInBounds])
+    return () => {
+      cleanup()
+      if (debounceTimeout) {
+        clearTimeout(debounceTimeout)
+      }
+    }
+  }, [map, isMapLoaded, currentPopup, fetchPinsInBounds])
 
   // Load initial pins
   useEffect(() => {
