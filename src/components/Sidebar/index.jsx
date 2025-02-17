@@ -120,34 +120,39 @@ const Sidebar = ({
   }
 
   return (
-    <div className='w-80 h-full bg-white shadow-lg flex flex-col'>
-      <MapControls
-        user={user}
-        socket={socket}
-        isCreatingPin={isCreatingPin}
-        setIsCreatingPin={setIsCreatingPin}
-        isCreatingReview={isCreatingReview}
-        setIsCreatingReview={setIsCreatingReview}
-        isEditing={isEditing}
-        setIsEditing={setIsEditing}
-        editData={editData}
-        userPin={userPin}
-        selectedPin={selectedPin}
-        startChat={startChat}
-        map={map}
-        isMapLoaded={isMapLoaded}
-      />
+    <div className='w-80 h-full bg-white shadow-lg'>
+      <div className='flex flex-col h-full'>
+        <div className='shrink-0'>
+          <MapControls
+            user={user}
+            socket={socket}
+            isCreatingPin={isCreatingPin}
+            setIsCreatingPin={setIsCreatingPin}
+            isCreatingReview={isCreatingReview}
+            setIsCreatingReview={setIsCreatingReview}
+            isEditing={isEditing}
+            editData={editData}
+            userPin={userPin}
+            selectedPin={selectedPin}
+            startChat={startChat}
+            map={map}
+            isMapLoaded={isMapLoaded}
+          />
+        </div>
 
-      <div className='flex-1 overflow-hidden'>
-        <PinList
-          pins={allPins}
-          user={user}
-          selectedPin={selectedPin}
-          onPinSelect={onPinSelect}
-          onStartChat={handleStartChat}
-          onReview={handleReview}
-          onEdit={handleEdit}
-        />
+        {!isCreatingPin && !isCreatingReview && (
+          <div className='flex-1 overflow-y-auto'>
+            <PinList
+              pins={allPins}
+              user={user}
+              selectedPin={selectedPin}
+              onPinSelect={onPinSelect}
+              onStartChat={handleStartChat}
+              onReview={handleReview}
+              onEdit={handleEdit}
+            />
+          </div>
+        )}
       </div>
     </div>
   )
