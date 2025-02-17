@@ -3,8 +3,7 @@ import { useMap } from '../../context/MapContext'
 import { useAuth } from '../../context/AuthContext'
 import { useSocket } from '../../context/SocketContext'
 import {
-  createMarker,
-  createPinPopup,
+  createMarker,  
   setupMapInteractions,
   DEFAULT_CENTER,
 } from './utils/mapHandlers'
