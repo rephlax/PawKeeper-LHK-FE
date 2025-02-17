@@ -29,6 +29,14 @@ const MapControls = ({
   selectedPin,
   startChat,
 }) => {
+  console.log('MapControls Props:', {
+    userSitter: user?.sitter,
+    userPin,
+    isCreatingPin,
+    isCreatingReview,
+    userId: user?._id,
+  })
+
   const [searchQuery, setSearchQuery] = useState('')
   const { isMapLoaded } = useMap()
   const [searchResults, setSearchResults] = useState([])
@@ -44,8 +52,9 @@ const MapControls = ({
     try {
       setIsSearching(true)
       const response = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?` +
-          `access_token=${mapboxgl.accessToken}&limit=5`,
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+          query,
+        )}.json?access_token=${mapboxgl.accessToken}&limit=5`,
       )
 
       const data = await response.json()
@@ -78,7 +87,21 @@ const MapControls = ({
     }
   }
 
+  useEffect(() => {
+    console.log('Form State Changed:', {
+      isCreatingPin,
+      isCreatingReview,
+      isEditing,
+    })
+  }, [isCreatingPin, isCreatingReview, isEditing])
+
   if (isCreatingPin || isCreatingReview) {
+    console.log('Rendering Form:', {
+      isCreatingPin,
+      isCreatingReview,
+      isEditing,
+      editData,
+    })
     return (
       <div className='space-y-4 p-4'>
         <div className='flex justify-between items-center mb-4'>
@@ -114,9 +137,19 @@ const MapControls = ({
     )
   }
 
+  const debugDisplay = (
+    <div className='text-xs text-gray-500 mb-2'>
+      <p>User ID: {user?._id}</p>
+      <p>Is Sitter: {String(Boolean(user?.sitter))}</p>
+      <p>Has Pin: {String(Boolean(userPin))}</p>
+    </div>
+  )
+
   return (
     <div className='space-y-6 p-4'>
       <h2 className='text-xl font-semibold mb-6'>Map Controls</h2>
+
+      {debugDisplay}
 
       <div className='space-y-2'>
         <button
@@ -156,7 +189,8 @@ const MapControls = ({
         </div>
       </div>
 
-      {user?.sitter && (
+      {/* Make sitter condition more explicit */}
+      {user && user.sitter === true && (
         <div className='space-y-2'>
           {userPin ? (
             <button
