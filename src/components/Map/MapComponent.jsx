@@ -96,54 +96,66 @@ const MapComponent = () => {
   const fetchPinsInBounds = useCallback(
     async bounds => {
       try {
-        const normalizedBounds = {
-          north: Number(bounds.north.toFixed(6)),
-          south: Number(bounds.south.toFixed(6)),
-          east: Number(bounds.east.toFixed(6)),
-          west: Number(bounds.west.toFixed(6)),
-        }
-
-        console.log('Fetching pins with bounds:', normalizedBounds)
-
         const response = await axios.get(
           `${BACKEND_URL}/api/location-pins/in-bounds`,
           {
-            params: normalizedBounds,
+            params: bounds,
             ...getAuthConfig(),
           },
         )
 
-        if (response.data) {
+        if (response.data && Array.isArray(response.data)) {
           setAllPins(prevPins => {
-            const existingPinsMap = new Map(prevPins.map(pin => [pin._id, pin]))
+            const validPins = prevPins.filter(pin =>
+              response.data.some(newPin => newPin._id === pin._id),
+            )
 
+            // Add new pins from the response
+            const newPinsMap = new Map()
             response.data.forEach(pin => {
-              existingPinsMap.set(pin._id, pin)
+              newPinsMap.set(pin._id, pin)
             })
 
-            return Array.from(existingPinsMap.values())
-          })
-
-          if (isMapLoaded) {
+            // Clean up markers for deleted pins
             markersRef.current.forEach((marker, pinId) => {
-              if (!response.data.find(pin => pin._id === pinId)) {
+              if (!newPinsMap.has(pinId)) {
                 marker.remove()
                 markersRef.current.delete(pinId)
               }
             })
-            response.data.forEach((pin, index) => {
-              if (!markersRef.current.has(pin._id)) {
-                addPinMarker(pin, index)
-              }
-            })
-          }
+
+            // Update markers for remaining pins
+            if (isMapLoaded) {
+              response.data.forEach((pin, index) => {
+                const existingMarker = markersRef.current.get(pin._id)
+                if (!existingMarker) {
+                  addPinMarker(pin, index)
+                }
+              })
+            }
+
+            return Array.from(newPinsMap.values())
+          })
+        } else {
+          console.log('No pins found in current bounds')
         }
       } catch (error) {
-        console.error('Error fetching pins in bounds:', error.response || error)
-        if (error.response?.status === 500) {
-          console.warn(
-            'Server error when fetching pins, retaining existing pins',
+        console.warn('Error fetching pins in bounds:', error.response || error)
+
+        // Handle deleted pins
+        if (error.response?.status === 404) {
+          console.log('Pin not found, might have been deleted')
+          setAllPins(prevPins =>
+            prevPins.filter(pin => pin._id !== error.response?.data?.pinId),
           )
+
+          if (error.response?.data?.pinId) {
+            const marker = markersRef.current.get(error.response.data.pinId)
+            if (marker) {
+              marker.remove()
+              markersRef.current.delete(error.response.data.pinId)
+            }
+          }
         }
       }
     },
@@ -158,31 +170,64 @@ const MapComponent = () => {
         getAuthConfig(),
       )
 
-      if (response.data) {
-        setAllPins(response.data)
+      if (response.data && Array.isArray(response.data)) {
+        const validPins = response.data.filter(pin => pin && pin._id)
+        setAllPins(validPins)
 
         if (isMapLoaded) {
+          // Clear existing markers
           clearAllMarkers()
 
-          response.data.forEach((pin, index) => {
+          // Add markers for valid pins
+          validPins.forEach((pin, index) => {
             addPinMarker(pin, index)
           })
         }
+      } else {
+        setAllPins([])
+        clearAllMarkers()
       }
     } catch (error) {
-      console.error('Error fetching pins:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-      })
+      console.error('Error fetching pins:', error)
 
-      if (error.response?.status !== 500) {
-        alert('Failed to load pins. Please try refreshing the page.')
+      if (error.response?.status === 404 && error.response?.data?.pinId) {
+        setAllPins(prevPins =>
+          prevPins.filter(pin => pin._id !== error.response.data.pinId),
+        )
+
+        const marker = markersRef.current.get(error.response.data.pinId)
+        if (marker) {
+          marker.remove()
+          markersRef.current.delete(error.response.data.pinId)
+        }
+      } else {
+        // For other errors, maintain existing state
+        console.warn('Error fetching pins, maintaining current state')
       }
     } finally {
       setIsLoading(false)
     }
   }, [getAuthConfig, clearAllMarkers, addPinMarker, isMapLoaded])
+
+  // Cleanup
+  useEffect(() => {
+    const cleanupDeletedPins = pinId => {
+      setAllPins(prevPins => prevPins.filter(pin => pin._id !== pinId))
+      const marker = markersRef.current.get(pinId)
+      if (marker) {
+        marker.remove()
+        markersRef.current.delete(pinId)
+      }
+    }
+
+    if (socket) {
+      socket.on('pin_deleted', cleanupDeletedPins)
+
+      return () => {
+        socket.off('pin_deleted', cleanupDeletedPins)
+      }
+    }
+  }, [socket])
 
   const loadUserPin = useCallback(async () => {
     if (!user?._id) return
@@ -287,7 +332,6 @@ const MapComponent = () => {
     const handlePinUpdate = data => {
       console.log('Received pin update:', data)
 
-      // Clear markers and refetch all pins to ensure clean state
       clearAllMarkers()
       fetchAllPins()
       loadUserPin()
