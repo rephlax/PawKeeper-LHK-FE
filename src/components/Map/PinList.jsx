@@ -98,7 +98,7 @@ const PinCard = ({
 }
 
 const PinList = ({
-  pins = [], // Provide default empty array
+  pins = [],
   user,
   selectedPin,
   onPinSelect,
@@ -106,7 +106,6 @@ const PinList = ({
   onReview,
   onEdit,
 }) => {
-  // Ensure pins is always an array
   const safePins = Array.isArray(pins) ? pins : []
 
   if (!safePins.length) {
