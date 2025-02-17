@@ -129,6 +129,7 @@ const Sidebar = ({
         isCreatingReview={isCreatingReview}
         setIsCreatingReview={setIsCreatingReview}
         isEditing={isEditing}
+        setIsEditing={setIsEditing}
         editData={editData}
         userPin={userPin}
         selectedPin={selectedPin}

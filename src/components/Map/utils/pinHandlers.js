@@ -1,12 +1,12 @@
 export const handlePinCreation = (isCreatingPin, setIsCreatingPin, socket) => {
-  console.log('Pin creation handler called')
+  console.log('Pin creation handler called', { isCreatingPin })
 
   try {
-    setIsCreatingPin(!isCreatingPin)
+    setIsCreatingPin(true)
 
     if (socket) {
       socket.emit('toggle_pin_creation', {
-        isCreating: !isCreatingPin,
+        isCreating: true,
         isEditing: false,
       })
     }

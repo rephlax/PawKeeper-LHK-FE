@@ -62,7 +62,6 @@ export const MapProvider = ({ children }) => {
         }
       })
 
-      // Error handler
       newMap.on('error', e => {
         console.error('Map error:', e)
         setLocationError('Error loading map. Please refresh the page.')
@@ -70,21 +69,39 @@ export const MapProvider = ({ children }) => {
 
       // Viewport change handler
       newMap.on('moveend', () => {
-        const center = newMap.getCenter()
-        const bounds = newMap.getBounds()
-        const newViewport = {
-          longitude: center.lng,
-          latitude: center.lat,
-          zoom: newMap.getZoom(),
-          bounds: {
-            north: bounds.getNorth(),
-            south: bounds.getSouth(),
-            east: bounds.getEast(),
-            west: bounds.getWest(),
-          },
-        }
+        try {
+          const center = newMap.getCenter()
+          const bounds = newMap.getBounds()
+          if (!center || !bounds) {
+            console.warn('Invalid map state:', { center, bounds })
+            return
+          }
 
-        setViewport(newViewport)
+          const newViewport = {
+            longitude: center.lng,
+            latitude: center.lat,
+            zoom: newMap.getZoom(),
+            bounds: {
+              north: bounds.getNorth(),
+              south: bounds.getSouth(),
+              east: bounds.getEast(),
+              west: bounds.getWest(),
+            },
+          }
+
+          const isValidBounds = Object.values(newViewport.bounds).every(
+            val => typeof val === 'number' && !isNaN(val),
+          )
+
+          if (!isValidBounds) {
+            console.warn('Invalid bounds:', newViewport.bounds)
+            return
+          }
+
+          setViewport(newViewport)
+        } catch (error) {
+          console.error('Error updating viewport:', error)
+        }
       })
 
       newMap.addControl(new mapboxgl.NavigationControl(), 'top-right')
