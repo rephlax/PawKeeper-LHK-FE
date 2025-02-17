@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Compass,
   MapPin,
@@ -8,88 +8,63 @@ import {
   Star,
   Edit,
 } from 'lucide-react'
-import { Autocomplete } from '@react-google-maps/api'
-import { handleLocationRequest } from '../utils/locationHandlers'
-import { handlePinCreation } from '../utils/pinHandlers'
-import PinForm from '../../Modal/PinForm'
-import ReviewForm from '../../Modal/ReviewForm'
+import { useMap } from '../../context/MapContext'
+import PinForm from './PinForm'
+import ReviewForm from './ReviewForm'
+import { debounce } from 'lodash'
+import { handleLocationRequest } from './utils/locationHandlers'
+import { handlePinCreation, handlePinEdit } from './utils/pinHandlers'
+import mapboxgl from 'mapbox-gl'
 
 const MapControls = ({
   user,
   socket,
   isCreatingPin,
   setIsCreatingPin,
+  isCreatingReview,
+  setIsCreatingReview,
   isEditing,
   editData,
   userPin,
   selectedPin,
   startChat,
-  map,
-  isCreatingReview,
-  setIsCreatingReview,
 }) => {
-  const autocompleteRef = useRef(null)
-  const [searchLocation, setSearchLocation] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
+  const { isMapLoaded } = useMap()
+  const [searchResults, setSearchResults] = useState([])
+  const [isSearching, setIsSearching] = useState(false)
+  const { map, flyTo } = useMap()
 
-  const handlePlaceSelect = () => {
-    const place = autocompleteRef.current?.getPlace()
-    if (!place?.geometry) {
-      console.log('No location found for this place')
+  const searchPlaces = debounce(async query => {
+    if (!query.trim()) {
+      setSearchResults([])
       return
     }
 
-    const location = {
-      lat: place.geometry.location.lat(),
-      lng: place.geometry.location.lng(),
+    try {
+      setIsSearching(true)
+      const response = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?` +
+          `access_token=${mapboxgl.accessToken}&limit=5`,
+      )
+
+      const data = await response.json()
+      setSearchResults(data.features)
+    } catch (error) {
+      console.error('Search error:', error)
+    } finally {
+      setIsSearching(false)
     }
+  }, 500)
 
-    setSearchLocation(place.formatted_address || '')
-    console.log('Selected location:', location)
+  useEffect(() => {
+    searchPlaces(searchQuery)
+  }, [searchQuery])
 
-    if (map) {
-      map.panTo(location)
-      map.setZoom(14)
-    }
-
-    if (socket) {
-      socket.emit('center_map', location)
-    }
-  }
-
-  const handlePlaceSearch = () => {
-    if (!searchLocation.trim() || !map) return
-
-    const placesService = new google.maps.places.PlacesService(map)
-
-    placesService.findPlaceFromQuery(
-      {
-        query: searchLocation,
-        fields: ['geometry', 'formatted_address'],
-      },
-      (results, status) => {
-        if (
-          status === google.maps.places.PlacesServiceStatus.OK &&
-          results[0]
-        ) {
-          const location = {
-            lat: results[0].geometry.location.lat(),
-            lng: results[0].geometry.location.lng(),
-          }
-
-          console.log('Found location:', location)
-          if (map) {
-            map.panTo(location)
-            map.setZoom(14)
-          }
-
-          if (socket) {
-            socket.emit('center_map', location)
-          }
-        } else {
-          alert('Location not found')
-        }
-      },
-    )
+  const handleSearchItemClick = place => {
+    flyTo(place.center)
+    setSearchQuery('')
+    setSearchResults([])
   }
 
   const handleCloseForm = () => {
@@ -103,7 +78,6 @@ const MapControls = ({
     }
   }
 
-  // Show form if creating/editing pin or writing review
   if (isCreatingPin || isCreatingReview) {
     return (
       <div className='space-y-4 p-4'>
@@ -112,7 +86,7 @@ const MapControls = ({
             {isCreatingReview
               ? 'Write a Review'
               : isEditing
-                ? 'Edit Location Pin'
+                ? 'Edit Your Pin'
                 : 'Create Location Pin'}
           </h2>
           <button
@@ -158,59 +132,43 @@ const MapControls = ({
         <div className='flex items-center space-x-2 p-3'>
           <Search className='h-5 w-5' />
           <div className='flex-1 relative'>
-            <Autocomplete
-              onLoad={ref => {
-                console.log('Autocomplete loaded')
-                autocompleteRef.current = ref
-              }}
-              onPlaceChanged={handlePlaceSelect}
-              options={{
-                componentRestrictions: { country: 'us' },
-                fields: ['geometry.location', 'formatted_address', 'place_id'],
-              }}
-            >
-              <input
-                type='text'
-                placeholder='Search location...'
-                className='w-full p-2 border rounded'
-                value={searchLocation}
-                onChange={e => setSearchLocation(e.target.value)}
-              />
-            </Autocomplete>
-            <button
-              onClick={handlePlaceSearch}
-              className='absolute right-2 top-1/2 -translate-y-1/2 bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600'
-            >
-              Go
-            </button>
+            <input
+              type='text'
+              placeholder='Search location...'
+              className='w-full p-2 border rounded'
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+            />
+            {searchResults.length > 0 && (
+              <div className='absolute z-10 w-full mt-1 bg-white border rounded-lg shadow-lg max-h-60 overflow-y-auto'>
+                {searchResults.map(place => (
+                  <button
+                    key={place.id}
+                    onClick={() => handleSearchItemClick(place)}
+                    className='w-full p-2 text-left hover:bg-gray-100 border-b last:border-b-0'
+                  >
+                    {place.place_name}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Show Create Pin only if user is sitter without a pin */}
       {user?.sitter && (
         <div className='space-y-2'>
           {userPin ? (
-            // Edit Pin Button
             <button
-              onClick={() => {
-                setIsCreatingPin(true)
-                setIsEditing(true)
-                if (socket) {
-                  socket.emit('toggle_pin_creation', {
-                    isCreating: true,
-                    isEditing: true,
-                    pinData: userPin,
-                  })
-                }
-              }}
+              onClick={() =>
+                handlePinEdit(setIsCreatingPin, setIsEditing, socket, userPin)
+              }
               className='flex items-center space-x-2 w-full p-3 text-left transition-colors hover:bg-blue-100 rounded-lg text-blue-600'
             >
               <Edit className='h-5 w-5' />
-              <span>Edit Location Pin</span>
+              <span>Edit Your Pin</span>
             </button>
           ) : (
-            // Create Pin Button
             <button
               onClick={() =>
                 handlePinCreation(isCreatingPin, setIsCreatingPin, socket)
@@ -224,8 +182,7 @@ const MapControls = ({
         </div>
       )}
 
-      {/* Show Review and Chat buttons when viewing other's pin */}
-      {selectedPin && selectedPin.user !== user?._id && (
+      {selectedPin && selectedPin.user !== user?._id && user && (
         <div className='space-y-2'>
           <button
             onClick={() => startChat(selectedPin.user)}
