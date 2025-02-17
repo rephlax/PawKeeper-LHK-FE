@@ -9,7 +9,7 @@ import PinList from '../Map/PinList'
 const Sidebar = ({
   isMapPage,
   userPin,
-  allPins,
+  allPins = [], // Provide default empty array
   selectedPin,
   onPinSelect,
   user,
@@ -44,7 +44,7 @@ const Sidebar = ({
   }
 
   const handleEdit = pin => {
-    if (socket) {
+    if (socket && pin) {
       socket.emit('toggle_pin_creation', {
         isCreating: true,
         isEditing: true,
@@ -61,24 +61,20 @@ const Sidebar = ({
       console.log('Setting up sidebar socket listeners')
 
       const handlePinCreated = () => {
-        console.log('Sidebar: Received pin_created event')
         setIsCreatingPin(false)
         setIsEditing(false)
         setEditData(null)
       }
 
       const handleTogglePinCreation = data => {
-        console.log('Received toggle_pin_creation:', data)
         setIsCreatingPin(data.isCreating)
         setIsEditing(data.isEditing || false)
         if (data.pinData) {
-          console.log('Received pin data for editing:', data.pinData)
           setEditData(data.pinData)
         }
       }
 
       const handleReviewCreated = () => {
-        console.log('Sidebar: Received review_created event')
         setIsCreatingReview(false)
       }
 
@@ -88,7 +84,6 @@ const Sidebar = ({
       socket.on('review_created', handleReviewCreated)
 
       return () => {
-        console.log('Cleaning up sidebar socket listeners')
         socket.off('pin_created', handlePinCreated)
         socket.off('pin_updated', handlePinCreated)
         socket.off('toggle_pin_creation', handleTogglePinCreation)
@@ -105,21 +100,12 @@ const Sidebar = ({
     }
   }, [selectedPin, setIsCreatingReview, setIsEditing, setEditData])
 
-  console.log('Sidebar render:', {
-    isMapPage,
-    isCreatingPin,
-    isCreatingReview,
-    isEditing,
-    hasEditData: !!editData,
-    hasSocket: !!socket,
-    hasUser: !!user,
-    selectedPin: !!selectedPin,
-    totalPins: allPins?.length,
-  })
-
   if (!isMapPage) {
     return <RegularSidebar user={user} />
   }
+
+  // Ensure allPins is always an array
+  const safePins = Array.isArray(allPins) ? allPins : []
 
   return (
     <div className='w-80 h-full bg-white shadow-lg flex flex-col'>
@@ -141,7 +127,7 @@ const Sidebar = ({
 
       <div className='flex-1 overflow-hidden'>
         <PinList
-          pins={allPins}
+          pins={safePins}
           user={user}
           selectedPin={selectedPin}
           onPinSelect={onPinSelect}

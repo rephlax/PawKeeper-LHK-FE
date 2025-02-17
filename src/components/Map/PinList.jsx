@@ -98,7 +98,7 @@ const PinCard = ({
 }
 
 const PinList = ({
-  pins,
+  pins = [], // Provide default empty array
   user,
   selectedPin,
   onPinSelect,
@@ -106,7 +106,10 @@ const PinList = ({
   onReview,
   onEdit,
 }) => {
-  if (!pins.length) {
+  // Ensure pins is always an array
+  const safePins = Array.isArray(pins) ? pins : []
+
+  if (!safePins.length) {
     return (
       <div className='p-4 text-center text-gray-500'>
         No pins found in this area
@@ -116,7 +119,7 @@ const PinList = ({
 
   return (
     <div className='h-full overflow-y-auto px-4'>
-      {pins.map((pin, index) => (
+      {safePins.map((pin, index) => (
         <PinCard
           key={pin._id}
           pin={pin}
