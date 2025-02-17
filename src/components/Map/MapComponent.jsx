@@ -13,7 +13,12 @@ import axios from 'axios'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
-const MapComponent = () => {
+const MapComponent = ({
+  setUserPin,
+  setAllPins,
+  selectedPin,
+  setSelectedPin,
+}) => {
   const mapContainer = useRef(null)
   const markersRef = useRef(new Map())
   const { user } = useAuth()
@@ -52,16 +57,9 @@ const MapComponent = () => {
     )
   }
 
-  const [userPin, setUserPin] = useState(null)
-  const [allPins, setAllPins] = useState([])
-  const [selectedPin, setSelectedPin] = useState(null)
   const [currentPopup, setCurrentPopup] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [initError, setInitError] = useState(null)
-  const [isCreatingPin, setIsCreatingPin] = useState(false)
-  const [isCreatingReview, setIsCreatingReview] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
-  const [editData, setEditData] = useState(null)
 
   const getAuthConfig = useCallback(
     () => ({
@@ -224,7 +222,7 @@ const MapComponent = () => {
     } finally {
       setIsLoading(false)
     }
-  }, [getAuthConfig, clearAllMarkers, addPinMarker, isMapLoaded])
+  }, [setAllPins, getAuthConfig, clearAllMarkers, addPinMarker, isMapLoaded])
 
   // Cleanup
   useEffect(() => {

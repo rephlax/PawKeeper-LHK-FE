@@ -1,3 +1,7 @@
+import { useState } from 'react'
+import { useAuth } from './context/AuthContext'
+import { useSocket } from './context/SocketContext'
+import { useMap } from './context/MapContext'
 import HomePage from './pages/HomePage'
 import LogInPage from './pages/LogInPage'
 import SignUpPage from './pages/SignUpPage'
@@ -19,6 +23,18 @@ import MapErrorBoundary from './components/Map/MapErrorBoundary'
 function App() {
   const location = useLocation()
   const isMapPage = location.pathname === '/map'
+
+  const [userPin, setUserPin] = useState(null)
+  const [selectedPin, setSelectedPin] = useState(null)
+  const [allPins, setAllPins] = useState([])
+  const [isCreatingPin, setIsCreatingPin] = useState(false)
+  const [isCreatingReview, setIsCreatingReview] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editData, setEditData] = useState(null)
+
+  const { user } = useAuth()
+  const { socket } = useSocket()
+  const { map } = useMap()
 
   return (
     <div className='h-screen flex flex-col relative bg-gradient-to-b from-cream-50 via-cream-100 to-cream-200 overflow-hidden'>
@@ -46,6 +62,7 @@ function App() {
             isEditing={isEditing}
             setIsEditing={setIsEditing}
             editData={editData}
+            setEditData={setEditData}
             map={map}
           />
         </aside>
@@ -57,7 +74,13 @@ function App() {
               path='/map'
               element={
                 <MapErrorBoundary>
-                  <MapComponent />
+                  <MapComponent
+                    setUserPin={setUserPin}
+                    setAllPins={setAllPins}
+                    selectedPin={selectedPin}
+                    setSelectedPin={setSelectedPin}
+                    setEditData={setEditData}
+                  />
                 </MapErrorBoundary>
               }
             />
@@ -108,10 +131,7 @@ function App() {
         </main>
       </div>
 
-      <footer
-        className='h-[40px] backdrop-blur-md bg-cream-50/70 shrink-0 
-                        border-t border-cream-accent relative z-10'
-      >
+      <footer className='h-[40px] backdrop-blur-md bg-cream-50/70 shrink-0 border-t border-cream-accent relative z-10'>
         <Footer />
       </footer>
 
