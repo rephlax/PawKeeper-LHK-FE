@@ -17,21 +17,21 @@ export const createMarker = (coordinates, options = {}) => {
     cursor-pointer 
     shadow-lg 
     border-2 border-white 
-    transform transition-transform hover:scale-110
-    ${type === 'user' ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-green-500 text-white hover:bg-green-600'}
+    ${type === 'user' ? 'bg-blue-500 text-white' : 'bg-green-500 text-white'}
     ${className}
   `
 
-  // Use numbers instead of icons
+  // Prevent hover effects
+  el.style.pointerEvents = 'auto'
+  el.style.transform = 'none'
+
   el.innerHTML = `<span class="font-bold">${index + 1}</span>`
 
   const marker = new mapboxgl.Marker({
     element: el,
     anchor: 'center',
     offset: [0, 0],
-    zIndexOffset: type === 'user' ? 999 : Math.floor(Math.random() * 100),
     draggable: false,
-    clickTolerance: 10,
   }).setLngLat(coordinates)
 
   if (map) {
@@ -41,7 +41,6 @@ export const createMarker = (coordinates, options = {}) => {
   if (onClick) {
     el.addEventListener('click', e => {
       e.stopPropagation()
-      e.preventDefault()
       onClick()
     })
   }

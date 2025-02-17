@@ -76,13 +76,6 @@ const PinForm = ({
   }
 
   const handleSubmit = useCallback(async () => {
-    console.log('Submitting pin with data:', {
-      map,
-      isMapLoaded,
-      formData,
-      authToken: localStorage.getItem('authToken'),
-    })
-
     if (!map || !isMapLoaded) {
       alert('Map is not ready. Please try again.')
       return
@@ -93,6 +86,11 @@ const PinForm = ({
     try {
       setIsLoading(true)
       const center = map.getCenter()
+
+      if (!center) {
+        console.error('Unable to get map center')
+        return
+      }
 
       const pinData = {
         longitude: center.lng,
@@ -109,16 +107,9 @@ const PinForm = ({
 
       const response = await axios.post(
         `${BACKEND_URL}/api/location-pins/${isEditing ? 'update' : 'create'}`,
-        isEditing ? { ...pinData, id: initialData._id } : pinData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-            'Content-Type': 'application/json',
-          },
-        },
+        pinData,
+        getAuthConfig(),
       )
-
-      console.log('Pin creation response:', response.data)
 
       if (socket) {
         socket.emit(isEditing ? 'pin_updated' : 'pin_created', response.data)
@@ -130,19 +121,20 @@ const PinForm = ({
 
       onClose()
     } catch (error) {
-      console.error('Error with pin operation:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-      })
-      alert(
-        error.response?.data?.message ||
-          'Failed to save pin. Please try again.',
-      )
+      console.error('Pin submission error:', error)
+      alert(error.response?.data?.message || 'Failed to save pin')
     } finally {
       setIsLoading(false)
     }
-  }, [map, isMapLoaded, formData, isEditing, initialData, socket])
+  }, [
+    map,
+    isMapLoaded,
+    formData,
+    isEditing,
+    socket,
+    getAuthConfig,
+    validateForm,
+  ])
 
   return (
     <div className={`space-y-4 ${containerClass}`}>
