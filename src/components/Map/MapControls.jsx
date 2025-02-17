@@ -99,8 +99,8 @@ const MapControls = ({
         {isCreatingReview ? (
           <ReviewForm
             onClose={handleCloseForm}
-            targetUserId={selectedPin.user}
-            sitterName={selectedPin.title}
+            targetUserId={selectedPin?.user}
+            sitterName={selectedPin?.title}
           />
         ) : (
           <PinForm
