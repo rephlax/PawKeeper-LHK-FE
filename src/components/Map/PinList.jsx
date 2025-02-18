@@ -13,6 +13,11 @@ const PinCard = ({
 }) => {
   const isOwnPin = pin.user === user?._id
 
+  const handleEdit = (e, pin) => {
+    e.stopPropagation()
+    onEdit(pin)
+  }
+
   return (
     <div
       onClick={onClick}
@@ -55,10 +60,7 @@ const PinCard = ({
               {isOwnPin ? (
                 user?.sitter && (
                   <button
-                    onClick={e => {
-                      e.stopPropagation()
-                      onEdit(pin)
-                    }}
+                    onClick={e => handleEdit(e, pin)}
                     className='px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center gap-1 text-sm'
                   >
                     <Edit className='w-4 h-4' />

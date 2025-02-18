@@ -20,12 +20,14 @@ export const handlePinEdit = (
   setIsEditing,
   socket,
   pinData,
+  setEditData,
 ) => {
   console.log('Pin edit handler called')
 
   try {
     setIsCreatingPin(true)
     setIsEditing(true)
+    setEditData(pinData)
 
     if (socket) {
       socket.emit('toggle_pin_creation', {

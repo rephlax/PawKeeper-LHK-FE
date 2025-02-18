@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import {
   Compass,
   MapPin,
@@ -24,19 +24,13 @@ const MapControls = ({
   isCreatingReview,
   setIsCreatingReview,
   isEditing,
+  setIsEditing,
   editData,
+  setEditData,
   userPin,
   selectedPin,
   startChat,
 }) => {
-  console.log('MapControls Props:', {
-    userSitter: user?.sitter,
-    userPin,
-    isCreatingPin,
-    isCreatingReview,
-    userId: user?._id,
-  })
-
   const [searchQuery, setSearchQuery] = useState('')
   const { isMapLoaded } = useMap()
   const [searchResults, setSearchResults] = useState([])
@@ -76,32 +70,32 @@ const MapControls = ({
     setSearchResults([])
   }
 
-  const handleCloseForm = () => {
+  const handleCloseForm = useCallback(() => {
     setIsCreatingPin(false)
     setIsCreatingReview(false)
+    setIsEditing(false)
+    setEditData(null)
     if (socket) {
       socket.emit('toggle_pin_creation', {
         isCreating: false,
         isEditing: false,
       })
     }
-  }
+  }, [socket, setIsCreatingPin, setIsCreatingReview, setIsEditing, setEditData])
 
-  useEffect(() => {
-    console.log('Form State Changed:', {
-      isCreatingPin,
-      isCreatingReview,
-      isEditing,
-    })
-  }, [isCreatingPin, isCreatingReview, isEditing])
+  const handleEditClick = useCallback(() => {
+    handlePinEdit(setIsCreatingPin, setIsEditing, socket, userPin, setEditData)
+  }, [socket, userPin, setIsCreatingPin, setIsEditing, setEditData])
+
+  const handleCreateClick = useCallback(() => {
+    handlePinCreation(isCreatingPin, setIsCreatingPin, socket)
+  }, [isCreatingPin, setIsCreatingPin, socket])
+
+  const handleReviewClick = useCallback(() => {
+    setIsCreatingReview(true)
+  }, [setIsCreatingReview])
 
   if (isCreatingPin || isCreatingReview) {
-    console.log('Rendering Form:', {
-      isCreatingPin,
-      isCreatingReview,
-      isEditing,
-      editData,
-    })
     return (
       <div className='space-y-4 p-4'>
         <div className='flex justify-between items-center mb-4'>
@@ -141,19 +135,9 @@ const MapControls = ({
     )
   }
 
-  const debugDisplay = (
-    <div className='text-xs text-gray-500 mb-2'>
-      <p>User ID: {user?._id}</p>
-      <p>Is Sitter: {String(Boolean(user?.sitter))}</p>
-      <p>Has Pin: {String(Boolean(userPin))}</p>
-    </div>
-  )
-
   return (
     <div className='space-y-6 p-4'>
       <h2 className='text-xl font-semibold mb-6'>Map Controls</h2>
-
-      {debugDisplay}
 
       <div className='space-y-2'>
         <button
@@ -193,14 +177,11 @@ const MapControls = ({
         </div>
       </div>
 
-      {/* Make sitter condition more explicit */}
       {user && user.sitter === true && (
         <div className='space-y-2'>
           {userPin ? (
             <button
-              onClick={() =>
-                handlePinEdit(setIsCreatingPin, setIsEditing, socket, userPin)
-              }
+              onClick={handleEditClick}
               className='flex items-center space-x-2 w-full p-3 text-left transition-colors hover:bg-blue-100 rounded-lg text-blue-600'
             >
               <Edit className='h-5 w-5' />
@@ -208,9 +189,7 @@ const MapControls = ({
             </button>
           ) : (
             <button
-              onClick={() =>
-                handlePinCreation(isCreatingPin, setIsCreatingPin, socket)
-              }
+              onClick={handleCreateClick}
               className='flex items-center space-x-2 w-full p-3 text-left transition-colors hover:bg-cream-100 rounded-lg'
             >
               <MapPin className='h-5 w-5' />
@@ -230,7 +209,7 @@ const MapControls = ({
             <span>Chat with Sitter</span>
           </button>
           <button
-            onClick={() => setIsCreatingReview(true)}
+            onClick={handleReviewClick}
             className='flex items-center space-x-2 w-full p-3 text-left transition-colors hover:bg-blue-100 rounded-lg text-blue-600'
           >
             <Star className='h-5 w-5' />

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useAuth } from './context/AuthContext'
 import { useSocket } from './context/SocketContext'
 import { useMap } from './context/MapContext'
@@ -36,6 +36,30 @@ function App() {
   const { socket } = useSocket()
   const { map } = useMap()
 
+  const startChat = useCallback(
+    targetUserId => {
+      if (socket) {
+        socket.emit('start_private_chat', { targetUserId })
+      }
+    },
+    [socket],
+  )
+
+  const handlePinSelect = useCallback(pin => {
+    setSelectedPin(pin)
+    setIsCreatingPin(false)
+    setIsCreatingReview(false)
+    setIsEditing(false)
+    setEditData(null)
+  }, [])
+
+  const resetStates = useCallback(() => {
+    setIsCreatingPin(false)
+    setIsCreatingReview(false)
+    setIsEditing(false)
+    setEditData(null)
+  }, [])
+
   return (
     <div className='h-screen flex flex-col relative bg-gradient-to-b from-cream-50 via-cream-100 to-cream-200 overflow-hidden'>
       <div className='absolute top-0 left-1/4 w-96 h-96 bg-cream-300/30 rounded-full blur-3xl'></div>
@@ -52,7 +76,7 @@ function App() {
             userPin={userPin}
             selectedPin={selectedPin}
             allPins={allPins}
-            onPinSelect={setSelectedPin}
+            onPinSelect={handlePinSelect}
             user={user}
             socket={socket}
             isCreatingPin={isCreatingPin}
@@ -63,7 +87,9 @@ function App() {
             setIsEditing={setIsEditing}
             editData={editData}
             setEditData={setEditData}
+            startChat={startChat}
             map={map}
+            resetStates={resetStates}
           />
         </aside>
 
@@ -78,7 +104,7 @@ function App() {
                     setUserPin={setUserPin}
                     setAllPins={setAllPins}
                     selectedPin={selectedPin}
-                    setSelectedPin={setSelectedPin}
+                    setSelectedPin={handlePinSelect}
                     setEditData={setEditData}
                   />
                 </MapErrorBoundary>

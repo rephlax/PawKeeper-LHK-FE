@@ -77,6 +77,15 @@ const Sidebar = ({
     [socket, setIsCreatingPin, setIsEditing, setEditData],
   )
 
+  const handleEditPin = useCallback(
+    pin => {
+      if (socket && pin) {
+        handleEdit(pin)
+      }
+    },
+    [socket, handleEdit],
+  )
+
   useEffect(() => {
     if (!socket) return
 
@@ -131,6 +140,7 @@ const Sidebar = ({
             isCreatingReview={isCreatingReview}
             setIsCreatingReview={setIsCreatingReview}
             isEditing={isEditing}
+            setIsEditing={setIsEditing}
             editData={editData}
             userPin={userPin}
             selectedPin={selectedPin}
@@ -149,7 +159,7 @@ const Sidebar = ({
               onPinSelect={onPinSelect}
               onStartChat={handleStartChat}
               onReview={handleReview}
-              onEdit={handleEdit}
+              onEdit={handleEditPin}
             />
           </div>
         )}
