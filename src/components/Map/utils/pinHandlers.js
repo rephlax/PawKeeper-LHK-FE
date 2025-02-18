@@ -18,9 +18,9 @@ export const handlePinCreation = (isCreatingPin, setIsCreatingPin, socket) => {
 export const handlePinEdit = (
   setIsCreatingPin,
   setIsEditing,
+  setEditData,
   socket,
   pinData,
-  setEditData,
 ) => {
   console.log('Pin edit handler called')
 

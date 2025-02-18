@@ -5,6 +5,7 @@ import { RegularSidebar } from './components'
 import { MapControls } from '../Map'
 import { useMap } from '../../context/MapContext'
 import PinList from '../Map/PinList'
+import { handlePinEdit } from '../Map/utils/pinHandlers'
 
 const Sidebar = ({
   isMapPage,
@@ -61,29 +62,11 @@ const Sidebar = ({
     [socket, setIsCreatingReview],
   )
 
-  const handleEdit = useCallback(
-    pin => {
-      if (socket && pin && setIsCreatingPin && setIsEditing && setEditData) {
-        socket.emit('toggle_pin_creation', {
-          isCreating: true,
-          isEditing: true,
-          pinData: pin,
-        })
-        setIsCreatingPin(true)
-        setIsEditing(true)
-        setEditData(pin)
-      }
-    },
-    [socket, setIsCreatingPin, setIsEditing, setEditData],
-  )
-
   const handleEditPin = useCallback(
     pin => {
-      if (socket && pin) {
-        handleEdit(pin)
-      }
+      handlePinEdit(setIsCreatingPin, setIsEditing, setEditData, socket, pin)
     },
-    [socket, handleEdit],
+    [socket, setIsCreatingPin, setIsEditing, setEditData],
   )
 
   useEffect(() => {
@@ -142,6 +125,7 @@ const Sidebar = ({
             isEditing={isEditing}
             setIsEditing={setIsEditing}
             editData={editData}
+            setEditData={setEditData}
             userPin={userPin}
             selectedPin={selectedPin}
             startChat={startChat}

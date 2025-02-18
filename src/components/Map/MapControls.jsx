@@ -84,7 +84,15 @@ const MapControls = ({
   }, [socket, setIsCreatingPin, setIsCreatingReview, setIsEditing, setEditData])
 
   const handleEditClick = useCallback(() => {
-    handlePinEdit(setIsCreatingPin, setIsEditing, socket, userPin, setEditData)
+    if (userPin) {
+      handlePinEdit(
+        setIsCreatingPin,
+        setIsEditing,
+        setEditData,
+        socket,
+        userPin,
+      )
+    }
   }, [socket, userPin, setIsCreatingPin, setIsEditing, setEditData])
 
   const handleCreateClick = useCallback(() => {

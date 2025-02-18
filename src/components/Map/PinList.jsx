@@ -13,10 +13,12 @@ const PinCard = ({
 }) => {
   const isOwnPin = pin.user === user?._id
 
-  const handleEdit = (e, pin) => {
-    e.stopPropagation()
-    onEdit(pin)
-  }
+  const handleEdit = useCallback(
+    pin => {
+      handlePinEdit(setIsCreatingPin, setIsEditing, setEditData, socket, pin)
+    },
+    [setIsCreatingPin, setIsEditing, setEditData, socket],
+  )
 
   return (
     <div
