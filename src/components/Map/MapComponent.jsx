@@ -224,25 +224,17 @@ const MapComponent = ({
     }
   }, [setAllPins, getAuthConfig, clearAllMarkers, addPinMarker, isMapLoaded])
 
-  // Cleanup
-  useEffect(() => {
-    const cleanupDeletedPins = pinId => {
+  const cleanupDeletedPins = useCallback(
+    pinId => {
       setAllPins(prevPins => prevPins.filter(pin => pin._id !== pinId))
       const marker = markersRef.current.get(pinId)
       if (marker) {
         marker.remove()
         markersRef.current.delete(pinId)
       }
-    }
-
-    if (socket) {
-      socket.on('pin_deleted', cleanupDeletedPins)
-
-      return () => {
-        socket.off('pin_deleted', cleanupDeletedPins)
-      }
-    }
-  }, [socket])
+    },
+    [setAllPins],
+  )
 
   const loadUserPin = useCallback(async () => {
     if (!user?._id) return
@@ -435,6 +427,7 @@ const MapComponent = ({
     clearAllMarkers,
     viewport,
     user,
+    cleanupDeletedPins,
   ])
 
   useEffect(() => {
