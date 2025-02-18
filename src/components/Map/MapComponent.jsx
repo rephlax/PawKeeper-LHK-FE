@@ -277,8 +277,6 @@ const MapComponent = ({
         console.error('Map initialization error:', error)
         setInitError('Failed to initialize map')
         setLocationError('Failed to initialize map')
-      } finally {
-        setIsLoading(false)
       }
     }
 
@@ -288,7 +286,6 @@ const MapComponent = ({
       clearAllMarkers()
     }
   }, [])
-
   useEffect(() => {
     if (!map || !isMapLoaded) return
 
@@ -439,6 +436,12 @@ const MapComponent = ({
     viewport,
     user,
   ])
+
+  useEffect(() => {
+    if (isMapLoaded) {
+      setIsLoading(false)
+    }
+  }, [isMapLoaded])
 
   return (
     <MapErrorBoundary>
