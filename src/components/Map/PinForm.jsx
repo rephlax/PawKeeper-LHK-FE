@@ -105,7 +105,7 @@ const PinForm = ({
 
       console.log('Sending pin data:', pinData)
 
-      const response = await axios.post(
+      const response = await axios.put(
         `${BACKEND_URL}/api/location-pins/${isEditing ? 'update' : 'create'}`,
         pinData,
         getAuthConfig(),
