@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { Edit, MessageCircle, Star } from 'lucide-react'
 
 const PinCard = ({
@@ -10,14 +10,21 @@ const PinCard = ({
   onReview,
   isSelected,
   onClick,
+  socket,
+  setIsCreatingPin,
+  setIsEditing,
+  setEditData,
 }) => {
   const isOwnPin = pin.user === user?._id
 
   const handleEdit = useCallback(
-    pin => {
-      handlePinEdit(setIsCreatingPin, setIsEditing, setEditData, socket, pin)
+    (e, pin) => {
+      e.stopPropagation()
+      if (onEdit) {
+        onEdit(pin)
+      }
     },
-    [setIsCreatingPin, setIsEditing, setEditData, socket],
+    [onEdit],
   )
 
   return (
