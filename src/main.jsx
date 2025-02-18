@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom'
 import './styles/App.css'
 import { AuthWrapper } from './context/AuthContext.jsx'
 import { SocketProvider } from './context/SocketContext.jsx'
+import { ChatProvider } from './context/ChatContext'
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import enTranslations from './locales/en.json'
@@ -30,13 +31,15 @@ i18n.use(initReactI18next).init({
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <AuthWrapper>
+      <AuthProvider>
         <SocketProvider>
           <MapProvider>
-            <App />
+            <ChatProvider>
+              <App />
+            </ChatProvider>
           </MapProvider>
         </SocketProvider>
-      </AuthWrapper>
+      </AuthProvider>
     </BrowserRouter>
   </StrictMode>,
 )

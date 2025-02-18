@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react'
 import { Edit, MessageCircle, Star } from 'lucide-react'
 import { useSocket } from '../../context/SocketContext'
+import { useChat } from '../../context/ChatContext'
 
 const PinCard = ({
   pin,
@@ -16,6 +17,7 @@ const PinCard = ({
   setEditData,
 }) => {
   const isOwnPin = pin.user === user?._id
+  const { isOpen, setIsOpen } = useChat()
 
   const { startPrivateChat } = useSocket()
 
@@ -127,8 +129,6 @@ const PinList = ({
   onStartChat,
   onReview,
   onEdit,
-  isOpen,
-  setIsOpen,
 }) => {
   const safePins = Array.isArray(pins) ? pins : []
 

@@ -6,6 +6,7 @@ import { MapControls } from '../Map'
 import { useMap } from '../../context/MapContext'
 import PinList from '../Map/PinList'
 import { handlePinEdit } from '../Map/utils/pinHandlers'
+import { useChat } from '../../context/ChatContext'
 
 const Sidebar = ({
   isMapPage,
@@ -27,6 +28,7 @@ const Sidebar = ({
   map,
 }) => {
   const { isMapLoaded } = useMap()
+  const { isOpen, setIsOpen } = useChat()
 
   const resetStates = useCallback(() => {
     if (setIsCreatingReview) setIsCreatingReview(false)
@@ -158,8 +160,6 @@ const Sidebar = ({
               onReview={handleReview}
               onEdit={handleEditPin}
               onDelete={handlePinDelete}
-              isOpen={isOpen}
-              setIsOpen={setIsOpen}
             />
           </div>
         )}
