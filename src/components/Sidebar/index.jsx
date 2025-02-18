@@ -69,6 +69,19 @@ const Sidebar = ({
     [socket, setIsCreatingPin, setIsEditing, setEditData],
   )
 
+  const handlePinDelete = useCallback(
+    async pinId => {
+      try {
+        if (socket) {
+          socket.emit('delete_pin', pinId)
+        }
+      } catch (error) {
+        console.error('Error deleting pin:', error)
+      }
+    },
+    [socket],
+  )
+
   useEffect(() => {
     if (!socket) return
 
@@ -144,6 +157,7 @@ const Sidebar = ({
               onStartChat={handleStartChat}
               onReview={handleReview}
               onEdit={handleEditPin}
+              onDelete={handlePinDelete}
             />
           </div>
         )}
