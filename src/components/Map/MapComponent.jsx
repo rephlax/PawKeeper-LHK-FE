@@ -3,7 +3,7 @@ import { useMap } from '../../context/MapContext'
 import { useAuth } from '../../context/AuthContext'
 import { useSocket } from '../../context/SocketContext'
 import {
-  createMarker,  
+  createMarker,
   setupMapInteractions,
   DEFAULT_CENTER,
 } from './utils/mapHandlers'
@@ -391,7 +391,7 @@ const MapComponent = ({
     socket.on('pin_updated', handlePinUpdate)
     socket.on('pin_deleted', handlePinUpdate)
     socket.on('center_map', location => {
-      if (location && map) {
+      if (location && location.userId === user?._id && map) {
         setUserLocation(location)
         map.flyTo({
           center: [location.lng, location.lat],
