@@ -371,25 +371,46 @@ const MapComponent = ({
   useEffect(() => {
     if (!socket || !isMapLoaded) return
 
-    const handlePinUpdate = data => {
-      console.log('Received pin update:', data)
+    const handleUserPinCreated = data => {
+      if (data.userId === user?._id) {
+        console.log('Received user pin created:', data)
 
-      clearAllMarkers()
-      fetchAllPins()
-      loadUserPin()
+        clearAllMarkers()
+        fetchAllPins()
+        loadUserPin()
 
-      if (data?.location?.coordinates && map) {
-        map.flyTo({
-          center: data.location.coordinates,
-          zoom: 14,
-          essential: true,
-        })
+        if (data.pin?.location?.coordinates && map) {
+          map.flyTo({
+            center: data.pin.location.coordinates,
+            zoom: 14,
+            essential: true,
+          })
+        }
       }
     }
 
-    socket.on('pin_created', handlePinUpdate)
-    socket.on('pin_updated', handlePinUpdate)
-    socket.on('pin_deleted', handlePinUpdate)
+    const handleUserPinUpdated = data => {
+      // Only update for the current user
+      if (data.userId === user?._id) {
+        console.log('Received user pin updated:', data)
+
+        clearAllMarkers()
+        fetchAllPins()
+        loadUserPin()
+
+        if (data.pin?.location?.coordinates && map) {
+          map.flyTo({
+            center: data.pin.location.coordinates,
+            zoom: 14,
+            essential: true,
+          })
+        }
+      }
+    }
+
+    socket.on('user_pin_created', handleUserPinCreated)
+    socket.on('user_pin_updated', handleUserPinUpdated)
+    socket.on('pin_deleted', cleanupDeletedPins)
     socket.on('center_map', location => {
       if (location && location.userId === user?._id && map) {
         setUserLocation(location)
@@ -403,9 +424,9 @@ const MapComponent = ({
     socket.emit('viewport_update', viewport)
 
     return () => {
-      socket.off('pin_created', handlePinUpdate)
-      socket.off('pin_updated', handlePinUpdate)
-      socket.off('pin_deleted', handlePinUpdate)
+      socket.off('user_pin_created', handleUserPinCreated)
+      socket.off('user_pin_updated', handleUserPinUpdated)
+      socket.off('pin_deleted')
       socket.off('center_map')
     }
   }, [
@@ -416,6 +437,7 @@ const MapComponent = ({
     loadUserPin,
     clearAllMarkers,
     viewport,
+    user,
   ])
 
   return (
