@@ -152,6 +152,7 @@ const PinList = ({
           onClick={() => onPinSelect(pin)}
           onReview={onReview}
           onEdit={onEdit}
+          onStartChat={onStartChat}
         />
       ))}
     </div>
