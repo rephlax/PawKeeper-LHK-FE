@@ -15,6 +15,7 @@ const PinCard = ({
   setIsCreatingPin,
   setIsEditing,
   setEditData,
+  onStartChat,
 }) => {
   const isOwnPin = pin.user === user?._id
   const { isOpen, setIsOpen } = useChat()
