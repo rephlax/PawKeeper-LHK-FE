@@ -97,7 +97,7 @@ function App() {
           <Routes>
             <Route path='/' element={<HomePage />} />
             <Route
-              path='/map'
+              path='/map/:userId'
               element={
                 <MapErrorBoundary>
                   <MapComponent
