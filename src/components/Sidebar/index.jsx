@@ -158,6 +158,8 @@ const Sidebar = ({
               onReview={handleReview}
               onEdit={handleEditPin}
               onDelete={handlePinDelete}
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
             />
           </div>
         )}

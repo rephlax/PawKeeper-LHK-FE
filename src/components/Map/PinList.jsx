@@ -24,9 +24,8 @@ const PinCard = ({
     try {
       if (!isOpen) {
         setIsOpen(true)
-        await startPrivateChat(userId)
       }
-      await startPrivateChat(userId)
+      await onStartChat(userId)
     } catch (error) {
       console.error('Error starting chat:', error)
     }
@@ -128,6 +127,8 @@ const PinList = ({
   onStartChat,
   onReview,
   onEdit,
+  isOpen,
+  setIsOpen,
 }) => {
   const safePins = Array.isArray(pins) ? pins : []
 
