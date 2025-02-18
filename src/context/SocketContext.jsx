@@ -119,17 +119,20 @@ export const SocketProvider = ({ children }) => {
   const startPrivateChat = async targetUserId => {
     if (!socket) return
 
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       socket.emit(
         'create_room',
         {
+          name: null,
           participants: [targetUserId],
-          type: 'private',
+          type: 'direct',
         },
         response => {
           if (response?.roomId) {
             socket.emit('join_room', response.roomId)
             resolve(response.roomId)
+          } else {
+            reject(new Error('Failed to create room'))
           }
         },
       )

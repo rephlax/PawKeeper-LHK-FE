@@ -56,8 +56,11 @@ const ChatWidget = () => {
   const handleCreateRoom = roomData => {
     console.log('Attempting to create room:', roomData)
     if (socket) {
-      console.log('Socket is connected, emitting create_room event')
-      socket.emit('create_room', roomData)
+      socket.emit('create_room', roomData, response => {
+        if (response?.error) {
+          console.error('Room creation error:', response.error)
+        }
+      })
     } else {
       console.error('Socket is not connected')
     }
