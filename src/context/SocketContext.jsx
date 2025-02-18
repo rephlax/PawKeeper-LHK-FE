@@ -120,6 +120,20 @@ export const SocketProvider = ({ children }) => {
     if (!socket) return
 
     return new Promise((resolve, reject) => {
+      const handleRoomCreated = async room => {
+        socket.off('room_created', handleRoomCreated)
+        await new Promise(resolve => {
+          const handleRoomJoined = room => {
+            socket.off('room_joined', handleRoomJoined)
+            resolve(room._id)
+          }
+          socket.on('room_joined', handleRoomJoined)
+          socket.emit('join_room', room._id)
+        })
+      }
+
+      socket.on('room_created', handleRoomCreated)
+
       socket.emit(
         'create_room',
         {
@@ -128,10 +142,7 @@ export const SocketProvider = ({ children }) => {
           type: 'direct',
         },
         response => {
-          if (response?.roomId) {
-            socket.emit('join_room', response.roomId)
-            resolve(response.roomId)
-          } else {
+          if (!response?.roomId) {
             reject(new Error('Failed to create room'))
           }
         },

@@ -22,6 +22,10 @@ const PinCard = ({
   const handleChatClick = async (e, userId) => {
     e.stopPropagation()
     try {
+      if (!isOpen) {
+        setIsOpen(true)
+        await startPrivateChat(userId)
+      }
       await startPrivateChat(userId)
     } catch (error) {
       console.error('Error starting chat:', error)

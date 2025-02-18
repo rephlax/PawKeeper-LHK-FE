@@ -27,9 +27,11 @@ const ChatWidget = () => {
 
     const handleRoomJoined = room => {
       console.log('Joined room:', room)
-      setActiveRoom(room._id)
-      setIsOpen(true)
-      setShowUserList(false)
+      if (room) {
+        setActiveRoom(room._id)
+        setIsOpen(true)
+        setShowUserList(false)
+      }
     }
 
     const handleRoomInvitation = invitation => {
