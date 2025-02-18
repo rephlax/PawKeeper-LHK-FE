@@ -23,6 +23,12 @@ const ReviewForm = ({ onClose, targetUserId, sitterName }) => {
     e.preventDefault()
     setIsLoading(true)
 
+    if (!targetUserId) {
+      alert('No sitter selected for review')
+      setIsLoading(false)
+      return
+    }
+
     try {
       const response = await axios.post(
         `${BACKEND_URL}/reviews/${targetUserId}`,

@@ -120,11 +120,15 @@ const MapControls = ({
           </button>
         </div>
         {isCreatingReview ? (
-          <ReviewForm
-            onClose={handleCloseForm}
-            targetUserId={selectedPin?.user}
-            sitterName={selectedPin?.title}
-          />
+          selectedPin?.user ? (
+            <ReviewForm
+              onClose={handleCloseForm}
+              targetUserId={selectedPin.user}
+              sitterName={selectedPin.title}
+            />
+          ) : (
+            <div className='text-red-500'>No sitter selected for review</div>
+          )
         ) : (
           <PinForm
             onClose={handleCloseForm}
