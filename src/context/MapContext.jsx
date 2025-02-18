@@ -120,6 +120,25 @@ export const MapProvider = ({ children }) => {
     [map, userLocation, viewport],
   )
 
+  const cleanupDeletedPins = useCallback(
+    deletedPinIds => {
+      if (!markers || !deletedPinIds?.length) return
+
+      deletedPinIds.forEach(pinId => {
+        const marker = markers.get(pinId)
+        if (marker) {
+          marker.remove()
+          setMarkers(prev => {
+            const newMarkers = new Map(prev)
+            newMarkers.delete(pinId)
+            return newMarkers
+          })
+        }
+      })
+    },
+    [markers],
+  )
+
   const getUserLocation = async socket => {
     if (!navigator.geolocation) {
       setLocationError('Geolocation is not supported by your browser')
@@ -325,6 +344,7 @@ export const MapProvider = ({ children }) => {
     isMapLoaded,
     viewport,
     setViewport,
+    cleanupDeletedPins,
   }
 
   return <MapContext.Provider value={value}>{children}</MapContext.Provider>

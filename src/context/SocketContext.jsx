@@ -116,6 +116,26 @@ export const SocketProvider = ({ children }) => {
     }
   }
 
+  const startPrivateChat = async targetUserId => {
+    if (!socket) return
+
+    return new Promise(resolve => {
+      socket.emit(
+        'create_room',
+        {
+          participants: [targetUserId],
+          type: 'private',
+        },
+        response => {
+          if (response?.roomId) {
+            socket.emit('join_room', response.roomId)
+            resolve(response.roomId)
+          }
+        },
+      )
+    })
+  }
+
   const contextValue = {
     socket,
     user,
@@ -124,6 +144,7 @@ export const SocketProvider = ({ children }) => {
     nearbySitters,
     findNearbySitters,
     isUserOnline: userId => onlineUsers.has(userId),
+    startPrivateChat,
   }
 
   return (

@@ -112,7 +112,10 @@ const PinForm = ({
       )
 
       if (socket) {
-        socket.emit(isEditing ? 'pin_updated' : 'pin_created', response.data)
+        socket.emit(isEditing ? 'user_pin_updated' : 'user_pin_created', {
+          pin: response.data,
+          userId: user._id,
+        })
         socket.emit('share_location', {
           lng: center.lng,
           lat: center.lat,
