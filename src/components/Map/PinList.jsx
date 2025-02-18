@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react'
 import { Edit, MessageCircle, Star } from 'lucide-react'
 import { useSocket } from '../../context/SocketContext'
+import { useChat } from '../../context/ChatContext'
 
 const PinCard = ({
   pin,
@@ -16,13 +17,17 @@ const PinCard = ({
   setEditData,
 }) => {
   const isOwnPin = pin.user === user?._id
+  const { isOpen, setIsOpen } = useChat()
 
   const { startPrivateChat } = useSocket()
 
   const handleChatClick = async (e, userId) => {
     e.stopPropagation()
     try {
-      await startPrivateChat(userId)
+      if (!isOpen) {
+        setIsOpen(true)
+      }
+      await onStartChat(userId)
     } catch (error) {
       console.error('Error starting chat:', error)
     }

@@ -7,9 +7,10 @@ import RoomList from './RoomList'
 import CreateRoomModal from './CreateRoomModal'
 import ChatInvitations from './ChatInvitations'
 import { useSocket } from '../context/SocketContext'
+import { useChat } from '../context/ChatContext'
 
 const ChatWidget = () => {
-  const [isOpen, setIsOpen] = useState(false)
+  const { isOpen, setIsOpen } = useChat()
   const [activeRoom, setActiveRoom] = useState(null)
   const [showUserList, setShowUserList] = useState(false)
   const [showCreateRoom, setShowCreateRoom] = useState(false)
@@ -27,9 +28,11 @@ const ChatWidget = () => {
 
     const handleRoomJoined = room => {
       console.log('Joined room:', room)
-      setActiveRoom(room._id)
-      setIsOpen(true)
-      setShowUserList(false)
+      if (room) {
+        setActiveRoom(room._id)
+        setIsOpen(true)
+        setShowUserList(false)
+      }
     }
 
     const handleRoomInvitation = invitation => {

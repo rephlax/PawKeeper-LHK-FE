@@ -90,6 +90,8 @@ function App() {
             startChat={startChat}
             map={map}
             resetStates={resetStates}
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
           />
         </aside>
 
