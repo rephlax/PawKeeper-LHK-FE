@@ -18,24 +18,38 @@ const ChatWidget = () => {
   useEffect(() => {
     if (!socket) return
 
-    socket.on('room_joined', room => {
+    const handleRoomCreated = room => {
+      console.log('Room created:', room)
+      setActiveRoom(room._id)
+      setIsOpen(true)
+      setShowUserList(false)
+    }
+
+    const handleRoomJoined = room => {
       console.log('Joined room:', room)
       setActiveRoom(room._id)
+      setIsOpen(true)
       setShowUserList(false)
-    })
+    }
 
-    socket.on('room_invitation', invitation => {
+    const handleRoomInvitation = invitation => {
       console.log('Received room invitation:', invitation)
-    })
+    }
 
-    socket.on('error', error => {
+    const handleError = error => {
       console.error('Socket error:', error)
-    })
+    }
+
+    socket.on('room_created', handleRoomCreated)
+    socket.on('room_joined', handleRoomJoined)
+    socket.on('room_invitation', handleRoomInvitation)
+    socket.on('error', handleError)
 
     return () => {
-      socket.off('room_joined')
-      socket.off('room_invitation')
-      socket.off('error')
+      socket.off('room_created', handleRoomCreated)
+      socket.off('room_joined', handleRoomJoined)
+      socket.off('room_invitation', handleRoomInvitation)
+      socket.off('error', handleError)
     }
   }, [socket])
 

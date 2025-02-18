@@ -1,12 +1,12 @@
 import React, { useCallback } from 'react'
 import { Edit, MessageCircle, Star } from 'lucide-react'
+import { useSocket } from '../../context/SocketContext'
 
 const PinCard = ({
   pin,
   index,
   user,
   onEdit,
-  onStartChat,
   onReview,
   isSelected,
   onClick,
@@ -16,6 +16,17 @@ const PinCard = ({
   setEditData,
 }) => {
   const isOwnPin = pin.user === user?._id
+
+  const { startPrivateChat } = useSocket()
+
+  const handleChatClick = async (e, userId) => {
+    e.stopPropagation()
+    try {
+      await startPrivateChat(userId)
+    } catch (error) {
+      console.error('Error starting chat:', error)
+    }
+  }
 
   const handleEdit = useCallback(
     (e, pin) => {
@@ -79,10 +90,7 @@ const PinCard = ({
               ) : (
                 <>
                   <button
-                    onClick={e => {
-                      e.stopPropagation()
-                      onStartChat(pin.user)
-                    }}
+                    onClick={e => handleChatClick(e, pin.user)}
                     className='px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 flex items-center gap-1 text-sm'
                   >
                     <MessageCircle className='w-4 h-4' />
@@ -137,7 +145,6 @@ const PinList = ({
           user={user}
           isSelected={selectedPin?._id === pin._id}
           onClick={() => onPinSelect(pin)}
-          onStartChat={onStartChat}
           onReview={onReview}
           onEdit={onEdit}
         />
