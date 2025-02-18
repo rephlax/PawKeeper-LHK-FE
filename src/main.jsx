@@ -31,7 +31,7 @@ i18n.use(initReactI18next).init({
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <AuthProvider>
+      <AuthWrapper>
         <SocketProvider>
           <MapProvider>
             <ChatProvider>
@@ -39,7 +39,7 @@ createRoot(document.getElementById('root')).render(
             </ChatProvider>
           </MapProvider>
         </SocketProvider>
-      </AuthProvider>
+      </AuthWrapper>
     </BrowserRouter>
   </StrictMode>,
 )
