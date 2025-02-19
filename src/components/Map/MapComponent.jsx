@@ -13,8 +13,6 @@ import axios from 'axios'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
-const [showLocationPrompt, setShowLocationPrompt] = useState(true)
-
 const MapComponent = ({
   setUserPin,
   setAllPins,
@@ -22,9 +20,11 @@ const MapComponent = ({
   setSelectedPin,
 }) => {
   const mapContainer = useRef(null)
+  const [showLocationPrompt, setShowLocationPrompt] = useState(true)
   const [isLocating, setIsLocating] = useState(true)
   const markersRef = useRef(new Map())
   const { user } = useAuth()
+  const isProcessing = isLoading || isLocating || !isMapLoaded
   const { socket } = useSocket()
   const {
     map,
@@ -307,13 +307,15 @@ const MapComponent = ({
         console.error('Map initialization error:', error)
         setInitError('Failed to initialize map')
         setLocationError('Failed to initialize map')
+      } finally {
+        setIsLoading(false)
       }
+    }
 
-      initMap()
+    initMap()
 
-      return () => {
-        clearAllMarkers()
-      }
+    return () => {
+      clearAllMarkers()
     }
   }, [])
 
@@ -523,15 +525,23 @@ const MapComponent = ({
             </div>
           </div>
         )}
-        <div className='absolute top-4 left-4 z-10 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded max-w-md'>
-          <p>{locationError}</p>
-        </div>
-        {isLoading || isLocating ? (
+
+        {locationError && (
+          <div className='absolute top-4 left-4 z-10 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded max-w-md'>
+            <p>{locationError}</p>
+          </div>
+        )}
+
+        {isProcessing ? (
           <div className='absolute inset-0 bg-white/50 flex items-center justify-center z-20'>
             <div className='bg-white p-4 rounded-lg shadow flex flex-col items-center gap-2'>
               <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500'></div>
               <p>
-                {isLocating ? 'Getting your location...' : 'Loading map...'}
+                {isLocating
+                  ? 'Getting your location...'
+                  : !isMapLoaded
+                    ? 'Initializing map...'
+                    : 'Loading...'}
               </p>
             </div>
           </div>
@@ -542,6 +552,7 @@ const MapComponent = ({
             </div>
           </div>
         ) : null}
+
         <div ref={mapContainer} className='w-full h-full' />
       </div>
     </MapErrorBoundary>
