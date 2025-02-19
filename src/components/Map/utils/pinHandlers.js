@@ -41,12 +41,10 @@ export const handlePinEdit = (
   }
 }
 
-export const handlePinDelete = (pinData, socket, setPins) => {
-  // const {pinId} = pinData
-  // console.log(pinData)
-  // console.log('Pin delete handler called', { pinId })
+export const handlePinDelete = ( socket, setPins) => {
+  
   console.log('Socket on call', socket)
-  if (!socket) {
+  if (!socket || typeof socket !== "function") {
     console.error('Socket is not available')
     return
   }
