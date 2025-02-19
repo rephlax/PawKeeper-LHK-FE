@@ -34,7 +34,7 @@ const Navbar = () => {
         ) : (
           <>
             <Link
-              to={`/map/${userId}`}
+              to={`/map`}
               className='text-cream-text hover:text-cream-accent transition-colors'
             >
               <MapPin className='h-6 w-6' />
