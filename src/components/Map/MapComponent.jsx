@@ -13,6 +13,8 @@ import axios from 'axios'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
+const [showLocationPrompt, setShowLocationPrompt] = useState(true)
+
 const MapComponent = ({
   setUserPin,
   setAllPins,
@@ -165,6 +167,54 @@ const MapComponent = ({
     [getAuthConfig, addPinMarker, isMapLoaded, map],
   )
 
+  const requestLocation = () => {
+    if (navigator.geolocation) {
+      setIsLocating(true)
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          setIsLocating(false)
+          const location = {
+            lng: position.coords.longitude,
+            lat: position.coords.latitude,
+          }
+          setUserLocation(location)
+          setShowLocationPrompt(false)
+
+          // Center map on user location and zoom
+          map?.flyTo({
+            center: [location.lng, location.lat],
+            zoom: 14,
+            essential: true,
+          })
+
+          // Emit location for socket updates
+          if (socket) {
+            socket.emit('viewport_update', {
+              longitude: location.lng,
+              latitude: location.lat,
+              zoom: 14,
+              bounds: map.getBounds(),
+            })
+          }
+        },
+        error => {
+          setIsLocating(false)
+          console.error('Error getting location:', error)
+          setLocationError(
+            error.code === 1
+              ? 'Please enable location access in your browser settings.'
+              : 'Unable to get your location. Please try again.',
+          )
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0,
+        },
+      )
+    }
+  }
+
   const fetchAllPins = useCallback(async () => {
     try {
       setIsLoading(true)
@@ -253,62 +303,17 @@ const MapComponent = ({
         setIsLoading(true)
         setInitError(null)
         await initializeMap(mapContainer.current)
-
-        // Get user location after map initialization
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            position => {
-              setIsLocating(false)
-              const location = {
-                lng: position.coords.longitude,
-                lat: position.coords.latitude,
-              }
-              setUserLocation(location)
-
-              // Center map on user location and zoom
-              map?.flyTo({
-                center: [location.lng, location.lat],
-                zoom: 14,
-                essential: true,
-              })
-
-              // Emit location for socket updates
-              if (socket) {
-                socket.emit('viewport_update', {
-                  longitude: location.lng,
-                  latitude: location.lat,
-                  zoom: 14,
-                  bounds: map.getBounds(),
-                })
-              }
-            },
-            error => {
-              setIsLocating(false)
-              console.error('Error getting location:', error)
-              setLocationError(
-                error.code === 1
-                  ? 'Please enable location access in your browser settings.'
-                  : 'Unable to get your location. Please try again.',
-              )
-            },
-            {
-              enableHighAccuracy: true,
-              timeout: 5000,
-              maximumAge: 0,
-            },
-          )
-        }
       } catch (error) {
         console.error('Map initialization error:', error)
         setInitError('Failed to initialize map')
         setLocationError('Failed to initialize map')
       }
-    }
 
-    initMap()
+      initMap()
 
-    return () => {
-      clearAllMarkers()
+      return () => {
+        clearAllMarkers()
+      }
     }
   }, [])
 
@@ -489,11 +494,38 @@ const MapComponent = ({
   return (
     <MapErrorBoundary>
       <div className='w-full h-full relative'>
-        {locationError && (
-          <div className='absolute top-4 left-4 z-10 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded max-w-md'>
-            <p>{locationError}</p>
+        {showLocationPrompt && (
+          <div className='absolute inset-0 bg-black/50 flex items-center justify-center z-30'>
+            <div className='bg-white p-6 rounded-lg shadow-lg max-w-md text-center'>
+              <h3 className='text-lg font-semibold mb-4'>
+                Enable Location Services
+              </h3>
+              <p className='mb-4'>
+                To show pet sitters in your area, we need your location.
+              </p>
+              <div className='flex gap-3 justify-center'>
+                <button
+                  onClick={() => {
+                    setShowLocationPrompt(false)
+                    requestLocation()
+                  }}
+                  className='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600'
+                >
+                  Allow Location Access
+                </button>
+                <button
+                  onClick={() => setShowLocationPrompt(false)}
+                  className='px-4 py-2 border border-gray-300 rounded hover:bg-gray-50'
+                >
+                  Not Now
+                </button>
+              </div>
+            </div>
           </div>
         )}
+        <div className='absolute top-4 left-4 z-10 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded max-w-md'>
+          <p>{locationError}</p>
+        </div>
         {isLoading || isLocating ? (
           <div className='absolute inset-0 bg-white/50 flex items-center justify-center z-20'>
             <div className='bg-white p-4 rounded-lg shadow flex flex-col items-center gap-2'>
