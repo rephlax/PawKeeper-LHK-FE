@@ -28,7 +28,8 @@ const PinCard = ({
       if (!isOpen) {
         setIsOpen(true)
       }
-      await onStartChat(userId)
+
+      await startPrivateChat(userId)
     } catch (error) {
       console.error('Error starting chat:', error)
     }
