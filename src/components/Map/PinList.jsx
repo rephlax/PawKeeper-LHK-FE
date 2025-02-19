@@ -12,14 +12,9 @@ const PinCard = ({
   isSelected,
   onClick,
   socket,
-  setIsCreatingPin,
-  setIsEditing,
-  setEditData,
-  onStartChat,
 }) => {
   const isOwnPin = pin.user === user?._id
   const { isOpen, setIsOpen } = useChat()
-
   const { startPrivateChat } = useSocket()
 
   const handleChatClick = async (e, userId) => {
@@ -28,11 +23,10 @@ const PinCard = ({
       if (!isOpen) {
         setIsOpen(true)
       }
-
       const room = await startPrivateChat(userId)
       if (room) {
-        socket.emit('join_room', room._id) // Ensure we're in the room
-        socket.emit('get_rooms') // Refresh room list
+        socket.emit('join_room', room._id)
+        socket.emit('get_rooms')
       }
     } catch (error) {
       console.error('Error starting chat:', error)
@@ -85,19 +79,16 @@ const PinCard = ({
             </p>
           </div>
 
-          {/* Action buttons */}
           {user && (
             <div className='mt-3 space-x-2'>
               {isOwnPin ? (
-                user?.sitter && (
-                  <button
-                    onClick={e => handleEdit(e, pin)}
-                    className='px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center gap-1 text-sm'
-                  >
-                    <Edit className='w-4 h-4' />
-                    Edit Pin
-                  </button>
-                )
+                <button
+                  onClick={e => handleEdit(e, pin)}
+                  className='px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center gap-1 text-sm'
+                >
+                  <Edit className='w-4 h-4' />
+                  Edit Pin
+                </button>
               ) : (
                 <>
                   <button
@@ -154,6 +145,7 @@ const PinList = ({
           pin={pin}
           index={index}
           user={user}
+          socket={socket}
           isSelected={selectedPin?._id === pin._id}
           onClick={() => onPinSelect(pin)}
           onReview={onReview}
