@@ -3,7 +3,7 @@ import { Edit, MessageCircle, Star, Delete } from 'lucide-react'
 import { useSocket } from '../../context/SocketContext'
 import { useChat } from '../../context/ChatContext'
 import { calculateAverageRating } from './utils/ratingUtils'
-import { handlePinDelete } from './utils'
+import { handlePinDelete } from './utils/pinHandlers'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 const webToken = localStorage.getItem('authToken')
