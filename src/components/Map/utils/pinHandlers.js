@@ -40,3 +40,18 @@ export const handlePinEdit = (
     console.error('Error in handlePinEdit:', error)
   }
 }
+
+export const handlePinDelete = (pinId, socket, setPins) => {
+  console.log('Pin delete handler called', { pinId })
+
+  try {
+    if (socket) {
+      socket.emit('delete_pin', { pinId })
+    }
+
+    // Update local state to remove the deleted pin
+    setPins(prevPins => prevPins.filter(pin => pin._id !== pinId))
+  } catch (error) {
+    console.error('Error in handlePinDelete:', error)
+  }
+}

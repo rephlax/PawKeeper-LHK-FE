@@ -1,8 +1,9 @@
 import React, { useCallback } from 'react'
-import { Edit, MessageCircle, Star } from 'lucide-react'
+import { Edit, MessageCircle, Star, Delete } from 'lucide-react'
 import { useSocket } from '../../context/SocketContext'
 import { useChat } from '../../context/ChatContext'
 import { calculateAverageRating } from './utils/ratingUtils'
+import { handlePinDelete } from './utils'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 const webToken = localStorage.getItem('authToken')
@@ -20,7 +21,7 @@ const PinCard = ({
   const { isOpen, setIsOpen } = useChat()
   const { startPrivateChat, socket } = useSocket()
 
-const averageRating = calculateAverageRating(pin)
+  const averageRating = calculateAverageRating(pin)
 
   const handleChatClick = async (e, userId) => {
     e.stopPropagation()
@@ -71,10 +72,10 @@ const averageRating = calculateAverageRating(pin)
           <p className='text-gray-600 text-sm mb-2'>{pin.description}</p>
 
           <div className='text-sm text-gray-600 space-y-1'>
-          <p>
-            <span>User Rating:</span>{' '}
-            {averageRating > 0 ? `${averageRating}/5 ⭐`: 'No ratings yet'}
-          </p>
+            <p>
+              <span>User Rating:</span>{' '}
+              {averageRating > 0 ? `${averageRating}/5 ⭐` : 'No ratings yet'}
+            </p>
             <p>
               <span className='font-medium'>Services:</span>{' '}
               {pin.services.join(', ')}
@@ -91,13 +92,21 @@ const averageRating = calculateAverageRating(pin)
           {user && (
             <div className='mt-3 space-x-2'>
               {isOwnPin ? (
-                <button
-                  onClick={e => handleEdit(e, pin)}
-                  className='px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center gap-1 text-sm'
-                >
-                  <Edit className='w-4 h-4' />
-                  Edit Pin
-                </button>
+                <>
+                  <button
+                    onClick={e => handleEdit(e, pin)}
+                    className='px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center gap-1 text-sm'
+                  >
+                    <Edit className='w-4 h-4' />
+                    Edit Pin
+                  </button>
+                  <button
+                    onClick={e => handlePinDelete(e, pin)}
+                    className='px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center gap-1 text-sm'
+                  ><Delete className='w-4 h-4'/>
+                    Delete Pin
+                  </button>
+                </>
               ) : (
                 <>
                   <button
