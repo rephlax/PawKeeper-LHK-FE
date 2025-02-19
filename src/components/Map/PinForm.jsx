@@ -23,8 +23,9 @@ const PinForm = ({
     availability: initialData?.availability || 'Part Time',
     hourlyRate: initialData?.hourlyRate || 0,
   })
-
+  
   useEffect(() => {
+    console.log(initialData)
     if (isEditing && initialData && map && isMapLoaded) {
       map.flyTo({
         center: initialData.location.coordinates,
