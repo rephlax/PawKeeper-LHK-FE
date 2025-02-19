@@ -20,6 +20,7 @@ const MapComponent = ({
   setSelectedPin,
 }) => {
   const mapContainer = useRef(null)
+  const [isLocating, setIsLocating] = useState(true)
   const markersRef = useRef(new Map())
   const { user } = useAuth()
   const { socket } = useSocket()
@@ -252,6 +253,51 @@ const MapComponent = ({
         setIsLoading(true)
         setInitError(null)
         await initializeMap(mapContainer.current)
+
+        // Get user location after map initialization
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            position => {
+              setIsLocating(false)
+              const location = {
+                lng: position.coords.longitude,
+                lat: position.coords.latitude,
+              }
+              setUserLocation(location)
+
+              // Center map on user location and zoom
+              map?.flyTo({
+                center: [location.lng, location.lat],
+                zoom: 14,
+                essential: true,
+              })
+
+              // Emit location for socket updates
+              if (socket) {
+                socket.emit('viewport_update', {
+                  longitude: location.lng,
+                  latitude: location.lat,
+                  zoom: 14,
+                  bounds: map.getBounds(),
+                })
+              }
+            },
+            error => {
+              setIsLocating(false)
+              console.error('Error getting location:', error)
+              setLocationError(
+                error.code === 1
+                  ? 'Please enable location access in your browser settings.'
+                  : 'Unable to get your location. Please try again.',
+              )
+            },
+            {
+              enableHighAccuracy: true,
+              timeout: 5000,
+              maximumAge: 0,
+            },
+          )
+        }
       } catch (error) {
         console.error('Map initialization error:', error)
         setInitError('Failed to initialize map')
@@ -265,6 +311,7 @@ const MapComponent = ({
       clearAllMarkers()
     }
   }, [])
+
   useEffect(() => {
     if (!map || !isMapLoaded) return
 
@@ -418,6 +465,22 @@ const MapComponent = ({
   ])
 
   useEffect(() => {
+    if (map && isMapLoaded && userLocation) {
+      const bounds = map.getBounds()
+      if (bounds) {
+        const boundingBox = {
+          north: bounds.getNorth(),
+          south: bounds.getSouth(),
+          east: bounds.getEast(),
+          west: bounds.getWest(),
+        }
+
+        fetchPinsInBounds(boundingBox)
+      }
+    }
+  }, [map, isMapLoaded, userLocation, fetchPinsInBounds])
+
+  useEffect(() => {
     if (isMapLoaded) {
       setIsLoading(false)
     }
@@ -431,11 +494,13 @@ const MapComponent = ({
             <p>{locationError}</p>
           </div>
         )}
-        {isLoading ? (
+        {isLoading || isLocating ? (
           <div className='absolute inset-0 bg-white/50 flex items-center justify-center z-20'>
             <div className='bg-white p-4 rounded-lg shadow flex flex-col items-center gap-2'>
               <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500'></div>
-              <p>Loading map...</p>
+              <p>
+                {isLocating ? 'Getting your location...' : 'Loading map...'}
+              </p>
             </div>
           </div>
         ) : initError ? (
