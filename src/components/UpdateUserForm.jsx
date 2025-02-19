@@ -184,7 +184,7 @@ const UpdateUserForm = () => {
           />
         </label>
 
-        <button type="submit">{t('userupdate.submitButton')}</button>
+        <button type="submit">{t('userupdate.submit')}</button>
         <Link to={`/users/user/${userId}`}>
           <button>{t('userupdate.backbutton')}</button>
         </Link>
