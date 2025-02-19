@@ -2,6 +2,10 @@ import React, { useCallback } from 'react'
 import { Edit, MessageCircle, Star } from 'lucide-react'
 import { useSocket } from '../../context/SocketContext'
 import { useChat } from '../../context/ChatContext'
+import { calculateAverageRating } from './utils/ratingUtils'
+
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
+const webToken = localStorage.getItem('authToken')
 
 const PinCard = ({
   pin,
@@ -15,6 +19,8 @@ const PinCard = ({
   const isOwnPin = pin.user === user?._id
   const { isOpen, setIsOpen } = useChat()
   const { startPrivateChat, socket } = useSocket()
+
+const averageRating = calculateAverageRating(pin)
 
   const handleChatClick = async (e, userId) => {
     e.stopPropagation()
@@ -65,6 +71,10 @@ const PinCard = ({
           <p className='text-gray-600 text-sm mb-2'>{pin.description}</p>
 
           <div className='text-sm text-gray-600 space-y-1'>
+          <p>
+            <span>User Rating:</span>{' '}
+            {averageRating > 0 ? `${averageRating}/5 ⭐`: 'No ratings yet'}
+          </p>
             <p>
               <span className='font-medium'>Services:</span>{' '}
               {pin.services.join(', ')}

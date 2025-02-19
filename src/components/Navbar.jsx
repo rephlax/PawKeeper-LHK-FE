@@ -8,7 +8,7 @@ import { MapPin } from 'lucide-react'
 
 const Navbar = () => {
   const { t } = useTranslation()
-  const { isSignedIn, user, handleLogout, isMapOpen, setIsMapOpen } = useAuth()
+  const { isSignedIn, user, userId, handleLogout, isMapOpen, setIsMapOpen } = useAuth()
 
   return (
     <nav className='flex items-center justify-between h-full px-8 relative'>
@@ -34,7 +34,7 @@ const Navbar = () => {
         ) : (
           <>
             <Link
-              to='/map'
+              to={`/map`}
               className='text-cream-text hover:text-cream-accent transition-colors'
             >
               <MapPin className='h-6 w-6' />
