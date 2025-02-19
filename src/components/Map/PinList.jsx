@@ -29,7 +29,11 @@ const PinCard = ({
         setIsOpen(true)
       }
 
-      await startPrivateChat(userId)
+      const room = await startPrivateChat(userId)
+      if (room) {
+        socket.emit('join_room', room._id) // Ensure we're in the room
+        socket.emit('get_rooms') // Refresh room list
+      }
     } catch (error) {
       console.error('Error starting chat:', error)
     }

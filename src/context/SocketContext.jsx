@@ -130,6 +130,7 @@ export const SocketProvider = ({ children }) => {
     if (!socket) return
 
     return new Promise((resolve, reject) => {
+      // First, create the room
       socket.emit(
         'create_room',
         {
@@ -137,13 +138,14 @@ export const SocketProvider = ({ children }) => {
           participants: [targetUserId],
           type: 'direct',
         },
-        response => {
+        async response => {
           if (!response?.roomId) {
             console.error('Failed to get room ID:', response)
             reject(new Error('Failed to create room'))
             return
           }
 
+          // Wait for room join confirmation
           const handleRoomJoined = room => {
             console.log('Joined room:', room)
             socket.off('room_joined', handleRoomJoined)
@@ -152,6 +154,7 @@ export const SocketProvider = ({ children }) => {
 
           socket.on('room_joined', handleRoomJoined)
 
+          // Join the room after setting up the listener
           socket.emit('join_room', response.roomId)
         },
       )

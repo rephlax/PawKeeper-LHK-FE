@@ -24,6 +24,8 @@ const ChatWidget = () => {
       setActiveRoom(room._id)
       setIsOpen(true)
       setShowUserList(false)
+      // Trigger immediate message fetch
+      socket.emit('join_room', room._id)
     }
 
     const handleRoomJoined = room => {
