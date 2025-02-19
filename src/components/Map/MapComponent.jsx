@@ -24,7 +24,6 @@ const MapComponent = ({
   const [isLocating, setIsLocating] = useState(true)
   const markersRef = useRef(new Map())
   const { user } = useAuth()
-  const isProcessing = isLoading || isLocating || !isMapLoaded
   const { socket } = useSocket()
   const {
     map,
@@ -63,6 +62,7 @@ const MapComponent = ({
   const [currentPopup, setCurrentPopup] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [initError, setInitError] = useState(null)
+  const isProcessing = isLoading || isLocating || !isMapLoaded
 
   const getAuthConfig = useCallback(
     () => ({
