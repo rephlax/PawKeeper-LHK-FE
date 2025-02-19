@@ -27,7 +27,35 @@ const SignUpPage = () => {
 
   const nav = useNavigate()
 
-  // Mapbox search functionality
+  const handleImageChange = e => {
+    setImageFile(e.target.files[0])
+  }
+
+  const handleUpload = async () => {
+    if (!imageFile) return
+
+    setUploading(true)
+
+    const formData = new FormData()
+    formData.append('file', imageFile)
+    formData.append('upload_preset', 'ml_default') // Cloudinary upload preset
+
+    try {
+      const response = await axios.post(
+        'https://api.cloudinary.com/v1_1/dzdrwiugn/image/upload',
+        formData,
+      )
+
+      console.log(response)
+      setProfilePicture(response.data.secure_url)
+      console.log(profilePicture)
+    } catch (error) {
+      console.error('Error uploading image:', error)
+    } finally {
+      setUploading(false)
+    }
+  }
+
   const searchPlaces = debounce(async query => {
     if (!query.trim()) {
       setSearchResults([])
@@ -66,7 +94,6 @@ const SignUpPage = () => {
           setLatitude(position.coords.latitude)
           setLongitude(position.coords.longitude)
 
-          // Reverse geocoding to get place name
           fetch(
             `https://api.mapbox.com/geocoding/v5/mapbox.places/${position.coords.longitude},${position.coords.latitude}.json?access_token=${mapboxgl.accessToken}`,
           )
@@ -87,13 +114,118 @@ const SignUpPage = () => {
     }
   }
 
-  // Rest of your existing functions (handleImageChange, handleUpload, handleSubmit, clearForm)...
+  const handleSubmit = async e => {
+    e.preventDefault()
+
+    if (sitter && (!rate || !latitude || !longitude)) {
+      alert('Sitters must provide their rate and location')
+      return
+    }
+
+    const newUser = {
+      username,
+      email,
+      password,
+      profilePicture,
+      rate: sitter ? rate : 0,
+      latitude,
+      longitude,
+      sitter,
+      rating,
+    }
+
+    try {
+      const existingUsers = await axios.get(`${BACKEND_URL}/users/`)
+      const userExists = existingUsers.data.some(
+        user => user.username === newUser.username,
+      )
+      const emailExists = existingUsers.data.some(
+        user => user.email === newUser.email,
+      )
+
+      if (userExists) {
+        alert('User already exists')
+      } else if (emailExists) {
+        alert('Email already exists')
+      } else {
+        const response = await axios.post(
+          `${BACKEND_URL}/users/signup`,
+          newUser,
+        )
+
+        if (response.data) {
+          alert('User created successfully')
+          clearForm()
+          nav('/log-in')
+        }
+      }
+    } catch (error) {
+      console.error('Signup error:', error)
+      alert(error.response?.data?.message || 'Error creating user')
+    }
+  }
+
+  const clearForm = () => {
+    setUsername('')
+    setEmail('')
+    setPassword('')
+    setProfilePicture('')
+    setLatitude('')
+    setLongitude('')
+    setRate('')
+    setSitter(false)
+  }
 
   return (
     <div>
       <h1>{t('signuppage.title')}</h1>
       <form onSubmit={handleSubmit} className='form'>
-        {/* Other form fields... */}
+        <label>
+          {t('forms.emailLabel')}
+          <input
+            type='email'
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
+          />
+        </label>
+
+        <label>
+          {t('forms.passwordLabel')}
+          <input
+            type='password'
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            required
+          />
+        </label>
+
+        <label>
+          {t('signuppage.usernameLabel')}
+          <input
+            type='text'
+            value={username}
+            onChange={e => setUsername(e.target.value)}
+            required
+          />
+        </label>
+
+        <label>
+          {t('signuppage.profilePictureLabel')}
+          <input type='file' accept='image/*' onChange={handleImageChange} />
+        </label>
+        <button type='button' onClick={handleUpload} disabled={uploading}>
+          {uploading ? 'Uploading...' : 'Upload Image'}
+        </button>
+
+        <label>
+          {t('signuppage.sitterLabel')}
+          <input
+            type='checkbox'
+            checked={sitter}
+            onChange={e => setSitter(e.target.checked)}
+          />
+        </label>
 
         {sitter && (
           <>
