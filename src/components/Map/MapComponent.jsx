@@ -111,27 +111,30 @@ const MapComponent = ({
   const fetchPinsInBounds = useCallback(
     async bounds => {
       try {
+        const center = map.getCenter()
         const response = await axios.get(
           `${BACKEND_URL}/api/location-pins/in-bounds`,
           {
-            params: bounds,
+            params: {
+              ...bounds,
+              longitude: center.lng,
+              latitude: center.lat,
+            },
             ...getAuthConfig(),
           },
         )
 
         if (response.data && Array.isArray(response.data)) {
           setAllPins(prevPins => {
-            const validPins = prevPins.filter(pin =>
-              response.data.some(newPin => newPin._id === pin._id),
-            )
+            // Only show pins within 50km
+            const validPins = response.data.filter(pin => pin.distance <= 50000)
 
-            // Add new pins from the response
             const newPinsMap = new Map()
-            response.data.forEach(pin => {
+            validPins.forEach(pin => {
               newPinsMap.set(pin._id, pin)
             })
 
-            // Clean up markers for deleted pins
+            // Clean up markers for deleted/out-of-range pins
             markersRef.current.forEach((marker, pinId) => {
               if (!newPinsMap.has(pinId)) {
                 marker.remove()
@@ -141,7 +144,7 @@ const MapComponent = ({
 
             // Update markers for remaining pins
             if (isMapLoaded) {
-              response.data.forEach((pin, index) => {
+              validPins.forEach((pin, index) => {
                 const existingMarker = markersRef.current.get(pin._id)
                 if (!existingMarker) {
                   addPinMarker(pin, index)
@@ -156,25 +159,9 @@ const MapComponent = ({
         }
       } catch (error) {
         console.warn('Error fetching pins in bounds:', error.response || error)
-
-        // Handle deleted pins
-        if (error.response?.status === 404) {
-          console.log('Pin not found, might have been deleted')
-          setAllPins(prevPins =>
-            prevPins.filter(pin => pin._id !== error.response?.data?.pinId),
-          )
-
-          if (error.response?.data?.pinId) {
-            const marker = markersRef.current.get(error.response.data.pinId)
-            if (marker) {
-              marker.remove()
-              markersRef.current.delete(error.response.data.pinId)
-            }
-          }
-        }
       }
     },
-    [getAuthConfig, addPinMarker, isMapLoaded],
+    [getAuthConfig, addPinMarker, isMapLoaded, map],
   )
 
   const fetchAllPins = useCallback(async () => {
