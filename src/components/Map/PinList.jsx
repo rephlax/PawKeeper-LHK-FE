@@ -11,11 +11,10 @@ const PinCard = ({
   onReview,
   isSelected,
   onClick,
-  socket,
 }) => {
   const isOwnPin = pin.user === user?._id
   const { isOpen, setIsOpen } = useChat()
-  const { startPrivateChat } = useSocket()
+  const { startPrivateChat, socket } = useSocket()
 
   const handleChatClick = async (e, userId) => {
     e.stopPropagation()
@@ -145,7 +144,6 @@ const PinList = ({
           pin={pin}
           index={index}
           user={user}
-          socket={socket}
           isSelected={selectedPin?._id === pin._id}
           onClick={() => onPinSelect(pin)}
           onReview={onReview}
