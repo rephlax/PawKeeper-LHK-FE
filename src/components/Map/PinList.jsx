@@ -11,16 +11,10 @@ const PinCard = ({
   onReview,
   isSelected,
   onClick,
-  socket,
-  setIsCreatingPin,
-  setIsEditing,
-  setEditData,
-  onStartChat,
 }) => {
   const isOwnPin = pin.user === user?._id
   const { isOpen, setIsOpen } = useChat()
-
-  const { startPrivateChat } = useSocket()
+  const { startPrivateChat, socket } = useSocket()
 
   const handleChatClick = async (e, userId) => {
     e.stopPropagation()
@@ -28,7 +22,11 @@ const PinCard = ({
       if (!isOpen) {
         setIsOpen(true)
       }
-      await onStartChat(userId)
+      const room = await startPrivateChat(userId)
+      if (room) {
+        socket.emit('join_room', room._id)
+        socket.emit('get_rooms')
+      }
     } catch (error) {
       console.error('Error starting chat:', error)
     }
@@ -80,19 +78,16 @@ const PinCard = ({
             </p>
           </div>
 
-          {/* Action buttons */}
           {user && (
             <div className='mt-3 space-x-2'>
               {isOwnPin ? (
-                user?.sitter && (
-                  <button
-                    onClick={e => handleEdit(e, pin)}
-                    className='px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center gap-1 text-sm'
-                  >
-                    <Edit className='w-4 h-4' />
-                    Edit Pin
-                  </button>
-                )
+                <button
+                  onClick={e => handleEdit(e, pin)}
+                  className='px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center gap-1 text-sm'
+                >
+                  <Edit className='w-4 h-4' />
+                  Edit Pin
+                </button>
               ) : (
                 <>
                   <button

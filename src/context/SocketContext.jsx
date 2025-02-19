@@ -85,6 +85,14 @@ export const SocketProvider = ({ children }) => {
       setOnlineUsers(new Set())
     })
 
+    newSocket.on('room_created', room => {
+      console.log('Room created:', room)
+    })
+
+    newSocket.on('room_joined', room => {
+      console.log('Joined room:', room)
+    })
+
     newSocket.on('nearby_sitters', sitters => {
       console.log('Received nearby sitters:', sitters)
       setNearbySitters(sitters)
@@ -101,6 +109,8 @@ export const SocketProvider = ({ children }) => {
         newSocket.off('user_connected')
         newSocket.off('user_disconnected')
         newSocket.off('nearby_sitters')
+        newSocket.off('room_created')
+        newSocket.off('room_joined')
         newSocket.close()
       }
     }
@@ -120,20 +130,7 @@ export const SocketProvider = ({ children }) => {
     if (!socket) return
 
     return new Promise((resolve, reject) => {
-      const handleRoomCreated = async room => {
-        socket.off('room_created', handleRoomCreated)
-        await new Promise(resolve => {
-          const handleRoomJoined = room => {
-            socket.off('room_joined', handleRoomJoined)
-            resolve(room._id)
-          }
-          socket.on('room_joined', handleRoomJoined)
-          socket.emit('join_room', room._id)
-        })
-      }
-
-      socket.on('room_created', handleRoomCreated)
-
+      // First, create the room
       socket.emit(
         'create_room',
         {
@@ -141,10 +138,24 @@ export const SocketProvider = ({ children }) => {
           participants: [targetUserId],
           type: 'direct',
         },
-        response => {
+        async response => {
           if (!response?.roomId) {
+            console.error('Failed to get room ID:', response)
             reject(new Error('Failed to create room'))
+            return
           }
+
+          // Wait for room join confirmation
+          const handleRoomJoined = room => {
+            console.log('Joined room:', room)
+            socket.off('room_joined', handleRoomJoined)
+            resolve(room)
+          }
+
+          socket.on('room_joined', handleRoomJoined)
+
+          // Join the room after setting up the listener
+          socket.emit('join_room', response.roomId)
         },
       )
     })

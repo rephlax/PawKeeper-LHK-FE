@@ -20,6 +20,8 @@ const MapComponent = ({
   setSelectedPin,
 }) => {
   const mapContainer = useRef(null)
+  const [showLocationPrompt, setShowLocationPrompt] = useState(true)
+  const [isLocating, setIsLocating] = useState(true)
   const markersRef = useRef(new Map())
   const { user } = useAuth()
   const { socket } = useSocket()
@@ -60,6 +62,7 @@ const MapComponent = ({
   const [currentPopup, setCurrentPopup] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [initError, setInitError] = useState(null)
+  const isProcessing = isLoading || isLocating || !isMapLoaded
 
   const getAuthConfig = useCallback(
     () => ({
@@ -111,27 +114,30 @@ const MapComponent = ({
   const fetchPinsInBounds = useCallback(
     async bounds => {
       try {
+        const center = map.getCenter()
         const response = await axios.get(
           `${BACKEND_URL}/api/location-pins/in-bounds`,
           {
-            params: bounds,
+            params: {
+              ...bounds,
+              longitude: center.lng,
+              latitude: center.lat,
+            },
             ...getAuthConfig(),
           },
         )
 
         if (response.data && Array.isArray(response.data)) {
           setAllPins(prevPins => {
-            const validPins = prevPins.filter(pin =>
-              response.data.some(newPin => newPin._id === pin._id),
-            )
+            // Only show pins within 50km
+            const validPins = response.data.filter(pin => pin.distance <= 50000)
 
-            // Add new pins from the response
             const newPinsMap = new Map()
-            response.data.forEach(pin => {
+            validPins.forEach(pin => {
               newPinsMap.set(pin._id, pin)
             })
 
-            // Clean up markers for deleted pins
+            // Clean up markers for deleted/out-of-range pins
             markersRef.current.forEach((marker, pinId) => {
               if (!newPinsMap.has(pinId)) {
                 marker.remove()
@@ -141,7 +147,7 @@ const MapComponent = ({
 
             // Update markers for remaining pins
             if (isMapLoaded) {
-              response.data.forEach((pin, index) => {
+              validPins.forEach((pin, index) => {
                 const existingMarker = markersRef.current.get(pin._id)
                 if (!existingMarker) {
                   addPinMarker(pin, index)
@@ -156,26 +162,58 @@ const MapComponent = ({
         }
       } catch (error) {
         console.warn('Error fetching pins in bounds:', error.response || error)
-
-        // Handle deleted pins
-        if (error.response?.status === 404) {
-          console.log('Pin not found, might have been deleted')
-          setAllPins(prevPins =>
-            prevPins.filter(pin => pin._id !== error.response?.data?.pinId),
-          )
-
-          if (error.response?.data?.pinId) {
-            const marker = markersRef.current.get(error.response.data.pinId)
-            if (marker) {
-              marker.remove()
-              markersRef.current.delete(error.response.data.pinId)
-            }
-          }
-        }
       }
     },
-    [getAuthConfig, addPinMarker, isMapLoaded],
+    [getAuthConfig, addPinMarker, isMapLoaded, map],
   )
+
+  const requestLocation = () => {
+    if (navigator.geolocation) {
+      setIsLocating(true)
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          setIsLocating(false)
+          const location = {
+            lng: position.coords.longitude,
+            lat: position.coords.latitude,
+          }
+          setUserLocation(location)
+          setShowLocationPrompt(false)
+
+          // Center map on user location and zoom
+          map?.flyTo({
+            center: [location.lng, location.lat],
+            zoom: 14,
+            essential: true,
+          })
+
+          // Emit location for socket updates
+          if (socket) {
+            socket.emit('viewport_update', {
+              longitude: location.lng,
+              latitude: location.lat,
+              zoom: 14,
+              bounds: map.getBounds(),
+            })
+          }
+        },
+        error => {
+          setIsLocating(false)
+          console.error('Error getting location:', error)
+          setLocationError(
+            error.code === 1
+              ? 'Please enable location access in your browser settings.'
+              : 'Unable to get your location. Please try again.',
+          )
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0,
+        },
+      )
+    }
+  }
 
   const fetchAllPins = useCallback(async () => {
     try {
@@ -269,6 +307,8 @@ const MapComponent = ({
         console.error('Map initialization error:', error)
         setInitError('Failed to initialize map')
         setLocationError('Failed to initialize map')
+      } finally {
+        setIsLoading(false)
       }
     }
 
@@ -278,6 +318,7 @@ const MapComponent = ({
       clearAllMarkers()
     }
   }, [])
+
   useEffect(() => {
     if (!map || !isMapLoaded) return
 
@@ -431,6 +472,22 @@ const MapComponent = ({
   ])
 
   useEffect(() => {
+    if (map && isMapLoaded && userLocation) {
+      const bounds = map.getBounds()
+      if (bounds) {
+        const boundingBox = {
+          north: bounds.getNorth(),
+          south: bounds.getSouth(),
+          east: bounds.getEast(),
+          west: bounds.getWest(),
+        }
+
+        fetchPinsInBounds(boundingBox)
+      }
+    }
+  }, [map, isMapLoaded, userLocation, fetchPinsInBounds])
+
+  useEffect(() => {
     if (isMapLoaded) {
       setIsLoading(false)
     }
@@ -439,16 +496,53 @@ const MapComponent = ({
   return (
     <MapErrorBoundary>
       <div className='w-full h-full relative'>
+        {showLocationPrompt && (
+          <div className='absolute inset-0 bg-black/50 flex items-center justify-center z-30'>
+            <div className='bg-white p-6 rounded-lg shadow-lg max-w-md text-center'>
+              <h3 className='text-lg font-semibold mb-4'>
+                Enable Location Services
+              </h3>
+              <p className='mb-4'>
+                To show pet sitters in your area, we need your location.
+              </p>
+              <div className='flex gap-3 justify-center'>
+                <button
+                  onClick={() => {
+                    setShowLocationPrompt(false)
+                    requestLocation()
+                  }}
+                  className='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600'
+                >
+                  Allow Location Access
+                </button>
+                <button
+                  onClick={() => setShowLocationPrompt(false)}
+                  className='px-4 py-2 border border-gray-300 rounded hover:bg-gray-50'
+                >
+                  Not Now
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {locationError && (
           <div className='absolute top-4 left-4 z-10 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded max-w-md'>
             <p>{locationError}</p>
           </div>
         )}
-        {isLoading ? (
+
+        {isProcessing ? (
           <div className='absolute inset-0 bg-white/50 flex items-center justify-center z-20'>
             <div className='bg-white p-4 rounded-lg shadow flex flex-col items-center gap-2'>
               <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500'></div>
-              <p>Loading map...</p>
+              <p>
+                {isLocating
+                  ? 'Getting your location...'
+                  : !isMapLoaded
+                    ? 'Initializing map...'
+                    : 'Loading...'}
+              </p>
             </div>
           </div>
         ) : initError ? (
@@ -458,6 +552,7 @@ const MapComponent = ({
             </div>
           </div>
         ) : null}
+
         <div ref={mapContainer} className='w-full h-full' />
       </div>
     </MapErrorBoundary>
