@@ -42,6 +42,7 @@ export const handlePinEdit = (
 }
 
 export const handlePinDelete = (pinData, socket, setPins) => {
+  const {pinId} = pinData
   console.log(pinData)
   console.log('Pin delete handler called', { pinId })
   console.log('Socket on call', socket)
