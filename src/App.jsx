@@ -100,66 +100,68 @@ function App() {
 
         {/* Main Content Area */}
         <main className='flex-1 bg-cream-50/80 overflow-auto'>
-          <Routes>
-            <Route path='/' element={<HomePage />} />
-            <Route
-              path='/map'
-              element={
-                <MapErrorBoundary>
-                  <MapComponent
-                    setUserPin={setUserPin}
-                    setAllPins={setAllPins}
-                    selectedPin={selectedPin}
-                    setSelectedPin={handlePinSelect}
-                    setEditData={setEditData}
-                  />
-                </MapErrorBoundary>
-              }
-            />
-            <Route
-              path='/users/user/:userId'
-              element={
-                <PrivateRoute>
-                  <UserPage />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path={`/users/update-user/:userId`}
-              element={
-                <PrivateRoute>
-                  <UpdateUserForm />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path={`/pets/add-pet/:userId`}
-              element={
-                <PrivateRoute>
-                  <AddPetForm />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path={`/pets/update-pet/:userId/:petId`}
-              element={
-                <PrivateRoute>
-                  <UpdatePetForm />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path={`/users/update-user/:userId/password-change`}
-              element={
-                <PrivateRoute>
-                  <PasswordChange />
-                </PrivateRoute>
-              }
-            />
-            <Route path='/sign-up' element={<SignUpPage />} />
-            <Route path='/log-in' element={<LogInPage />} />
-            <Route path='*' element={<NotFoundPage />} />
-          </Routes>
+          <div className='min-h-full flex items-center justify-center'>
+            <Routes>
+              <Route path='/' element={<HomePage />} />
+              <Route
+                path='/map'
+                element={
+                  <MapErrorBoundary>
+                    <MapComponent
+                      setUserPin={setUserPin}
+                      setAllPins={setAllPins}
+                      selectedPin={selectedPin}
+                      setSelectedPin={handlePinSelect}
+                      setEditData={setEditData}
+                    />
+                  </MapErrorBoundary>
+                }
+              />
+              <Route
+                path='/users/user/:userId'
+                element={
+                  <PrivateRoute>
+                    <UserPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path={`/users/update-user/:userId`}
+                element={
+                  <PrivateRoute>
+                    <UpdateUserForm />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path={`/pets/add-pet/:userId`}
+                element={
+                  <PrivateRoute>
+                    <AddPetForm />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path={`/pets/update-pet/:userId/:petId`}
+                element={
+                  <PrivateRoute>
+                    <UpdatePetForm />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path={`/users/update-user/:userId/password-change`}
+                element={
+                  <PrivateRoute>
+                    <PasswordChange />
+                  </PrivateRoute>
+                }
+              />
+              <Route path='/sign-up' element={<SignUpPage />} />
+              <Route path='/log-in' element={<LogInPage />} />
+              <Route path='*' element={<NotFoundPage />} />
+            </Routes>
+          </div>
         </main>
       </div>
 
