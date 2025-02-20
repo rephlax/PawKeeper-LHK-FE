@@ -16,6 +16,7 @@ const PinCard = ({
   onReview,
   isSelected,
   onClick,
+  setPins
 }) => {
   const isOwnPin = pin.user === user?._id
   const { isOpen, setIsOpen } = useChat()
@@ -101,9 +102,13 @@ const PinCard = ({
                     Edit Pin
                   </button>
                   <button
-                    onClick={e => handlePinDelete(e, pin)}
+                    onClick={e => {
+                      e.stopPropagation()
+                      handlePinDelete(pin, socket, setPins)
+                    }}
                     className='px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center gap-1 text-sm'
-                  ><Delete className='w-4 h-4'/>
+                  >
+                    <Delete className='w-4 h-4' />
                     Delete Pin
                   </button>
                 </>
@@ -168,6 +173,7 @@ const PinList = ({
           onReview={onReview}
           onEdit={onEdit}
           onStartChat={onStartChat}
+          setPins={setPins}
         />
       ))}
     </div>

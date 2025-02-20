@@ -42,7 +42,7 @@ export const handlePinEdit = (
 }
 
 export const handlePinDelete = ( socket, setPins) => {
-  console.log(typeof socket.emit)
+
   console.log('Socket on call', socket)
   if (!socket || typeof socket.emit !== "function") {
     console.error('Socket is not available')
