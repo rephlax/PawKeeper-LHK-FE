@@ -22,7 +22,7 @@ const PinCard = ({
 
 
   console.log("Here is the user", pin.user)
-  const averageRating = calculateAverageRating(pin)
+  const averageRating = calculateAverageRating(pin.user._id)
 
   const handleChatClick = async (e, userId) => {
     e.stopPropagation()
