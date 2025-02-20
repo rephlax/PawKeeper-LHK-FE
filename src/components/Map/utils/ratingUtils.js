@@ -3,9 +3,11 @@ import axios from 'axios'
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 const webToken = localStorage.getItem('authToken')
 
-export async function calculateAverageRating(pinUserId) {
+export async function calculateAverageRating(id) {
+
+  console.log(id)
   try {
-    const user = await axios.get(`${BACKEND_URL}/users/user/${pinUserId}`, {
+    const user = await axios.get(`${BACKEND_URL}/users/user/${id}`, {
       headers: { authorization: `Bearer ${webToken}` },
     })
 

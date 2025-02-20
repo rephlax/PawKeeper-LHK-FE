@@ -1,10 +1,9 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Edit, MessageCircle, Star, Delete, MapPin } from 'lucide-react'
 import { useSocket } from '../../context/SocketContext'
 import { useChat } from '../../context/ChatContext'
 import { calculateAverageRating } from './utils/ratingUtils'
 import { handlePinDelete } from './utils/pinHandlers'
-
 
 const PinCard = ({
   pin,
@@ -19,10 +18,24 @@ const PinCard = ({
   const isOwnPin = pin.user === user?._id
   const { isOpen, setIsOpen } = useChat()
   const { startPrivateChat, socket } = useSocket()
+  const [averageRating, setAverageRating] = useState(0)
+  const [loadingRating, setLoadingRating] = useState(true)
 
+  useEffect(() => {
+    const fetchRating = async () => {
+      try {
+        const rating = await calculateAverageRating(pin.user._id)
+        setAverageRating(rating)
+      } catch (error) {
+        console.error('Error fetching rating:', error)
+        setAverageRating(0)
+      } finally {
+        setLoadingRating(false)
+      }
+    }
 
-  console.log("Here is the user", pin.user._id)
-  const averageRating = calculateAverageRating(pin.user._id)
+    fetchRating()
+  }, [pin.user._id])
 
   const handleChatClick = async (e, userId) => {
     e.stopPropagation()
@@ -74,7 +87,9 @@ const PinCard = ({
 
           <div className='text-sm text-cream-600 space-y-1'>
             <p>
-              {averageRating > 0 ? (
+            {loadingRating ? (
+                'Loading rating...'
+              ) : averageRating > 0 ? (
                 <span className='flex items-center gap-1'>
                   <Star className='w-4 h-4 fill-cream-500 text-cream-500' />
                   {averageRating.toFixed(1)}/5
