@@ -23,17 +23,16 @@ const ChatWidget = () => {
 
     const handleRoomCreated = room => {
       console.log('Room created:', room)
-      setActiveRoom(room._id)
+      setActiveRoom(room)
       setIsOpen(true)
       setShowUserList(false)
-      // Trigger immediate message fetch
       socket.emit('join_room', room._id)
     }
 
     const handleRoomJoined = room => {
       console.log('Joined room:', room)
       if (room) {
-        setActiveRoom(room._id)
+        setActiveRoom(room)
         setIsOpen(true)
         setShowUserList(false)
       }
@@ -83,6 +82,8 @@ const ChatWidget = () => {
       socket.emit('join_room', roomId, room => {
         if (room) {
           setActiveRoom(room)
+          setIsOpen(true)
+          setShowUserList(false)
         }
       })
     }
@@ -90,9 +91,27 @@ const ChatWidget = () => {
 
   const handleLeaveRoom = () => {
     if (socket && activeRoom) {
-      socket.emit('leave_room', activeRoom)
+      socket.emit('leave_room', activeRoom._id)
       setActiveRoom(null)
     }
+  }
+
+  const getRoomTitle = () => {
+    if (!activeRoom?.participants) return t('chat.messenger')
+
+    const otherParticipants = activeRoom.participants.filter(
+      p => p._id !== user?._id,
+    )
+
+    if (otherParticipants.length === 0) return t('chat.messenger')
+
+    // For group chats
+    if (activeRoom.type === 'group') {
+      return `${t('chat.groupChat')} (${otherParticipants.length + 1} ${t('chat.members')})`
+    }
+
+    // For direct chats
+    return otherParticipants[0].username
   }
 
   return (
@@ -117,16 +136,7 @@ const ChatWidget = () => {
         >
           {/* Header */}
           <div className='px-4 py-3 bg-white border-b border-cream-200 flex justify-between items-center'>
-            <h3 className='font-medium text-cream-800'>
-              {activeRoom?.participants
-                ? t('chat.speakingTo', {
-                    username: activeRoom.participants
-                      .filter(p => p._id !== user?._id)
-                      .map(p => p.username)
-                      .join(', '),
-                  })
-                : t('chat.messenger')}
-            </h3>
+            <h3 className='font-medium text-cream-800'>{getRoomTitle()}</h3>
             <div className='flex gap-2'>
               {!activeRoom && (
                 <>

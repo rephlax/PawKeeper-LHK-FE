@@ -45,7 +45,17 @@ const RoomList = ({ onRoomSelect, activeRoomId, onCreateRoom }) => {
   const handleDeleteRoom = (e, roomId) => {
     e.stopPropagation()
     if (window.confirm(t('chat.confirmDelete'))) {
-      socket.emit('delete_room', roomId)
+      socket.emit('delete_room', roomId, response => {
+        if (response?.error) {
+          console.error('Delete room error:', response.error)
+          alert(response.error.message || 'Failed to delete room')
+        }
+      })
+
+      socket.on('error', errorData => {
+        console.error('Socket error:', errorData)
+        alert(errorData.message || 'An error occurred')
+      })
     }
   }
 
