@@ -61,16 +61,21 @@ function App() {
   }, [])
 
   return (
-    <div className='h-screen flex flex-col relative bg-gradient-to-b from-cream-50 via-cream-100 to-cream-200 overflow-hidden'>
-      <div className='absolute top-0 left-1/4 w-96 h-96 bg-cream-300/30 rounded-full blur-3xl'></div>
-      <div className='absolute bottom-1/4 right-1/4 w-96 h-96 bg-cream-400/20 rounded-full blur-3xl'></div>
+    <div className='h-screen flex flex-col relative bg-gradient-to-br from-cream-50 via-cream-100 to-cream-200 overflow-hidden'>
+      <div className='absolute inset-0 z-0'>
+        <div className='absolute top-0 left-1/4 w-96 h-96 bg-cream-300/30 rounded-full blur-3xl animate-pulse'></div>
+        <div className='absolute bottom-1/4 right-1/4 w-96 h-96 bg-cream-400/20 rounded-full blur-3xl animate-pulse'></div>
+      </div>
 
-      <nav className='h-[80px] backdrop-blur-md bg-cream-background shrink-0 border-b border-cream-accent sticky top-0 z-50'>
+      {/* Navbar */}
+      <nav className='h-[80px] backdrop-blur-sm bg-white/70 border-b border-cream-200 sticky top-0 z-50 shadow-sm'>
         <Navbar />
       </nav>
 
+      {/* Main content */}
       <div className='flex flex-1 relative z-10'>
-        <aside className='w-64 backdrop-blur-md bg-cream-50/50 border-r border-cream-accent text-cream-text'>
+        {/* Sidebar */}
+        <aside className='w-64 bg-white border-r border-cream-200 shadow-sm'>
           <Sidebar
             isMapPage={isMapPage}
             userPin={userPin}
@@ -93,7 +98,8 @@ function App() {
           />
         </aside>
 
-        <main className='flex-1 backdrop-blur-md bg-cream-50/50 p-6'>
+        {/* Main content area */}
+        <main className='flex-1 bg-cream-50/80 p-6 overflow-auto'>
           <Routes>
             <Route path='/' element={<HomePage />} />
             <Route
@@ -157,10 +163,12 @@ function App() {
         </main>
       </div>
 
-      <footer className='h-[40px] backdrop-blur-md bg-cream-50/70 shrink-0 border-t border-cream-accent relative z-10'>
+      {/* Footer */}
+      <footer className='h-[40px] bg-white border-t border-cream-200 relative z-10 shadow-sm'>
         <Footer />
       </footer>
 
+      {/* Chat Widget */}
       <div className='relative z-50'>
         <ChatWidget />
       </div>
