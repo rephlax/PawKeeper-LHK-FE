@@ -43,9 +43,31 @@ const UserList = () => {
     }
   }, [socket, user?._id])
 
-  const startPrivateChat = userId => {
-    console.log('Starting private chat with:', userId)
-    socket.emit('start_private_chat', { targetUserId: userId })
+  const startPrivateChat = async userId => {
+    try {
+      if (!isOpen) {
+        setIsOpen(true)
+      }
+      const room = await socket.emit(
+        'create_room',
+        {
+          name: null,
+          participants: [userId],
+          type: 'direct',
+        },
+        response => {
+          if (response?.error) {
+            console.error('Room creation error:', response.error)
+          }
+        },
+      )
+      if (room) {
+        socket.emit('join_room', room._id)
+        socket.emit('get_rooms')
+      }
+    } catch (error) {
+      console.error('Error starting chat:', error)
+    }
   }
 
   return (

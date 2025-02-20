@@ -115,7 +115,12 @@ const ChatWidget = () => {
           {/* Header */}
           <div className='px-4 py-3 bg-white border-b border-cream-200 flex justify-between items-center'>
             <h3 className='font-medium text-cream-800'>
-              {t('chat.messenger')}
+              {activeRoom
+                ? `You are speaking to ${activeRoom.participants
+                    .filter(p => p._id !== user?._id)
+                    .map(p => p.username)
+                    .join(', ')}`
+                : t('chat.messenger')}
             </h3>
             <div className='flex gap-2'>
               {!activeRoom && (
