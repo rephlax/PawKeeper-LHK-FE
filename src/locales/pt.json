@@ -106,5 +106,10 @@
   "notfoundpage": {
     "notfound": "Página não encontrada",
     "backhome": "Voltar para a página inicial"
+  },
+  "sidebar": {
+    "home": "Início",
+    "nav": "Navegação",
+    "profile": "Perfil"
   }
 }

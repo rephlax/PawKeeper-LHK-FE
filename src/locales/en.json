@@ -111,5 +111,10 @@
   "notfoundpage": {
     "notfound": "Page is not found",
     "backhome": "Back to homepage"
+  },
+  "sidebar": {
+    "home": "Home",
+    "nav":"Navigation",
+    "profile":"Profile"
   }
 }
