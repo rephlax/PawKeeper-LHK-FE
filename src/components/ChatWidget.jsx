@@ -15,8 +15,8 @@ const ChatWidget = () => {
   const [activeRoom, setActiveRoom] = useState(null)
   const [showUserList, setShowUserList] = useState(false)
   const [showCreateRoom, setShowCreateRoom] = useState(false)
-  const { socket } = useSocket()
   const { t } = useTranslation()
+  const { socket, user } = useSocket()
 
   useEffect(() => {
     if (!socket) return
@@ -80,8 +80,11 @@ const ChatWidget = () => {
         return
       }
 
-      socket.emit('join_room', roomId)
-      setActiveRoom(roomId)
+      socket.emit('join_room', roomId, room => {
+        if (room) {
+          setActiveRoom(room)
+        }
+      })
     }
   }
 
@@ -102,9 +105,9 @@ const ChatWidget = () => {
           onClick={() => setIsOpen(true)}
           className='p-3 bg-cream-600 text-white rounded-full shadow-lg hover:bg-cream-700
                    transform hover:scale-105 transition-all duration-200 
-                   flex items-center justify-center'
+                   flex items-center justify-center w-14 h-14'
         >
-          <MessageSquare className='h-6 w-6' />
+          <MessageSquare className='h-8 w-8' />
         </button>
       ) : (
         <div
@@ -115,11 +118,13 @@ const ChatWidget = () => {
           {/* Header */}
           <div className='px-4 py-3 bg-white border-b border-cream-200 flex justify-between items-center'>
             <h3 className='font-medium text-cream-800'>
-              {activeRoom
-                ? `You are speaking to ${activeRoom.participants
-                    .filter(p => p._id !== user?._id)
-                    .map(p => p.username)
-                    .join(', ')}`
+              {activeRoom?.participants
+                ? t('chat.speakingTo', {
+                    username: activeRoom.participants
+                      .filter(p => p._id !== user?._id)
+                      .map(p => p.username)
+                      .join(', '),
+                  })
                 : t('chat.messenger')}
             </h3>
             <div className='flex gap-2'>
@@ -166,10 +171,10 @@ const ChatWidget = () => {
             {activeRoom ? (
               <div className='flex flex-col h-full'>
                 <div className='flex-1 overflow-hidden'>
-                  <Messages roomId={activeRoom} />
+                  <Messages roomId={activeRoom._id} />
                 </div>
                 <div className='border-t border-cream-200'>
-                  <MessageInput roomId={activeRoom} />
+                  <MessageInput roomId={activeRoom._id} />
                 </div>
               </div>
             ) : showUserList ? (
@@ -177,7 +182,7 @@ const ChatWidget = () => {
             ) : (
               <RoomList
                 onRoomSelect={handleRoomSelect}
-                activeRoomId={activeRoom}
+                activeRoomId={activeRoom?._id}
                 onCreateRoom={() => setShowCreateRoom(true)}
               />
             )}
