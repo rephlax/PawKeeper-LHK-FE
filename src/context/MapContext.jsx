@@ -104,15 +104,6 @@ export const MapProvider = ({ children }) => {
         }
       })
 
-      newMap.addControl(new mapboxgl.NavigationControl(), 'top-right')
-      newMap.addControl(
-        new mapboxgl.GeolocateControl({
-          positionOptions: { enableHighAccuracy: true },
-          trackUserLocation: true,
-          showAccuracyCircle: true,
-        }),
-      )
-
       setMap(newMap)
       console.log('Map instance created')
       return newMap
