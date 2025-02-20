@@ -36,7 +36,8 @@
       "species": "Espécie",
       "deletepet": "Excluir animal",
       "nopets": "Nenhum animal de estimação",
-      "addpet": "Adicionar animal"
+      "addpet": "Adicionar animal",
+      "update": "Atualizar informações do pet"
     },
     "update": "Atualizar informações do usuário",
     "deleteuser": "Excluir usuário",
@@ -85,7 +86,11 @@
   "map": {
     "createpin": "Crie seu pin de pet sitter",
     "startchat": "Iniciar chat",
-    "": ""
+    "notnow": "Não agora",
+    "enablelocation": "Ativar serviços de localização",
+    "allowlocation": "Permitir acesso à localização",
+    "showsitters": "Para mostrar cuidadores de animais na sua área, precisamos da sua localização."
+
   },
   "sendmessage": "Enviar",
   "password": {

@@ -10,6 +10,7 @@ import {
 import MapErrorBoundary from './MapErrorBoundary'
 import Sidebar from '../Sidebar'
 import axios from 'axios'
+import { useTranslation } from 'react-i18next'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
@@ -493,6 +494,7 @@ const MapComponent = ({
     }
   }, [isMapLoaded])
 
+  const { t } = useTranslation()
   return (
     <MapErrorBoundary>
       <div className='relative w-full h-full'>
@@ -500,10 +502,10 @@ const MapComponent = ({
           <div className='absolute inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-30'>
             <div className='bg-white p-6 rounded-lg shadow-lg max-w-md text-center'>
               <h3 className='text-xl font-semibold text-cream-800 mb-4'>
-                Enable Location Services
+                {t('map.enablelocation')}
               </h3>
               <p className='mb-4 text-cream-700'>
-                To show pet sitters in your area, we need your location.
+              {t('map.showsitters')}
               </p>
               <div className='flex gap-3 justify-center'>
                 <button
@@ -513,13 +515,13 @@ const MapComponent = ({
                   }}
                   className='px-4 py-2 bg-cream-600 text-white rounded-lg hover:bg-cream-700 transition-colors duration-200'
                 >
-                  Allow Location Access
+                  {t('map.allowlocation')}
                 </button>
                 <button
                   onClick={() => setShowLocationPrompt(false)}
                   className='px-4 py-2 border-2 border-cream-400 text-cream-700 rounded-lg hover:bg-cream-50 transition-colors duration-200'
                 >
-                  Not Now
+                  {t('map.notnow')}
                 </button>
               </div>
             </div>

@@ -41,7 +41,8 @@
       "species": "Species",
       "deletepet": "Delete pet",
       "nopets": "No pets owned",
-      "addpet": "Add pet"
+      "addpet": "Add pet",
+      "update": "Update pet info"
     },
     "update": "Update user information",
     "deleteuser": "Delete user",
@@ -90,7 +91,10 @@
   "map": {
     "createpin": "Create your pet sitter pin",
     "startchat": "Start chat",
-    "": ""
+    "notnow": "Not now",
+    "enablelocation":"Enable location services",
+    "allowlocation":"Allow Location Access",
+    "showsitters":"To show pet sitters in your area, we need your location."
   },
   "sendmessage": "Send",
   "password": {
