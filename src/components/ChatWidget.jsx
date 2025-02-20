@@ -85,6 +85,12 @@ const ChatWidget = () => {
         setIsCreatingRoom(false)
         if (response?.error) {
           console.error('Room creation error:', response.error)
+        } else {
+          socket.emit('get_rooms')
+
+          if (showUserList) {
+            setShowUserList(false)
+          }
         }
       })
     } else {

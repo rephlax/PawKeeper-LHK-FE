@@ -84,6 +84,7 @@ const RoomList = ({ onRoomSelect, activeRoomId, onCreateRoom }) => {
         console.log('Delete room response:', response)
         if (response && response.success) {
           console.log('Room deleted successfully')
+          socket.emit('get_rooms')
         } else {
           console.error(
             'Failed to delete room:',
