@@ -45,35 +45,27 @@ const RoomList = ({ onRoomSelect, activeRoomId, onCreateRoom }) => {
   const handleDeleteRoom = (e, roomId) => {
     e.stopPropagation()
 
-    console.log('Current socket connection:', {
-      connected: socket.connected,
-      authenticated: socket.auth,
-      roomId: roomId,
+    console.log('Delete room initiated:', {
+      roomId,
+      user: user,
+      userCreatedRooms: rooms.filter(room => room.creator === user?._id),
+      socketConnected: socket.connected,
     })
 
     if (window.confirm(t('chat.confirmDelete'))) {
-      console.log('Attempting to delete room:', roomId)
-
       socket.emit('delete_room', roomId, response => {
-        console.log('Delete room response:', response)
+        console.log('Delete room server response:', response)
 
         if (response?.error) {
-          console.error('Delete room error:', response.error)
-          alert(response.error.message || 'Failed to delete room')
+          console.error('Room deletion error:', response)
+          alert(response.message || 'Failed to delete room')
         } else if (response?.success) {
-          console.log('Room deleted successfully')
+          console.log('Room deletion confirmed by server')
         } else {
           console.warn('Unexpected response from delete_room:', response)
           alert('An unexpected error occurred while deleting the room')
         }
       })
-
-      setTimeout(() => {
-        if (!socket.connected) {
-          console.error('Socket disconnected during room deletion')
-          alert('Connection lost. Please try again.')
-        }
-      }, 5000)
     }
   }
 
@@ -117,14 +109,16 @@ const RoomList = ({ onRoomSelect, activeRoomId, onCreateRoom }) => {
                 )}
               </div>
             </div>
-            <button
-              onClick={e => handleDeleteRoom(e, room._id)}
-              className='p-1.5 text-cream-400 hover:text-red-500 rounded-md 
-                       transition-colors duration-200 opacity-0 group-hover:opacity-100'
-              title={t('chat.deleteRoom')}
-            >
-              <Trash2 className='h-4 w-4' />
-            </button>
+            {room.creator === user?._id && (
+              <button
+                onClick={e => handleDeleteRoom(e, room._id)}
+                className='p-1.5 text-cream-400 hover:text-red-500 rounded-md 
+                         transition-colors duration-200 opacity-0 group-hover:opacity-100'
+                title={t('chat.deleteRoom')}
+              >
+                <Trash2 className='h-4 w-4' />
+              </button>
+            )}
           </div>
         ))}
       </div>
