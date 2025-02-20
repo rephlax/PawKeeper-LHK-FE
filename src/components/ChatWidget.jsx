@@ -17,6 +17,7 @@ const ChatWidget = () => {
   const [showCreateRoom, setShowCreateRoom] = useState(false)
   const [joinedRoomIds, setJoinedRoomIds] = useState(new Set())
   const { t } = useTranslation()
+  const [isCreatingRoom, setIsCreatingRoom] = useState(false)
   const { socket, user } = useSocket()
 
   useEffect(() => {
@@ -71,9 +72,17 @@ const ChatWidget = () => {
   }, [socket])
 
   const handleCreateRoom = roomData => {
+    if (isCreatingRoom) {
+      console.log('Already creating a room, ignoring duplicate request')
+      return
+    }
+
     console.log('Attempting to create room:', roomData)
     if (socket) {
+      setIsCreatingRoom(true)
+
       socket.emit('create_room', roomData, response => {
+        setIsCreatingRoom(false)
         if (response?.error) {
           console.error('Room creation error:', response.error)
         }
