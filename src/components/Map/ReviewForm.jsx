@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Star } from 'lucide-react'
 import axios from 'axios'
+import { X } from 'lucide-react'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
