@@ -9,25 +9,25 @@ export async function calculateAverageRating(id) {
     return 0
   }
 
-  console.log('Calculating rating for user:', id)
+  // console.log('Calculating rating for user:', id)
   try {
     const user = await axios.get(`${BACKEND_URL}/users/user/${id}`, {
       headers: { authorization: `Bearer ${webToken}` },
     })
-
+      console.log(" the reviews", user.data.reviewsReceived)
     if (
-      !user.reviewsReceived ||
-      !Array.isArray(user.reviewsReceived) ||
-      user.reviewsReceived.length === 0
+      !user.data.reviewsReceived ||
+      !Array.isArray(user.data.reviewsReceived) ||
+      user.data.reviewsReceived.length === 0
     ) {
       return 0
     }
 
-    const totalRating = user.reviewsReceived.reduce(
+    const totalRating = user.data.reviewsReceived.reduce(
       (sum, review) => sum + review.rating,
       0,
     )
-    const averageRating = totalRating / user.reviewsReceived.length
+    const averageRating = totalRating / user.data.reviewsReceived.length
 
     return Math.round(averageRating * 10) / 10
   } catch (error) {
