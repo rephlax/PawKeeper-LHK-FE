@@ -4,7 +4,9 @@
   },
   "navbar": {
     "login": "Увійти",
-    "signup": "Зареєструватися"
+    "signup": "Зареєструватися",
+    "logout": "Вийти",
+    "profile": "Профіль"
   },
   "signuppage": {
     "title": "Станьте PawKeeper",
@@ -47,7 +49,9 @@
     "loading": "Завантаження інформації користувача",
     "sitterstatus": "Статус пет сітера",
     "active": "Активний",
-    "inactive": "Неактивний"
+    "inactive": "Неактивний",
+    "deactivatesitterstatus": "Деактивувати статус доглядальника",
+    "becomesitter": "Стати пет сітером"
   },
   "chat": {
     "active": "Активні чати",

@@ -4,7 +4,9 @@
   },
   "navbar": {
     "login": "Entrar",
-    "signup": "Inscrever-se"
+    "signup": "Inscrever-se",
+    "logout": "Sair",
+    "profile": "Perfil"
   },
   "signuppage": {
     "title": "Torne-se um PawKeeper",
