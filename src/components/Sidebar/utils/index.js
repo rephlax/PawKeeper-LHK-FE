@@ -1,2 +1,2 @@
-export * from './locationHandlers'
-export * from './pinHandlers'
+export * from '../../Map/utils/locationHandlers'
+export * from '../../Map/utils/pinHandlers'
