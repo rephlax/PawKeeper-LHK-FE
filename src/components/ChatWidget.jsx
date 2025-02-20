@@ -102,9 +102,9 @@ const ChatWidget = () => {
           onClick={() => setIsOpen(true)}
           className='p-3 bg-cream-600 text-white rounded-full shadow-lg hover:bg-cream-700
                    transform hover:scale-105 transition-all duration-200 
-                   flex items-center justify-center'
+                   flex items-center justify-center w-14 h-14'
         >
-          <MessageSquare className='h-6 w-6' />
+          <MessageSquare className='h-8 w-8' />
         </button>
       ) : (
         <div
