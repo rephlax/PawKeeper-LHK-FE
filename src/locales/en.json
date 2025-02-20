@@ -48,7 +48,12 @@
     "deleteuser": "Delete user",
     "logout": "Log out",
     "newpass": "Change password",
-    "loading": "Loading user information"
+    "loading": "Loading user information",
+    "sitterstatus": "Pet sitter status",
+    "active":"Active",
+    "inactive":"Inactive",
+    "deactivatesitterstatus": "Deactivate sitter status",
+    "becomesitter": "Become a sitter"
   },
   "chat": {
     "active": "Active chats",
