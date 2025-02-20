@@ -127,9 +127,9 @@ const Sidebar = ({
   }
 
   return (
-    <div className='w-80 h-full bg-white shadow-lg'>
+    <div className='w-80 h-full bg-white border-l border-cream-200 shadow-lg overflow-hidden'>
       <div className='flex flex-col h-full'>
-        <div className='shrink-0'>
+        <div className='shrink-0 border-b border-cream-200'>
           <MapControls
             user={user}
             socket={socket}
@@ -150,17 +150,22 @@ const Sidebar = ({
         </div>
 
         {!isCreatingPin && !isCreatingReview && (
-          <div className='flex-1 overflow-y-auto'>
-            <PinList
-              pins={allPins}
-              user={user}
-              selectedPin={selectedPin}
-              onPinSelect={onPinSelect}
-              onStartChat={handleStartChat}
-              onReview={handleReview}
-              onEdit={handleEditPin}
-              onDelete={handlePinDelete}
-            />
+          <div className='flex-1 overflow-y-auto bg-cream-50'>
+            <div className='p-4'>
+              <h2 className='text-lg font-semibold text-cream-800 mb-4'>
+                Available Pet Sitters
+              </h2>
+              <PinList
+                pins={allPins}
+                user={user}
+                selectedPin={selectedPin}
+                onPinSelect={onPinSelect}
+                onStartChat={handleStartChat}
+                onReview={handleReview}
+                onEdit={handleEditPin}
+                onDelete={handlePinDelete}
+              />
+            </div>
           </div>
         )}
       </div>
