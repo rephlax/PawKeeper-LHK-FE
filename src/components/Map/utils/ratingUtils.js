@@ -1,10 +1,10 @@
-export const calculateAverageRating = (user) => {
-    if (!user?.reviewsReceived || !Array.isArray(user.reviewsReceived) || user.reviewsReceived.length === 0) {
+export const calculateAverageRating = (pin) => {
+    if (!pin?.reviewsReceived || !Array.isArray(pin.reviewsReceived) || pin.reviewsReceived.length === 0) {
       return 0;
     }
   
-    const totalRating = user.reviewsReceived.reduce((sum, review) => sum + review.rating, 0);
-    const averageRating = totalRating / user.reviewsReceived.length;
+    const totalRating = pin.reviewsReceived.reduce((sum, review) => sum + review.rating, 0);
+    const averageRating = totalRating / pin.reviewsReceived.length;
   
     // Round to 1 decimal place
     return Math.round(averageRating * 10) / 10;
