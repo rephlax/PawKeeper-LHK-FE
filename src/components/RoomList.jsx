@@ -44,18 +44,36 @@ const RoomList = ({ onRoomSelect, activeRoomId, onCreateRoom }) => {
 
   const handleDeleteRoom = (e, roomId) => {
     e.stopPropagation()
+
+    console.log('Current socket connection:', {
+      connected: socket.connected,
+      authenticated: socket.auth,
+      roomId: roomId,
+    })
+
     if (window.confirm(t('chat.confirmDelete'))) {
+      console.log('Attempting to delete room:', roomId)
+
       socket.emit('delete_room', roomId, response => {
+        console.log('Delete room response:', response)
+
         if (response?.error) {
           console.error('Delete room error:', response.error)
           alert(response.error.message || 'Failed to delete room')
+        } else if (response?.success) {
+          console.log('Room deleted successfully')
+        } else {
+          console.warn('Unexpected response from delete_room:', response)
+          alert('An unexpected error occurred while deleting the room')
         }
       })
 
-      socket.on('error', errorData => {
-        console.error('Socket error:', errorData)
-        alert(errorData.message || 'An error occurred')
-      })
+      setTimeout(() => {
+        if (!socket.connected) {
+          console.error('Socket disconnected during room deletion')
+          alert('Connection lost. Please try again.')
+        }
+      }, 5000)
     }
   }
 
