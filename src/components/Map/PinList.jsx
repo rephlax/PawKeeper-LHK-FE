@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import { Edit, MessageCircle, Star, Delete, MapPin } from 'lucide-react'
 import { useSocket } from '../../context/SocketContext'
 import { useChat } from '../../context/ChatContext'
@@ -87,7 +87,7 @@ const PinCard = ({
 
           <div className='text-sm text-cream-600 space-y-1'>
             <p>
-            {loadingRating ? (
+              {loadingRating ? (
                 'Loading rating...'
               ) : averageRating > 0 ? (
                 <span className='flex items-center gap-1'>
