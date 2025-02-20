@@ -114,13 +114,13 @@ const UserPage = () => {
                 {user && user._id === userId && (
                   <div className='py-4 border-t border-cream-200'>
                     <p className='text-cream-700 mb-2'>
-                      Sitter Status:
+                    {t('userpage.sitterstatus')}:
                       <span
                         className={
                           userInfo.sitter ? 'text-green-600' : 'text-cream-600'
                         }
                       >
-                        {userInfo.sitter ? ' Active' : ' Inactive'}
+                        {userInfo.sitter ? t('userpage.active') : t('userpage.inactive')}
                       </span>
                     </p>
                     <button
@@ -129,8 +129,8 @@ const UserPage = () => {
                            hover:bg-cream-700 transition-colors duration-200'
                     >
                       {userInfo.sitter
-                        ? 'Deactivate Sitter Status'
-                        : 'Become a Sitter'}
+                        ? t('userpage.deactivatesitterstatus')
+                        : t('userpage.becomesitter')}
                     </button>
                   </div>
                 )}
