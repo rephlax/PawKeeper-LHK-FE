@@ -4,8 +4,12 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 const webToken = localStorage.getItem('authToken')
 
 export async function calculateAverageRating(id) {
+  if (!id) {
+    console.error('Invalid user ID provided')
+    return 0
+  }
 
-  console.log(id)
+  console.log('Calculating rating for user:', id)
   try {
     const user = await axios.get(`${BACKEND_URL}/users/user/${id}`, {
       headers: { authorization: `Bearer ${webToken}` },
@@ -25,7 +29,6 @@ export async function calculateAverageRating(id) {
     )
     const averageRating = totalRating / user.reviewsReceived.length
 
-    // Round to 1 decimal place
     return Math.round(averageRating * 10) / 10
   } catch (error) {
     console.error('Error fetching user data or calculating rating:', error)
