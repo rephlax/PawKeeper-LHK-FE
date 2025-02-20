@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext'
 import { useSocket } from '../../context/SocketContext'
 import { useMap } from '../../context/MapContext'
 import axios from 'axios'
+import { X } from 'lucide-react'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
@@ -141,9 +142,23 @@ const PinForm = ({
   ])
 
   return (
-    <div className={`space-y-6 ${containerClass}`}>
-      <div className='border-b border-cream-200 pb-6'>
-        <div className='flex flex-col space-y-4'>
+    <div className='h-full overflow-y-auto p-4'>
+      <div className='space-y-4'>
+        {/* Form Header */}
+        <div className='flex justify-between items-center mb-4'>
+          <h2 className='text-lg font-semibold text-cream-800'>
+            {isEditing ? 'Edit Your Pin' : 'Create Location Pin'}
+          </h2>
+          <button
+            onClick={onClose}
+            className='text-cream-600 hover:text-cream-800'
+          >
+            <X className='h-5 w-5' />
+          </button>
+        </div>
+
+        {/* Form Fields */}
+        <div className='space-y-3'>
           <div>
             <label className='block text-sm font-medium text-cream-700 mb-1'>
               Title
@@ -153,7 +168,7 @@ const PinForm = ({
               name='title'
               value={formData.title}
               onChange={handleInputChange}
-              className='w-full px-4 py-2 border border-cream-300 rounded-lg 
+              className='w-full px-3 py-1.5 text-sm border border-cream-300 rounded-md
                        focus:ring-2 focus:ring-cream-400 focus:border-transparent 
                        transition duration-200 placeholder:text-cream-400'
               placeholder={`${user?.username}'s Pet Sitting Location`}
@@ -169,10 +184,10 @@ const PinForm = ({
               name='description'
               value={formData.description}
               onChange={handleInputChange}
-              className='w-full px-4 py-2 border border-cream-300 rounded-lg 
+              className='w-full px-3 py-1.5 text-sm border border-cream-300 rounded-md
                        focus:ring-2 focus:ring-cream-400 focus:border-transparent 
                        transition duration-200 placeholder:text-cream-400
-                       min-h-[100px] resize-y'
+                       min-h-[80px] max-h-[120px] resize-y'
               placeholder='Describe your services...'
               disabled={isLoading}
             />
@@ -187,9 +202,9 @@ const PinForm = ({
               multiple
               value={formData.services}
               onChange={handleInputChange}
-              className='w-full px-4 py-2 border border-cream-300 rounded-lg 
+              className='w-full px-3 py-1.5 text-sm border border-cream-300 rounded-md
                        focus:ring-2 focus:ring-cream-400 focus:border-transparent 
-                       transition duration-200 min-h-[120px]'
+                       transition duration-200 h-24'
               disabled={isLoading}
             >
               <option value='Dog Walking'>Dog Walking</option>
@@ -198,7 +213,7 @@ const PinForm = ({
               <option value='Pet Grooming'>Pet Grooming</option>
               <option value='Dog Training'>Dog Training</option>
             </select>
-            <p className='mt-1 text-sm text-cream-600'>
+            <p className='mt-1 text-xs text-cream-600'>
               Hold Ctrl/Cmd to select multiple services
             </p>
           </div>
@@ -211,7 +226,7 @@ const PinForm = ({
               name='availability'
               value={formData.availability}
               onChange={handleInputChange}
-              className='w-full px-4 py-2 border border-cream-300 rounded-lg 
+              className='w-full px-3 py-1.5 text-sm border border-cream-300 rounded-md
                        focus:ring-2 focus:ring-cream-400 focus:border-transparent 
                        transition duration-200'
               disabled={isLoading}
@@ -231,7 +246,7 @@ const PinForm = ({
               name='hourlyRate'
               value={formData.hourlyRate}
               onChange={handleInputChange}
-              className='w-full px-4 py-2 border border-cream-300 rounded-lg 
+              className='w-full px-3 py-1.5 text-sm border border-cream-300 rounded-md
                        focus:ring-2 focus:ring-cream-400 focus:border-transparent 
                        transition duration-200'
               min='0'
@@ -240,25 +255,25 @@ const PinForm = ({
             />
           </div>
         </div>
-      </div>
 
-      <div className='flex flex-col space-y-4'>
-        <div className='bg-cream-50 rounded-lg p-4 border border-cream-200'>
-          <h3 className='font-medium text-cream-800 mb-2'>
+        {/* Instructions */}
+        <div className='bg-cream-50 rounded-md p-3 border border-cream-200 text-sm'>
+          <h3 className='font-medium text-cream-800 mb-1'>
             Pin Location Instructions
           </h3>
-          <ul className='list-disc list-inside text-sm text-cream-700 space-y-1'>
+          <ul className='list-disc list-inside text-xs text-cream-700 space-y-0.5'>
             <li>Your pin will be placed at the center of the map</li>
             <li>Move the map to adjust the pin location before saving</li>
             <li>Use the zoom controls to get a precise location</li>
           </ul>
         </div>
 
-        <div className='flex gap-3 pt-4'>
+        {/* Buttons */}
+        <div className='flex gap-2 pt-2'>
           <button
             onClick={onClose}
-            className='flex-1 px-4 py-2 border-2 border-cream-400 text-cream-700 
-                     rounded-lg hover:bg-cream-50 transition-colors duration-200
+            className='flex-1 px-3 py-1.5 text-sm border-2 border-cream-400 text-cream-700 
+                     rounded-md hover:bg-cream-50 transition-colors duration-200
                      disabled:opacity-50 disabled:cursor-not-allowed'
             disabled={isLoading}
           >
@@ -267,7 +282,7 @@ const PinForm = ({
           <button
             onClick={handleSubmit}
             disabled={isLoading}
-            className='flex-1 px-4 py-2 bg-cream-600 text-white rounded-lg 
+            className='flex-1 px-3 py-1.5 text-sm bg-cream-600 text-white rounded-md 
                      hover:bg-cream-700 transition-colors duration-200
                      disabled:bg-cream-400 disabled:cursor-not-allowed'
           >

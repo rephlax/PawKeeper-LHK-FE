@@ -90,19 +90,22 @@ const ReviewForm = ({ onClose, targetUserId, sitterName }) => {
   }
 
   return (
-    <div className='relative bg-white rounded-lg shadow-lg p-6'>
-      <form onSubmit={handleSubmit} className='space-y-6'>
-        <div className='bg-cream-50 rounded-lg p-4 border border-cream-200'>
-          <h3 className='text-lg font-medium text-cream-800 mb-2'>
-            Review {sitterName}
-          </h3>
-          <p className='text-sm text-cream-600'>
-            Share your experience to help other pet owners make informed
-            decisions.
-          </p>
+    <div className='h-full overflow-y-auto p-4'>
+      <form onSubmit={handleSubmit} className='space-y-4'>
+        <div className='flex justify-between items-center'>
+          <h2 className='text-xl font-semibold text-cream-800'>
+            Write a review for {sitterName}
+          </h2>
+          <button
+            type='button'
+            onClick={onClose}
+            className='text-cream-600 hover:text-cream-800'
+          >
+            <X className='h-5 w-5' />
+          </button>
         </div>
 
-        <div className='space-y-4'>
+        <div className='space-y-3'>
           <div>
             <label className='block text-sm font-medium text-cream-700 mb-1'>
               Rating

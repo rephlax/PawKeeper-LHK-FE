@@ -146,29 +146,24 @@ const MapControls = ({
   }
 
   return (
-    <div className='space-y-6 p-6 bg-white rounded-lg shadow-md'>
-      <h2 className='text-xl font-semibold text-cream-800 mb-6'>
-        Map Controls
-      </h2>
+    <div className='p-4 space-y-4'>
+      <h2 className='text-lg font-medium text-cream-800'>Map Controls</h2>
 
       <div className='space-y-2'>
-        <button
-          onClick={() => handleLocationRequest(socket, map)}
-          className='flex items-center space-x-3 w-full p-3 text-cream-700 hover:bg-cream-50 rounded-lg transition-colors duration-200'
-        >
-          <Compass className='h-5 w-5' />
+        <button className='flex items-center w-full px-3 py-2 text-sm text-cream-700 hover:bg-cream-50 rounded-md'>
+          <Compass className='h-4 w-4 mr-2' />
           <span>Find My Location</span>
         </button>
       </div>
 
       <div className='space-y-2'>
         <div className='search-container'>
-          <Search className='h-5 w-5 text-cream-600' />
+          <Search className='absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-cream-400' />
           <div className='flex-1 relative'>
             <input
               type='text'
               placeholder='Search location...'
-              className='search-input'
+              className='w-full px-3 py-1.5 text-sm pr-8 border border-cream-300 rounded-md'
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
             />
@@ -229,19 +224,6 @@ const MapControls = ({
           </button>
         </div>
       )}
-
-      <div className='mt-8 p-4 text-sm text-cream-600 border-t border-cream-200'>
-        <p className='font-medium mb-2'>Debug Info:</p>
-        <div className='space-y-1'>
-          <p>User logged in: {user ? 'Yes' : 'No'}</p>
-          <p>Sitter status: {user?.sitter ? 'Yes' : 'No'}</p>
-          <p>Socket connected: {socket ? 'Yes' : 'No'}</p>
-          <p>Creating pin: {isCreatingPin ? 'Yes' : 'No'}</p>
-          <p>Editing mode: {isEditing ? 'Yes' : 'No'}</p>
-          <p>Has pin: {userPin ? 'Yes' : 'No'}</p>
-          <p>Selected pin: {selectedPin ? 'Yes' : 'No'}</p>
-        </div>
-      </div>
     </div>
   )
 }

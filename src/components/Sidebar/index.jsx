@@ -127,9 +127,9 @@ const Sidebar = ({
   }
 
   return (
-    <div className='w-80 h-full bg-white border-l border-cream-200 shadow-lg overflow-hidden'>
-      <div className='flex flex-col h-full'>
-        <div className='shrink-0 border-b border-cream-200'>
+    <div className='h-full flex flex-col bg-white'>
+      <div className='flex flex-col h-full w-full'>
+        <div className='shrink-0'>
           <MapControls
             user={user}
             socket={socket}
