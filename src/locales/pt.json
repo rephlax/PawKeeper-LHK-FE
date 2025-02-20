@@ -56,7 +56,21 @@
     "direct": "Mensagem direta",
     "participants": "Selecionar participantes",
     "cancel": "Cancelar",
-    "create": "Criar"
+    "create": "Criar",
+    "messenger": "Mensageiro",
+    "showChats": "Mostrar Chats",
+    "showUsers": "Mostrar Usuários",
+    "close": "Fechar",
+    "rooms": "Lista de salas",
+    "translate": "Traduzir",
+    "translationFailed": "Falha na tradução",
+    "typeMessage": "Digite uma mensagem...",
+    "send": "Enviar",
+    "userlist": {
+      "online": "Online",
+      "offline": "Offline"
+    },
+    "enterName": "Digite o nome do chat..."
   },
   "addpet": {
     "name": "Nome do animal",

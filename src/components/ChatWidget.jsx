@@ -8,6 +8,7 @@ import CreateRoomModal from './CreateRoomModal'
 import ChatInvitations from './ChatInvitations'
 import { useSocket } from '../context/SocketContext'
 import { useChat } from '../context/ChatContext'
+import { useTranslation } from 'react-i18next'
 
 const ChatWidget = () => {
   const { isOpen, setIsOpen } = useChat()
@@ -15,6 +16,7 @@ const ChatWidget = () => {
   const [showUserList, setShowUserList] = useState(false)
   const [showCreateRoom, setShowCreateRoom] = useState(false)
   const { socket } = useSocket()
+  const { t } = useTranslation()
 
   useEffect(() => {
     if (!socket) return
@@ -113,7 +115,7 @@ const ChatWidget = () => {
           {/* Header */}
           <div className='px-4 py-3 bg-white border-b border-cream-200 flex justify-between items-center'>
             <h3 className='font-medium text-cream-800'>
-              {activeRoom ? 'Messager' : 'Messager'}
+              {t('chat.messenger')}
             </h3>
             <div className='flex gap-2'>
               {!activeRoom && (
@@ -122,7 +124,9 @@ const ChatWidget = () => {
                     onClick={() => setShowUserList(!showUserList)}
                     className='p-1.5 text-cream-600 hover:bg-cream-50 rounded-md
                              transition-colors duration-200'
-                    title={showUserList ? 'Show Chats' : 'Show Users'}
+                    title={
+                      showUserList ? t('chat.showChats') : t('chat.showUsers')
+                    }
                   >
                     {showUserList ? (
                       <MessageCircle className='h-5 w-5' />
@@ -142,6 +146,7 @@ const ChatWidget = () => {
                 }}
                 className='p-1.5 text-cream-600 hover:bg-cream-50 rounded-md
                          transition-colors duration-200'
+                title={t('chat.close')}
               >
                 <X className='h-5 w-5' />
               </button>

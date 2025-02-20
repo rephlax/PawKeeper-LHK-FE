@@ -8,7 +8,7 @@
     "profile": "Profile",
     "logout": "Log out"
   },
-  "footer" : {
+  "footer": {
     "contact": "Contact us"
   },
   "signuppage": {
@@ -23,32 +23,31 @@
     "signupButton": "Signup"
   },
   "loginpage": {
-      "title": "Log in page",
-      "loginButton": "Login"
+    "title": "Log in page",
+    "loginButton": "Login"
   },
   "forms": {
     "emailLabel": "Email",
     "passwordLabel": "Password"
   },
   "userpage": {
-    "title":"User Page",
-    "welcome":"Welcome",
-    "rating":"Rating",
+    "title": "User Page",
+    "welcome": "Welcome",
+    "rating": "Rating",
     "pets": {
-      "allpets":"Owned pets",
-      "name":"Name",
-      "age":"Age",
+      "allpets": "Owned pets",
+      "name": "Name",
+      "age": "Age",
       "species": "Species",
-      "deletepet":"Delete pet",
-      "nopets":"No pets owned",
+      "deletepet": "Delete pet",
+      "nopets": "No pets owned",
       "addpet": "Add pet"
     },
     "update": "Update user information",
-    "deleteuser":"Delete user",
-    "logout":"Log out",
+    "deleteuser": "Delete user",
+    "logout": "Log out",
     "newpass": "Change password",
-    "loading":"Loading user information"
-
+    "loading": "Loading user information"
   },
   "chat": {
     "active": "Active chats",
@@ -62,11 +61,25 @@
     "direct": "Direct message",
     "participants": "Select participants",
     "cancel": "Cancel",
-    "create": "Create"
+    "create": "Create",
+    "messenger": "Messenger",
+    "showChats": "Show Chats",
+    "showUsers": "Show Users",
+    "close": "Close",
+    "rooms": "Chatroom list",
+    "translate": "Translate",
+    "translationFailed": "Translation failed",
+    "typeMessage": "Type a message...",
+    "send": "Send",
+    "userlist": {
+      "online": "Online",
+      "offline": "Offline"
+    },
+    "enterName": "Enter chat name..."
   },
   "addpet": {
-    "name":"Pet's name",
-    "age":"Pet's age",
+    "name": "Pet's name",
+    "age": "Pet's age",
     "species": "Pet's species",
     "addpet": "Add pet",
     "petpicture": "Pet picture"
