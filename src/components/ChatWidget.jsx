@@ -15,6 +15,7 @@ const ChatWidget = () => {
   const [activeRoom, setActiveRoom] = useState(null)
   const [showUserList, setShowUserList] = useState(false)
   const [showCreateRoom, setShowCreateRoom] = useState(false)
+  const [joinedRoomIds, setJoinedRoomIds] = useState(new Set())
   const { t } = useTranslation()
   const { socket, user } = useSocket()
 
@@ -26,6 +27,9 @@ const ChatWidget = () => {
       setActiveRoom(room)
       setIsOpen(true)
       setShowUserList(false)
+
+      // Mark as joined to prevent duplicate join attempts
+      setJoinedRoomIds(prev => new Set([...prev, room._id]))
       socket.emit('join_room', room._id)
     }
 
@@ -35,6 +39,7 @@ const ChatWidget = () => {
         setActiveRoom(room)
         setIsOpen(true)
         setShowUserList(false)
+        setJoinedRoomIds(prev => new Set([...prev, room._id]))
       }
     }
 
@@ -46,12 +51,18 @@ const ChatWidget = () => {
       console.error('Socket error:', error)
     }
 
+    const handleConnect = () => {
+      setJoinedRoomIds(new Set())
+    }
+
+    socket.on('connect', handleConnect)
     socket.on('room_created', handleRoomCreated)
     socket.on('room_joined', handleRoomJoined)
     socket.on('room_invitation', handleRoomInvitation)
     socket.on('error', handleError)
 
     return () => {
+      socket.off('connect', handleConnect)
       socket.off('room_created', handleRoomCreated)
       socket.off('room_joined', handleRoomJoined)
       socket.off('room_invitation', handleRoomInvitation)
@@ -80,7 +91,19 @@ const ChatWidget = () => {
         return
       }
 
+      if (joinedRoomIds.has(roomId)) {
+        console.log('Already tried to join this room, just setting as active')
+        const room = activeRoom?._id === roomId ? activeRoom : null
+        if (room) {
+          setActiveRoom(room)
+          setIsOpen(true)
+          setShowUserList(false)
+          return
+        }
+      }
+
       console.log('Attempting to join room:', roomId)
+      setJoinedRoomIds(prev => new Set([...prev, roomId]))
 
       socket.emit('join_room', roomId, (room, error) => {
         if (error) {
@@ -99,13 +122,6 @@ const ChatWidget = () => {
           alert('Unable to join the room. Please try again.')
         }
       })
-
-      setTimeout(() => {
-        if (!socket.connected) {
-          console.error('Socket connection lost while trying to join room')
-          alert('Connection lost. Please check your internet connection.')
-        }
-      }, 5000)
     } else {
       console.error('Socket is not connected')
       alert('Socket connection failed. Please reconnect.')
@@ -115,6 +131,11 @@ const ChatWidget = () => {
   const handleLeaveRoom = () => {
     if (socket && activeRoom) {
       socket.emit('leave_room', activeRoom._id)
+      setJoinedRoomIds(prev => {
+        const updated = new Set([...prev])
+        updated.delete(activeRoom._id)
+        return updated
+      })
       setActiveRoom(null)
     }
   }

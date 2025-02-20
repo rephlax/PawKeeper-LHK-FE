@@ -85,14 +85,6 @@ export const SocketProvider = ({ children }) => {
       setOnlineUsers(new Set())
     })
 
-    newSocket.on('room_created', room => {
-      console.log('Room created:', room)
-    })
-
-    newSocket.on('room_joined', room => {
-      console.log('Joined room:', room)
-    })
-
     newSocket.on('nearby_sitters', sitters => {
       console.log('Received nearby sitters:', sitters)
       setNearbySitters(sitters)
@@ -109,8 +101,6 @@ export const SocketProvider = ({ children }) => {
         newSocket.off('user_connected')
         newSocket.off('user_disconnected')
         newSocket.off('nearby_sitters')
-        newSocket.off('room_created')
-        newSocket.off('room_joined')
         newSocket.close()
       }
     }
@@ -130,34 +120,63 @@ export const SocketProvider = ({ children }) => {
     if (!socket) return
 
     return new Promise((resolve, reject) => {
-      // First, create the room
-      socket.emit(
-        'create_room',
-        {
-          name: null,
-          participants: [targetUserId],
-          type: 'direct',
-        },
-        async response => {
-          if (!response?.roomId) {
-            console.error('Failed to get room ID:', response)
-            reject(new Error('Failed to create room'))
-            return
-          }
+      // First, check if a direct chat with this user already exists
+      socket.emit('get_rooms')
 
-          // Wait for room join confirmation
-          const handleRoomJoined = room => {
-            console.log('Joined room:', room)
-            socket.off('room_joined', handleRoomJoined)
+      const handleRoomsList = roomsList => {
+        // Look for an existing direct chat with the target user
+        const existingRoom = roomsList.find(
+          room =>
+            room.type === 'direct' &&
+            room.participants.some(p => p._id === targetUserId),
+        )
+
+        if (existingRoom) {
+          console.log('Found existing direct chat, reusing:', existingRoom._id)
+          socket.off('rooms_list', handleRoomsList)
+
+          // Join the existing room
+          socket.emit('join_room', existingRoom._id, (room, error) => {
+            if (error) {
+              reject(new Error(error.error || 'Failed to join existing room'))
+              return
+            }
             resolve(room)
-          }
+          })
+          return
+        }
 
-          socket.on('room_joined', handleRoomJoined)
+        // No existing room found, create a new one
+        socket.off('rooms_list', handleRoomsList)
 
-          // Join the room after setting up the listener
-          socket.emit('join_room', response.roomId)
-        },
-      )
+        socket.emit(
+          'create_room',
+          {
+            name: 'Direct Chat',
+            participants: [targetUserId],
+            type: 'direct',
+          },
+          async response => {
+            if (!response?.roomId) {
+              console.error('Failed to get room ID:', response)
+              reject(new Error('Failed to create room'))
+              return
+            }
+
+            // Join the new room
+            socket.emit('join_room', response.roomId, (room, error) => {
+              if (error) {
+                reject(new Error(error.error || 'Failed to join room'))
+                return
+              }
+              resolve(room)
+            })
+          },
+        )
+      }
+
+      // Listen for rooms list
+      socket.on('rooms_list', handleRoomsList)
     })
   }
 
