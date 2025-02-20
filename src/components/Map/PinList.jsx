@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Edit, MessageCircle, Star, Delete, MapPin } from 'lucide-react'
 import { useSocket } from '../../context/SocketContext'
 import { useChat } from '../../context/ChatContext'
