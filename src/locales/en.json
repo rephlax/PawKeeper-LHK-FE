@@ -76,6 +76,8 @@
       "offline": "Offline"
     },
     "enterName": "Enter chat name...",
+    "deleteRoom": "Delete chat room",
+    "confirmDelete": "Are you sure you want to delete this chat room?",
     "speakingTo": "You are speaking to %{username}"
   },
   "addpet": {
