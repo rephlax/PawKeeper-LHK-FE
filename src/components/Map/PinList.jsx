@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { Edit, MessageCircle, Star, Delete } from 'lucide-react'
+import { Edit, MessageCircle, Star, Delete, MapPin } from 'lucide-react'
 import { useSocket } from '../../context/SocketContext'
 import { useChat } from '../../context/ChatContext'
 import { calculateAverageRating } from './utils/ratingUtils'
@@ -97,16 +97,29 @@ const PinCard = ({
           </div>
 
           {user && (
-            <div className='mt-3 space-x-2'>
+            <div className='mt-3 flex flex-wrap gap-2'>
               {isOwnPin ? (
-                <button
-                  onClick={e => handleEdit(e, pin)}
-                  className='px-3 py-1 bg-cream-600 text-white rounded-lg hover:bg-cream-700 
+                <>
+                  <button
+                    onClick={e => handleEdit(e, pin)}
+                    className='px-3 py-1 bg-cream-600 text-white rounded-lg hover:bg-cream-700 
                            transition-colors duration-200 flex items-center gap-1 text-sm'
-                >
-                  <Edit className='w-4 h-4' />
-                  Edit Pin
-                </button>
+                  >
+                    <Edit className='w-4 h-4' />
+                    Edit Pin
+                  </button>
+                  <button
+                    onClick={e => {
+                      e.stopPropagation()
+                      handlePinDelete(pin._id, socket, setPins)
+                    }}
+                    className='px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 
+                           transition-colors duration-200 flex items-center gap-1 text-sm'
+                  >
+                    <Delete className='w-4 h-4' />
+                    Delete Pin
+                  </button>
+                </>
               ) : (
                 <>
                   <button
