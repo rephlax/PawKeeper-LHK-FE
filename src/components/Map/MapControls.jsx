@@ -106,7 +106,7 @@ const MapControls = ({
   if (isCreatingPin || isCreatingReview) {
     return (
       <div className='space-y-4 p-6 bg-white rounded-lg shadow-md'>
-        <div className='flex justify-between items-center mb-6'>
+        {/* <div className='flex justify-between items-center mb-6'>
           <h2 className='text-xl font-semibold text-cream-800'>
             {isCreatingReview
               ? 'Write a Review'
@@ -120,7 +120,7 @@ const MapControls = ({
           >
             <X className='h-5 w-5 text-cream-600' />
           </button>
-        </div>
+        </div> */}
         {isCreatingReview ? (
           selectedPin?.user ? (
             <ReviewForm
