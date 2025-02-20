@@ -495,14 +495,14 @@ const MapComponent = ({
 
   return (
     <MapErrorBoundary>
-      <div className='w-full h-full relative'>
+      <div className='relative w-full h-full'>
         {showLocationPrompt && (
-          <div className='absolute inset-0 bg-black/50 flex items-center justify-center z-30'>
+          <div className='absolute inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-30'>
             <div className='bg-white p-6 rounded-lg shadow-lg max-w-md text-center'>
-              <h3 className='text-lg font-semibold mb-4'>
+              <h3 className='text-xl font-semibold text-cream-800 mb-4'>
                 Enable Location Services
               </h3>
-              <p className='mb-4'>
+              <p className='mb-4 text-cream-700'>
                 To show pet sitters in your area, we need your location.
               </p>
               <div className='flex gap-3 justify-center'>
@@ -511,13 +511,13 @@ const MapComponent = ({
                     setShowLocationPrompt(false)
                     requestLocation()
                   }}
-                  className='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600'
+                  className='px-4 py-2 bg-cream-600 text-white rounded-lg hover:bg-cream-700 transition-colors duration-200'
                 >
                   Allow Location Access
                 </button>
                 <button
                   onClick={() => setShowLocationPrompt(false)}
-                  className='px-4 py-2 border border-gray-300 rounded hover:bg-gray-50'
+                  className='px-4 py-2 border-2 border-cream-400 text-cream-700 rounded-lg hover:bg-cream-50 transition-colors duration-200'
                 >
                   Not Now
                 </button>
@@ -527,16 +527,16 @@ const MapComponent = ({
         )}
 
         {locationError && (
-          <div className='absolute top-4 left-4 z-10 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded max-w-md'>
+          <div className='absolute top-4 left-4 z-10 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg shadow-sm max-w-md'>
             <p>{locationError}</p>
           </div>
         )}
 
         {isProcessing ? (
-          <div className='absolute inset-0 bg-white/50 flex items-center justify-center z-20'>
-            <div className='bg-white p-4 rounded-lg shadow flex flex-col items-center gap-2'>
-              <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500'></div>
-              <p>
+          <div className='absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-20'>
+            <div className='bg-white p-6 rounded-lg shadow-lg flex flex-col items-center gap-3'>
+              <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-cream-600'></div>
+              <p className='text-cream-700'>
                 {isLocating
                   ? 'Getting your location...'
                   : !isMapLoaded
@@ -547,13 +547,16 @@ const MapComponent = ({
           </div>
         ) : initError ? (
           <div className='absolute inset-0 flex items-center justify-center'>
-            <div className='bg-red-50 p-4 rounded-lg shadow text-red-600'>
+            <div className='bg-red-50 p-6 rounded-lg shadow-lg text-red-700'>
               {initError}
             </div>
           </div>
         ) : null}
 
-        <div ref={mapContainer} className='w-full h-full' />
+        <div
+          ref={mapContainer}
+          className='w-full h-full rounded-lg overflow-hidden'
+        />
       </div>
     </MapErrorBoundary>
   )

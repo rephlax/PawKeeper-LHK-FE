@@ -105,9 +105,9 @@ const MapControls = ({
 
   if (isCreatingPin || isCreatingReview) {
     return (
-      <div className='space-y-4 p-4'>
-        <div className='flex justify-between items-center mb-4'>
-          <h2 className='text-xl font-semibold'>
+      <div className='space-y-4 p-6 bg-white rounded-lg shadow-md'>
+        <div className='flex justify-between items-center mb-6'>
+          <h2 className='text-xl font-semibold text-cream-800'>
             {isCreatingReview
               ? 'Write a Review'
               : isEditing
@@ -116,9 +116,9 @@ const MapControls = ({
           </h2>
           <button
             onClick={handleCloseForm}
-            className='p-1 hover:bg-gray-100 rounded-full'
+            className='p-2 hover:bg-cream-50 rounded-full transition-colors duration-200'
           >
-            <X className='h-5 w-5' />
+            <X className='h-5 w-5 text-cream-600' />
           </button>
         </div>
         {isCreatingReview ? (
@@ -129,7 +129,9 @@ const MapControls = ({
               sitterName={selectedPin.title}
             />
           ) : (
-            <div className='text-red-500'>No sitter selected for review</div>
+            <div className='text-red-500 p-4 bg-red-50 rounded-lg'>
+              No sitter selected for review
+            </div>
           )
         ) : (
           <PinForm
@@ -144,13 +146,15 @@ const MapControls = ({
   }
 
   return (
-    <div className='space-y-6 p-4'>
-      <h2 className='text-xl font-semibold mb-6'>Map Controls</h2>
+    <div className='space-y-6 p-6 bg-white rounded-lg shadow-md'>
+      <h2 className='text-xl font-semibold text-cream-800 mb-6'>
+        Map Controls
+      </h2>
 
       <div className='space-y-2'>
         <button
           onClick={() => handleLocationRequest(socket, map)}
-          className='flex items-center space-x-2 w-full p-3 text-left transition-colors hover:bg-cream-100 rounded-lg'
+          className='flex items-center space-x-3 w-full p-3 text-cream-700 hover:bg-cream-50 rounded-lg transition-colors duration-200'
         >
           <Compass className='h-5 w-5' />
           <span>Find My Location</span>
@@ -158,23 +162,23 @@ const MapControls = ({
       </div>
 
       <div className='space-y-2'>
-        <div className='flex items-center space-x-2 p-3'>
-          <Search className='h-5 w-5' />
+        <div className='search-container'>
+          <Search className='h-5 w-5 text-cream-600' />
           <div className='flex-1 relative'>
             <input
               type='text'
               placeholder='Search location...'
-              className='w-full p-2 border rounded'
+              className='search-input'
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
             />
             {searchResults.length > 0 && (
-              <div className='absolute z-10 w-full mt-1 bg-white border rounded-lg shadow-lg max-h-60 overflow-y-auto'>
+              <div className='search-results'>
                 {searchResults.map(place => (
                   <button
                     key={place.id}
                     onClick={() => handleSearchItemClick(place)}
-                    className='w-full p-2 text-left hover:bg-gray-100 border-b last:border-b-0'
+                    className='search-result-item'
                   >
                     {place.place_name}
                   </button>
@@ -190,7 +194,7 @@ const MapControls = ({
           {userPin ? (
             <button
               onClick={handleEditClick}
-              className='flex items-center space-x-2 w-full p-3 text-left transition-colors hover:bg-blue-100 rounded-lg text-blue-600'
+              className='flex items-center space-x-3 w-full p-3 text-cream-700 hover:bg-cream-50 rounded-lg transition-colors duration-200'
             >
               <Edit className='h-5 w-5' />
               <span>Edit Your Pin</span>
@@ -198,7 +202,7 @@ const MapControls = ({
           ) : (
             <button
               onClick={handleCreateClick}
-              className='flex items-center space-x-2 w-full p-3 text-left transition-colors hover:bg-cream-100 rounded-lg'
+              className='flex items-center space-x-3 w-full p-3 bg-cream-600 text-white hover:bg-cream-700 rounded-lg transition-colors duration-200'
             >
               <MapPin className='h-5 w-5' />
               <span>Create Location Pin</span>
@@ -211,14 +215,14 @@ const MapControls = ({
         <div className='space-y-2'>
           <button
             onClick={() => startChat(selectedPin.user)}
-            className='flex items-center space-x-2 w-full p-3 text-left transition-colors hover:bg-blue-100 rounded-lg text-blue-600'
+            className='flex items-center space-x-3 w-full p-3 bg-cream-600 text-white hover:bg-cream-700 rounded-lg transition-colors duration-200'
           >
             <MessageCircle className='h-5 w-5' />
             <span>Chat with Sitter</span>
           </button>
           <button
             onClick={handleReviewClick}
-            className='flex items-center space-x-2 w-full p-3 text-left transition-colors hover:bg-blue-100 rounded-lg text-blue-600'
+            className='flex items-center space-x-3 w-full p-3 border-2 border-cream-400 text-cream-700 hover:bg-cream-50 rounded-lg transition-colors duration-200'
           >
             <Star className='h-5 w-5' />
             <span>Leave a Review</span>
@@ -226,15 +230,17 @@ const MapControls = ({
         </div>
       )}
 
-      <div className='mt-8 p-3 text-sm text-gray-500 border-t'>
-        <p>Debug Info:</p>
-        <p>User logged in: {user ? 'Yes' : 'No'}</p>
-        <p>Sitter status: {user?.sitter ? 'Yes' : 'No'}</p>
-        <p>Socket connected: {socket ? 'Yes' : 'No'}</p>
-        <p>Creating pin: {isCreatingPin ? 'Yes' : 'No'}</p>
-        <p>Editing mode: {isEditing ? 'Yes' : 'No'}</p>
-        <p>Has pin: {userPin ? 'Yes' : 'No'}</p>
-        <p>Selected pin: {selectedPin ? 'Yes' : 'No'}</p>
+      <div className='mt-8 p-4 text-sm text-cream-600 border-t border-cream-200'>
+        <p className='font-medium mb-2'>Debug Info:</p>
+        <div className='space-y-1'>
+          <p>User logged in: {user ? 'Yes' : 'No'}</p>
+          <p>Sitter status: {user?.sitter ? 'Yes' : 'No'}</p>
+          <p>Socket connected: {socket ? 'Yes' : 'No'}</p>
+          <p>Creating pin: {isCreatingPin ? 'Yes' : 'No'}</p>
+          <p>Editing mode: {isEditing ? 'Yes' : 'No'}</p>
+          <p>Has pin: {userPin ? 'Yes' : 'No'}</p>
+          <p>Selected pin: {selectedPin ? 'Yes' : 'No'}</p>
+        </div>
       </div>
     </div>
   )

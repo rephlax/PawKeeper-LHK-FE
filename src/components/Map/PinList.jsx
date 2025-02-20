@@ -16,7 +16,7 @@ const PinCard = ({
   onReview,
   isSelected,
   onClick,
-  setPins
+  setPins,
 }) => {
   const isOwnPin = pin.user === user?._id
   const { isOpen, setIsOpen } = useChat()
@@ -53,29 +53,35 @@ const PinCard = ({
   return (
     <div
       onClick={onClick}
-      className={`
-        p-4 mb-2 rounded-lg cursor-pointer transition-all
-        ${isSelected ? 'bg-cream-100 border-2 border-cream-500' : 'bg-white hover:bg-cream-50'}
-        shadow-sm
-      `}
+      className={`p-4 mb-2 rounded-lg cursor-pointer transition-all duration-200
+        ${
+          isSelected
+            ? 'bg-cream-100 border-2 border-cream-500'
+            : 'bg-white hover:bg-cream-50 border border-cream-200'
+        }`}
     >
       <div className='flex items-start gap-3'>
         <div
-          className={`
-          w-8 h-8 rounded-full flex items-center justify-center font-bold text-white
-          ${isOwnPin ? 'bg-blue-500' : 'bg-green-500'}
-        `}
+          className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white
+            ${isOwnPin ? 'bg-cream-600' : 'bg-cream-500'}`}
         >
           {index + 1}
         </div>
-        <div className='flex-1'>
-          <h3 className='font-bold text-lg'>{pin.title}</h3>
-          <p className='text-gray-600 text-sm mb-2'>{pin.description}</p>
 
-          <div className='text-sm text-gray-600 space-y-1'>
+        <div className='flex-1'>
+          <h3 className='font-bold text-lg text-cream-800'>{pin.title}</h3>
+          <p className='text-cream-600 text-sm mb-2'>{pin.description}</p>
+
+          <div className='text-sm text-cream-600 space-y-1'>
             <p>
-              <span>User Rating:</span>{' '}
-              {averageRating > 0 ? `${averageRating}/5 ⭐` : 'No ratings yet'}
+              {averageRating > 0 ? (
+                <span className='flex items-center gap-1'>
+                  <Star className='w-4 h-4 fill-cream-500 text-cream-500' />
+                  {averageRating.toFixed(1)}/5
+                </span>
+              ) : (
+                'No ratings yet'
+              )}
             </p>
             <p>
               <span className='font-medium'>Services:</span>{' '}
@@ -93,30 +99,20 @@ const PinCard = ({
           {user && (
             <div className='mt-3 space-x-2'>
               {isOwnPin ? (
-                <>
-                  <button
-                    onClick={e => handleEdit(e, pin)}
-                    className='px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center gap-1 text-sm'
-                  >
-                    <Edit className='w-4 h-4' />
-                    Edit Pin
-                  </button>
-                  <button
-                    onClick={e => {
-                      e.stopPropagation()
-                      handlePinDelete(pin._id, socket, setPins)
-                    }}
-                    className='px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center gap-1 text-sm'
-                  >
-                    <Delete className='w-4 h-4' />
-                    Delete Pin
-                  </button>
-                </>
+                <button
+                  onClick={e => handleEdit(e, pin)}
+                  className='px-3 py-1 bg-cream-600 text-white rounded-lg hover:bg-cream-700 
+                           transition-colors duration-200 flex items-center gap-1 text-sm'
+                >
+                  <Edit className='w-4 h-4' />
+                  Edit Pin
+                </button>
               ) : (
                 <>
                   <button
                     onClick={e => handleChatClick(e, pin.user)}
-                    className='px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 flex items-center gap-1 text-sm'
+                    className='px-3 py-1 bg-cream-600 text-white rounded-lg hover:bg-cream-700 
+                             transition-colors duration-200 flex items-center gap-1 text-sm'
                   >
                     <MessageCircle className='w-4 h-4' />
                     Chat
@@ -126,7 +122,9 @@ const PinCard = ({
                       e.stopPropagation()
                       onReview(pin)
                     }}
-                    className='px-3 py-1 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 flex items-center gap-1 text-sm'
+                    className='px-3 py-1 border border-cream-400 text-cream-700 rounded-lg 
+                             hover:bg-cream-50 transition-colors duration-200 
+                             flex items-center gap-1 text-sm'
                   >
                     <Star className='w-4 h-4' />
                     Review
@@ -149,14 +147,15 @@ const PinList = ({
   onStartChat,
   onReview,
   onEdit,
-  setPins
+  setPins,
 }) => {
   const safePins = Array.isArray(pins) ? pins : []
 
   if (!safePins.length) {
     return (
-      <div className='p-4 text-center text-gray-500'>
-        No pins found in this area
+      <div className='flex flex-col items-center justify-center h-full p-4 text-cream-600'>
+        <MapPin className='w-8 h-8 mb-2' />
+        <p>No pins found in this area</p>
       </div>
     )
   }
