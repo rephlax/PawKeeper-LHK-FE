@@ -15,8 +15,8 @@ const ChatWidget = () => {
   const [activeRoom, setActiveRoom] = useState(null)
   const [showUserList, setShowUserList] = useState(false)
   const [showCreateRoom, setShowCreateRoom] = useState(false)
-  const { socket } = useSocket()
   const { t } = useTranslation()
+  const { socket, user } = useSocket()
 
   useEffect(() => {
     if (!socket) return
@@ -115,11 +115,13 @@ const ChatWidget = () => {
           {/* Header */}
           <div className='px-4 py-3 bg-white border-b border-cream-200 flex justify-between items-center'>
             <h3 className='font-medium text-cream-800'>
-              {activeRoom
-                ? `You are speaking to ${activeRoom.participants
-                    .filter(p => p._id !== user?._id)
-                    .map(p => p.username)
-                    .join(', ')}`
+              {activeRoom && activeRoom.participants && user
+                ? t('chat.speakingTo', {
+                    username: activeRoom.participants
+                      .filter(p => p._id !== user._id)
+                      .map(p => p.username)
+                      .join(', '),
+                  })
                 : t('chat.messenger')}
             </h3>
             <div className='flex gap-2'>
