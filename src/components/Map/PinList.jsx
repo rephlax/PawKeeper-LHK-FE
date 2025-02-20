@@ -149,6 +149,7 @@ const PinList = ({
   onStartChat,
   onReview,
   onEdit,
+  setPins
 }) => {
   const safePins = Array.isArray(pins) ? pins : []
 
