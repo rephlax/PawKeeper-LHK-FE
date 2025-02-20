@@ -20,6 +20,8 @@ const PinCard = ({
   const { isOpen, setIsOpen } = useChat()
   const { startPrivateChat, socket } = useSocket()
 
+
+  console.log("Here is the pin", pin)
   const averageRating = calculateAverageRating(pin)
 
   const handleChatClick = async (e, userId) => {
