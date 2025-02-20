@@ -104,7 +104,7 @@ const PinCard = ({
                   <button
                     onClick={e => {
                       e.stopPropagation()
-                      handlePinDelete(pin, socket, setPins)
+                      handlePinDelete(pin._id, socket, setPins)
                     }}
                     className='px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center gap-1 text-sm'
                   >
