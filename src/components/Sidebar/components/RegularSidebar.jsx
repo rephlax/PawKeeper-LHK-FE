@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Home, User } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 const NavLink = ({ to, icon: Icon, children, isActive }) => (
   <Link
@@ -28,18 +29,19 @@ const NavLink = ({ to, icon: Icon, children, isActive }) => (
 
 const RegularSidebar = ({ user }) => {
   const location = useLocation()
+  const { t } = useTranslation()
 
   return (
     <div className='h-full flex flex-col p-6'>
       <div className='mb-8'>
         <h2 className='text-xl font-semibold text-cream-800 px-4'>
-          Navigation
+          {t('sidebar.nav')}
         </h2>
       </div>
 
       <nav className='space-y-2'>
         <NavLink to='/' icon={Home} isActive={location.pathname === '/'}>
-          Home
+        {t('sidebar.home')}
         </NavLink>
 
         {user && (
@@ -48,7 +50,7 @@ const RegularSidebar = ({ user }) => {
             icon={User}
             isActive={location.pathname.includes(`/users/user/${user._id}`)}
           >
-            Profile
+            {t('sidebar.profile')}
           </NavLink>
         )}
       </nav>

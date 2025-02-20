@@ -71,6 +71,8 @@
       "offline": "Offline"
     },
     "enterName": "Digite o nome do chat...",
+    "deleteRoom": "Excluir sala de chat",
+    "confirmDelete": "Tem certeza que deseja excluir esta sala de chat?",
     "speakingTo": "Você está falando com %{username}"
   },
   "addpet": {
@@ -106,5 +108,10 @@
   "notfoundpage": {
     "notfound": "Página não encontrada",
     "backhome": "Voltar para a página inicial"
+  },
+  "sidebar": {
+    "home": "Início",
+    "nav": "Navegação",
+    "profile": "Perfil"
   }
 }
