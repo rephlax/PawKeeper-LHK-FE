@@ -41,27 +41,22 @@ export const handlePinEdit = (
   }
 }
 
-export const handlePinDelete = ( socket, setPins) => {
-
-  console.log('Socket on call', socket)
-  if (!socket || typeof socket.emit !== "function") {
+export const handlePinDelete = (pinId, socket, setPins) => {
+  if (!socket || typeof socket.emit !== 'function') {
     console.error('Socket is not available')
     return
   }
-  
+
   try {
-    socket.emit('delete_pin',  socket._id , response => {
+    socket.emit('delete_pin', pinId, response => {
       if (response?.success) {
-        // Update local state only if the server confirms deletion
         setPins(prevPins => prevPins.filter(pin => pin._id !== pinId))
       } else {
-        console.error(
-          'Failed to delete pin:',
-          response?.error || 'Unknown error',
-        )
+        console.error('Failed to delete pin:', response?.error || 'Unknown error')
       }
     })
   } catch (error) {
     console.error('Error emitting delete_pin event:', error)
   }
 }
+
