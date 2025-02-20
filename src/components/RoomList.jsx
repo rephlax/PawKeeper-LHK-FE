@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useSocket } from '../context/SocketContext'
 import { Plus, Hash, MessageCircle } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 const RoomList = ({ onRoomSelect, activeRoomId, onCreateRoom }) => {
   const [rooms, setRooms] = useState([])
   const { socket } = useSocket()
+  const { t } = useTranslation()
 
   useEffect(() => {
     if (!socket) return
@@ -40,7 +42,7 @@ const RoomList = ({ onRoomSelect, activeRoomId, onCreateRoom }) => {
   return (
     <div className='flex flex-col h-full'>
       <div className='flex justify-between items-center p-4 border-b border-cream-200'>
-        <h3 className='font-medium text-cream-800'>Chatroom list</h3>
+        <h3 className='font-medium text-cream-800'>{t('chat.rooms')}</h3>
         <button
           onClick={onCreateRoom}
           className='p-1.5 hover:bg-cream-50 rounded-md transition-colors duration-200'

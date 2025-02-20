@@ -1,9 +1,11 @@
 import { useRef, useEffect, useState } from 'react'
 import { useSocket } from '../context/SocketContext'
+import { useTranslation } from 'react-i18next'
 
 const Messages = ({ roomId }) => {
   const messagesEndRef = useRef(null)
   const { socket, user } = useSocket()
+  const { t } = useTranslation()
   const [messages, setMessages] = useState([])
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
   const userLanguage = 'en' // Specify the user's language code
