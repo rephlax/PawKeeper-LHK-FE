@@ -109,11 +109,11 @@ const RoomList = ({ onRoomSelect, activeRoomId, onCreateRoom }) => {
                 )}
               </div>
             </div>
-            {room.creator === user?._id && (
+            {room.creator.toString() === user?._id && (
               <button
                 onClick={e => handleDeleteRoom(e, room._id)}
                 className='p-1.5 text-cream-400 hover:text-red-500 rounded-md 
-                         transition-colors duration-200 opacity-0 group-hover:opacity-100'
+               transition-colors duration-200 opacity-0 group-hover:opacity-100'
                 title={t('chat.deleteRoom')}
               >
                 <Trash2 className='h-4 w-4' />
