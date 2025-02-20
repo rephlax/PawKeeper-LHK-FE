@@ -68,13 +68,8 @@ function App() {
         <div className='absolute bottom-1/4 right-1/4 w-96 h-96 bg-cream-400/20 rounded-full blur-3xl animate-pulse'></div>
       </div>
 
-      {/* Navbar */}
       <div className='sticky top-0 w-full z-50'>
-        <div className='w-full h-20 backdrop-blur-sm bg-white/70 border-b border-cream-200 shadow-sm'>
-          <div className='h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-            <Navbar />
-          </div>
-        </div>
+        <Navbar />
       </div>
 
       {/* Main Content */}
@@ -105,76 +100,72 @@ function App() {
 
         {/* Main Content Area */}
         <main className='flex-1 bg-cream-50/80 overflow-auto'>
-          <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6'>
-            <Routes>
-              <Route path='/' element={<HomePage />} />
-              <Route
-                path='/map'
-                element={
-                  <MapErrorBoundary>
-                    <MapComponent
-                      setUserPin={setUserPin}
-                      setAllPins={setAllPins}
-                      selectedPin={selectedPin}
-                      setSelectedPin={handlePinSelect}
-                      setEditData={setEditData}
-                    />
-                  </MapErrorBoundary>
-                }
-              />
-              <Route
-                path='/users/user/:userId'
-                element={
-                  <PrivateRoute>
-                    <UserPage />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path={`/users/update-user/:userId`}
-                element={
-                  <PrivateRoute>
-                    <UpdateUserForm />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path={`/pets/add-pet/:userId`}
-                element={
-                  <PrivateRoute>
-                    <AddPetForm />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path={`/pets/update-pet/:userId/:petId`}
-                element={
-                  <PrivateRoute>
-                    <UpdatePetForm />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path={`/users/update-user/:userId/password-change`}
-                element={
-                  <PrivateRoute>
-                    <PasswordChange />
-                  </PrivateRoute>
-                }
-              />
-              <Route path='/sign-up' element={<SignUpPage />} />
-              <Route path='/log-in' element={<LogInPage />} />
-              <Route path='*' element={<NotFoundPage />} />
-            </Routes>
-          </div>
+          <Routes>
+            <Route path='/' element={<HomePage />} />
+            <Route
+              path='/map'
+              element={
+                <MapErrorBoundary>
+                  <MapComponent
+                    setUserPin={setUserPin}
+                    setAllPins={setAllPins}
+                    selectedPin={selectedPin}
+                    setSelectedPin={handlePinSelect}
+                    setEditData={setEditData}
+                  />
+                </MapErrorBoundary>
+              }
+            />
+            <Route
+              path='/users/user/:userId'
+              element={
+                <PrivateRoute>
+                  <UserPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path={`/users/update-user/:userId`}
+              element={
+                <PrivateRoute>
+                  <UpdateUserForm />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path={`/pets/add-pet/:userId`}
+              element={
+                <PrivateRoute>
+                  <AddPetForm />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path={`/pets/update-pet/:userId/:petId`}
+              element={
+                <PrivateRoute>
+                  <UpdatePetForm />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path={`/users/update-user/:userId/password-change`}
+              element={
+                <PrivateRoute>
+                  <PasswordChange />
+                </PrivateRoute>
+              }
+            />
+            <Route path='/sign-up' element={<SignUpPage />} />
+            <Route path='/log-in' element={<LogInPage />} />
+            <Route path='*' element={<NotFoundPage />} />
+          </Routes>
         </main>
       </div>
 
       {/* Footer */}
       <div className='w-full bg-white border-t border-cream-200 shadow-sm z-10'>
-        <div className='h-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <Footer />
-        </div>
+        <Footer />
       </div>
 
       {/* Chat Widget */}
