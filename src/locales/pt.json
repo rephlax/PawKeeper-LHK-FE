@@ -43,7 +43,12 @@
     "deleteuser": "Excluir usuário",
     "logout": "Sair",
     "newpass": "Alterar senha",
-    "loading": "Carregando informações do usuário"
+    "loading": "Carregando informações do usuário",
+    "sitterstatus": "Status do cuidador de animais",
+    "active": "Ativo",
+    "inactive": "Inativo",
+    "deactivatesitterstatus": "Desativar status de cuidador",
+    "becomesitter": "Tornar-se um cuidador"
   },
   "chat": {
     "active": "Chats ativos",

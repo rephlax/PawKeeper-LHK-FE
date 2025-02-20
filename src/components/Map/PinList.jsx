@@ -96,7 +96,7 @@ useEffect(() => {
 
           <div className='text-sm text-cream-600 space-y-1'>
             <p>
-            {loadingRating ? (
+              {loadingRating ? (
                 'Loading rating...'
               ) : averageRating > 0 ? (
                 <span className='flex items-center gap-1'>
