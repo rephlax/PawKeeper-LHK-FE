@@ -48,23 +48,56 @@ const RoomList = ({ onRoomSelect, activeRoomId, onCreateRoom }) => {
     console.log('Delete room initiated:', {
       roomId,
       user: user,
-      userCreatedRooms: rooms.filter(room => room.creator === user?._id),
-      socketConnected: socket.connected,
+      rooms: rooms.map(r => ({
+        _id: r._id,
+        creator: r.creator,
+        creatorType: typeof r.creator,
+        userId: user?._id,
+        userIdType: typeof user?._id,
+      })),
     })
 
-    if (window.confirm(t('chat.confirmDelete'))) {
-      socket.emit('delete_room', roomId, response => {
-        console.log('Delete room server response:', response)
+    // Find the specific room
+    const roomToDelete = rooms.find(room => room._id === roomId)
+    // creator check to be more in depth
+    const isCreator =
+      roomToDelete &&
+      (roomToDelete.creator.toString() === user?._id ||
+        roomToDelete.creator === user?._id)
 
-        if (response?.error) {
-          console.error('Room deletion error:', response)
-          alert(response.message || 'Failed to delete room')
-        } else if (response?.success) {
-          console.log('Room deletion confirmed by server')
-        } else {
-          console.warn('Unexpected response from delete_room:', response)
-          alert('An unexpected error occurred while deleting the room')
-        }
+    if (!isCreator) {
+      console.error('Not authorized to delete this room', {
+        roomCreator: roomToDelete?.creator,
+        currentUser: user?._id,
+      })
+      alert('You are not authorized to delete this room')
+      return
+    }
+
+    if (window.confirm(t('chat.confirmDelete'))) {
+      return new Promise((resolve, reject) => {
+        socket.emit('delete_room', roomId, response => {
+          console.log('Delete room server response:', response)
+
+          if (response?.error) {
+            console.error('Room deletion error:', response)
+            alert(response.message || 'Failed to delete room')
+            reject(response)
+          } else if (response?.success) {
+            console.log('Room deletion confirmed by server')
+            resolve(response)
+          } else {
+            console.warn('Unexpected response from delete_room:', response)
+            alert('An unexpected error occurred while deleting the room')
+            reject(response)
+          }
+        })
+
+        setTimeout(() => {
+          reject(new Error('Room deletion timed out'))
+        }, 5000)
+      }).catch(error => {
+        console.error('Room deletion failed:', error)
       })
     }
   }

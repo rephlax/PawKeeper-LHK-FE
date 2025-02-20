@@ -82,8 +82,12 @@ const ChatWidget = () => {
 
       console.log('Attempting to join room:', roomId)
 
-      socket.emit('join_room', roomId, room => {
-        console.log('Room join response:', room)
+      socket.emit('join_room', roomId, (room, error) => {
+        if (error) {
+          console.error('Room join error:', error)
+          alert(error.error || 'Unable to join the room. Please try again.')
+          return
+        }
 
         if (room) {
           console.log('Successfully joined room:', room._id)
@@ -95,6 +99,7 @@ const ChatWidget = () => {
           alert('Unable to join the room. Please try again.')
         }
       })
+
       setTimeout(() => {
         if (!socket.connected) {
           console.error('Socket connection lost while trying to join room')
