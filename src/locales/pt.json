@@ -70,7 +70,8 @@
       "online": "Online",
       "offline": "Offline"
     },
-    "enterName": "Digite o nome do chat..."
+    "enterName": "Digite o nome do chat...",
+    "speakingTo": "Você está falando com %{username}"
   },
   "addpet": {
     "name": "Nome do animal",
