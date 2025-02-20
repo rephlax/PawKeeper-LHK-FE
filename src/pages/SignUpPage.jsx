@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { debounce } from 'lodash'
+import PageWrapper from '../components/PageWrapper'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005'
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN
@@ -177,218 +178,221 @@ const SignUpPage = () => {
   }
 
   return (
-    <div className='max-w-2xl mx-auto p-6 space-y-8'>
-      <h1 className='text-3xl font-bold text-cream-800 text-center'>
-        {t('signuppage.title')}
-      </h1>
-
-      <form
-        onSubmit={handleSubmit}
-        className='bg-white rounded-lg shadow-lg border border-cream-200 p-6 space-y-6'
-      >
-        {/* Basic Information */}
-        <div className='space-y-4'>
-          <label className='block'>
-            <span className='text-sm font-medium text-cream-700'>
-              {t('forms.emailLabel')}
-            </span>
-            <input
-              type='email'
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-              className='mt-1 block w-full px-4 py-2 border border-cream-300 rounded-lg 
+    <PageWrapper>
+      <div className='w-full max-w-2xl mx-auto'>
+        <h1 className='text-3xl font-bold text-cream-800 text-center mb-8'>
+          {t('signuppage.title')}
+        </h1>
+        <div className='bg-white rounded-xl shadow-lg border border-cream-200 p-8'>
+          <form
+            onSubmit={handleSubmit}
+            className='bg-white rounded-lg shadow-lg border border-cream-200 p-6 space-y-6'
+          >
+            {/* Basic Information */}
+            <div className='space-y-4'>
+              <label className='block'>
+                <span className='text-sm font-medium text-cream-700'>
+                  {t('forms.emailLabel')}
+                </span>
+                <input
+                  type='email'
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                  className='mt-1 block w-full px-4 py-2 border border-cream-300 rounded-lg 
                        focus:ring-2 focus:ring-cream-400 focus:border-transparent 
                        transition duration-200'
-            />
-          </label>
+                />
+              </label>
 
-          <label className='block'>
-            <span className='text-sm font-medium text-cream-700'>
-              {t('forms.passwordLabel')}
-            </span>
-            <input
-              type='password'
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              className='mt-1 block w-full px-4 py-2 border border-cream-300 rounded-lg 
+              <label className='block'>
+                <span className='text-sm font-medium text-cream-700'>
+                  {t('forms.passwordLabel')}
+                </span>
+                <input
+                  type='password'
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                  className='mt-1 block w-full px-4 py-2 border border-cream-300 rounded-lg 
                        focus:ring-2 focus:ring-cream-400 focus:border-transparent 
                        transition duration-200'
-            />
-          </label>
+                />
+              </label>
 
-          <label className='block'>
-            <span className='text-sm font-medium text-cream-700'>
-              {t('signuppage.usernameLabel')}
-            </span>
-            <input
-              type='text'
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-              required
-              className='mt-1 block w-full px-4 py-2 border border-cream-300 rounded-lg 
+              <label className='block'>
+                <span className='text-sm font-medium text-cream-700'>
+                  {t('signuppage.usernameLabel')}
+                </span>
+                <input
+                  type='text'
+                  value={username}
+                  onChange={e => setUsername(e.target.value)}
+                  required
+                  className='mt-1 block w-full px-4 py-2 border border-cream-300 rounded-lg 
                        focus:ring-2 focus:ring-cream-400 focus:border-transparent 
                        transition duration-200'
-            />
-          </label>
+                />
+              </label>
 
-          {/* Profile Picture Upload */}
-          <div className='space-y-2'>
-            <span className='text-sm font-medium text-cream-700'>
-              {t('signuppage.profilePictureLabel')}
-            </span>
-            <div className='flex gap-3'>
-              <input
-                type='file'
-                accept='image/*'
-                onChange={handleImageChange}
-                className='flex-1 px-4 py-2 border border-cream-300 rounded-lg 
+              {/* Profile Picture Upload */}
+              <div className='space-y-2'>
+                <span className='text-sm font-medium text-cream-700'>
+                  {t('signuppage.profilePictureLabel')}
+                </span>
+                <div className='flex gap-3'>
+                  <input
+                    type='file'
+                    accept='image/*'
+                    onChange={handleImageChange}
+                    className='flex-1 px-4 py-2 border border-cream-300 rounded-lg 
                          text-cream-700 file:mr-4 file:py-2 file:px-4 file:border-0
                          file:text-sm file:font-medium file:bg-cream-100
                          file:text-cream-700 hover:file:bg-cream-200'
-              />
-              <button
-                type='button'
-                onClick={handleUpload}
-                disabled={uploading}
-                className='px-4 py-2 bg-cream-600 text-white rounded-lg
+                  />
+                  <button
+                    type='button'
+                    onClick={handleUpload}
+                    disabled={uploading}
+                    className='px-4 py-2 bg-cream-600 text-white rounded-lg
                          hover:bg-cream-700 transition-colors duration-200
                          disabled:bg-cream-400 disabled:cursor-not-allowed'
-              >
-                {uploading ? 'Uploading...' : 'Upload Image'}
-              </button>
+                  >
+                    {uploading ? 'Uploading...' : 'Upload Image'}
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        {/* Sitter Toggle */}
-        <div className='flex items-center gap-2 py-2'>
-          <label className='inline-flex items-center'>
-            <input
-              type='checkbox'
-              checked={sitter}
-              onChange={e => setSitter(e.target.checked)}
-              className='form-checkbox h-5 w-5 text-cream-600 rounded
+            {/* Sitter Toggle */}
+            <div className='flex items-center gap-2 py-2'>
+              <label className='inline-flex items-center'>
+                <input
+                  type='checkbox'
+                  checked={sitter}
+                  onChange={e => setSitter(e.target.checked)}
+                  className='form-checkbox h-5 w-5 text-cream-600 rounded
                        border-cream-300 focus:ring-cream-400'
-            />
-            <span className='ml-2 text-cream-700'>
-              {t('signuppage.sitterLabel')}
-            </span>
-          </label>
-        </div>
+                />
+                <span className='ml-2 text-cream-700'>
+                  {t('signuppage.sitterLabel')}
+                </span>
+              </label>
+            </div>
 
-        {/* Sitter-specific Fields */}
-        {sitter && (
-          <div className='space-y-6 pt-4 border-t border-cream-200'>
-            <label className='block'>
-              <span className='text-sm font-medium text-cream-700'>
-                {t('signuppage.rateLabel')}
-              </span>
-              <input
-                type='number'
-                value={rate}
-                onChange={e => setRate(e.target.value)}
-                required={sitter}
-                min='0'
-                className='mt-1 block w-full px-4 py-2 border border-cream-300 rounded-lg 
+            {/* Sitter-specific Fields */}
+            {sitter && (
+              <div className='space-y-6 pt-4 border-t border-cream-200'>
+                <label className='block'>
+                  <span className='text-sm font-medium text-cream-700'>
+                    {t('signuppage.rateLabel')}
+                  </span>
+                  <input
+                    type='number'
+                    value={rate}
+                    onChange={e => setRate(e.target.value)}
+                    required={sitter}
+                    min='0'
+                    className='mt-1 block w-full px-4 py-2 border border-cream-300 rounded-lg 
                          focus:ring-2 focus:ring-cream-400 focus:border-transparent 
                          transition duration-200'
-              />
-            </label>
+                  />
+                </label>
 
-            <div className='space-y-4'>
-              <span className='text-sm font-medium text-cream-700'>
-                {t('signuppage.locationLabel')}
-              </span>
+                <div className='space-y-4'>
+                  <span className='text-sm font-medium text-cream-700'>
+                    {t('signuppage.locationLabel')}
+                  </span>
 
-              <div className='relative'>
-                <input
-                  type='text'
-                  placeholder='Search for a location'
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  className='w-full px-4 py-2 border border-cream-300 rounded-lg 
+                  <div className='relative'>
+                    <input
+                      type='text'
+                      placeholder='Search for a location'
+                      value={searchQuery}
+                      onChange={e => setSearchQuery(e.target.value)}
+                      className='w-full px-4 py-2 border border-cream-300 rounded-lg 
                            focus:ring-2 focus:ring-cream-400 focus:border-transparent 
                            transition duration-200'
-                />
+                    />
 
-                {searchResults.length > 0 && (
-                  <div
-                    className='absolute z-10 w-full mt-1 bg-white border border-cream-200 
+                    {searchResults.length > 0 && (
+                      <div
+                        className='absolute z-10 w-full mt-1 bg-white border border-cream-200 
                                 rounded-lg shadow-lg max-h-60 overflow-y-auto'
-                  >
-                    {searchResults.map(place => (
-                      <button
-                        key={place.id}
-                        type='button'
-                        onClick={() => handlePlaceSelect(place)}
-                        className='w-full p-3 text-left hover:bg-cream-50 
+                      >
+                        {searchResults.map(place => (
+                          <button
+                            key={place.id}
+                            type='button'
+                            onClick={() => handlePlaceSelect(place)}
+                            className='w-full p-3 text-left hover:bg-cream-50 
                                  border-b border-cream-100 last:border-b-0
                                  text-cream-700 transition-colors duration-200'
-                      >
-                        {place.place_name}
-                      </button>
-                    ))}
+                          >
+                            {place.place_name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
 
-              <button
-                type='button'
-                onClick={getCurrentLocation}
-                className='w-full px-4 py-2 bg-cream-500 text-white rounded-lg
+                  <button
+                    type='button'
+                    onClick={getCurrentLocation}
+                    className='w-full px-4 py-2 bg-cream-500 text-white rounded-lg
                          hover:bg-cream-600 transition-colors duration-200
                          flex items-center justify-center gap-2'
-              >
-                Get Current Location
-              </button>
+                  >
+                    Get Current Location
+                  </button>
 
-              <div className='grid grid-cols-2 gap-4'>
-                <label className='block'>
-                  <span className='text-sm font-medium text-cream-700'>
-                    {t('signuppage.latitudePlaceholder')}
-                  </span>
-                  <input
-                    type='number'
-                    value={latitude}
-                    onChange={e => setLatitude(e.target.value)}
-                    required={sitter}
-                    className='mt-1 block w-full px-4 py-2 border border-cream-300 rounded-lg 
+                  <div className='grid grid-cols-2 gap-4'>
+                    <label className='block'>
+                      <span className='text-sm font-medium text-cream-700'>
+                        {t('signuppage.latitudePlaceholder')}
+                      </span>
+                      <input
+                        type='number'
+                        value={latitude}
+                        onChange={e => setLatitude(e.target.value)}
+                        required={sitter}
+                        className='mt-1 block w-full px-4 py-2 border border-cream-300 rounded-lg 
                              focus:ring-2 focus:ring-cream-400 focus:border-transparent 
                              transition duration-200'
-                  />
-                </label>
+                      />
+                    </label>
 
-                <label className='block'>
-                  <span className='text-sm font-medium text-cream-700'>
-                    {t('signuppage.longitudePlaceholder')}
-                  </span>
-                  <input
-                    type='number'
-                    value={longitude}
-                    onChange={e => setLongitude(e.target.value)}
-                    required={sitter}
-                    className='mt-1 block w-full px-4 py-2 border border-cream-300 rounded-lg 
+                    <label className='block'>
+                      <span className='text-sm font-medium text-cream-700'>
+                        {t('signuppage.longitudePlaceholder')}
+                      </span>
+                      <input
+                        type='number'
+                        value={longitude}
+                        onChange={e => setLongitude(e.target.value)}
+                        required={sitter}
+                        className='mt-1 block w-full px-4 py-2 border border-cream-300 rounded-lg 
                              focus:ring-2 focus:ring-cream-400 focus:border-transparent 
                              transition duration-200'
-                  />
-                </label>
+                      />
+                    </label>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        )}
+            )}
 
-        {/* Submit Button */}
-        <button
-          type='submit'
-          className='w-full mt-6 px-4 py-2 bg-cream-600 text-white rounded-lg
+            {/* Submit Button */}
+            <button
+              type='submit'
+              className='w-full mt-6 px-4 py-2 bg-cream-600 text-white rounded-lg
                    hover:bg-cream-700 transition-colors duration-200'
-        >
-          {t('signuppage.signupButton')}
-        </button>
-      </form>
-    </div>
+            >
+              {t('signuppage.signupButton')}
+            </button>
+          </form>
+        </div>
+      </div>
+    </PageWrapper>
   )
 }
 
