@@ -190,7 +190,7 @@ const UserPage = () => {
                               className='px-3 py-1 bg-cream-600 text-white rounded-lg 
                                        hover:bg-cream-700 transition-colors duration-200'
                             >
-                              Update Pet Info
+                              {t('userpage.pets.update')}
                             </button>
                           </Link>
                         </div>
