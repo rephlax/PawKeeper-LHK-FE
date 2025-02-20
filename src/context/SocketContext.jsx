@@ -11,6 +11,7 @@ export const SocketProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false)
   const [onlineUsers, setOnlineUsers] = useState(new Set())
   const [nearbySitters, setNearbySitters] = useState([])
+  const [isCreatingPrivateChat, setIsCreatingPrivateChat] = useState(false)
   const { isSignedIn, user } = useAuth()
   const authToken = localStorage.getItem('authToken')
 
@@ -119,6 +120,14 @@ export const SocketProvider = ({ children }) => {
   const startPrivateChat = async targetUserId => {
     if (!socket) return
 
+    // Prevent duplicate chat creation attempts
+    if (isCreatingPrivateChat) {
+      console.log('Already creating a private chat, ignoring duplicate request')
+      return Promise.reject(new Error('Chat creation in progress'))
+    }
+
+    setIsCreatingPrivateChat(true)
+
     return new Promise((resolve, reject) => {
       // First, check if a direct chat with this user already exists
       socket.emit('get_rooms')
@@ -134,6 +143,7 @@ export const SocketProvider = ({ children }) => {
         if (existingRoom) {
           console.log('Found existing direct chat, reusing:', existingRoom._id)
           socket.off('rooms_list', handleRoomsList)
+          setIsCreatingPrivateChat(false) // Reset flag
 
           // Join the existing room
           socket.emit('join_room', existingRoom._id, (room, error) => {
@@ -157,6 +167,7 @@ export const SocketProvider = ({ children }) => {
             type: 'direct',
           },
           async response => {
+            setIsCreatingPrivateChat(false) // Reset flag
             if (!response?.roomId) {
               console.error('Failed to get room ID:', response)
               reject(new Error('Failed to create room'))
@@ -177,6 +188,9 @@ export const SocketProvider = ({ children }) => {
 
       // Listen for rooms list
       socket.on('rooms_list', handleRoomsList)
+    }).catch(error => {
+      setIsCreatingPrivateChat(false) // Reset flag on error
+      throw error
     })
   }
 
