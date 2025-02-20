@@ -9,12 +9,12 @@ export async function calculateAverageRating(id) {
     return 0
   }
 
-  console.log('Calculating rating for user:', id)
+  // console.log('Calculating rating for user:', id)
   try {
     const user = await axios.get(`${BACKEND_URL}/users/user/${id}`, {
       headers: { authorization: `Bearer ${webToken}` },
     })
-      
+      console.log(" the reviews", user.data.reviewsReceived)
     if (
       !user.data.reviewsReceived ||
       !Array.isArray(user.data.reviewsReceived) ||
