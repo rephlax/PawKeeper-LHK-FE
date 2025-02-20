@@ -45,60 +45,20 @@ const RoomList = ({ onRoomSelect, activeRoomId, onCreateRoom }) => {
   const handleDeleteRoom = (e, roomId) => {
     e.stopPropagation()
 
-    console.log('Delete room initiated:', {
-      roomId,
-      user: user,
-      rooms: rooms.map(r => ({
-        _id: r._id,
-        creator: r.creator,
-        creatorType: typeof r.creator,
-        userId: user?._id,
-        userIdType: typeof user?._id,
-      })),
-    })
+    if (!roomId) {
+      console.error('No room ID provided')
+      return
+    }
 
-    // Find the specific room
     const roomToDelete = rooms.find(room => room._id === roomId)
-    // creator check to be more in depth
-    const isCreator =
-      roomToDelete &&
-      (roomToDelete.creator.toString() === user?._id ||
-        roomToDelete.creator === user?._id)
 
-    if (!isCreator) {
-      console.error('Not authorized to delete this room', {
-        roomCreator: roomToDelete?.creator,
-        currentUser: user?._id,
-      })
+    if (!roomToDelete || roomToDelete.creator.toString() !== user?._id) {
       alert('You are not authorized to delete this room')
       return
     }
 
-    if (window.confirm(t('chat.confirmDelete'))) {
-      return new Promise((resolve, reject) => {
-        socket.emit('delete_room', roomId, response => {
-          console.log('Delete room server response:', response)
-
-          if (response?.error) {
-            console.error('Room deletion error:', response)
-            alert(response.message || 'Failed to delete room')
-            reject(response)
-          } else if (response?.success) {
-            console.log('Room deletion confirmed by server')
-            resolve(response)
-          } else {
-            console.warn('Unexpected response from delete_room:', response)
-            alert('An unexpected error occurred while deleting the room')
-            reject(response)
-          }
-        })
-
-        setTimeout(() => {
-          reject(new Error('Room deletion timed out'))
-        }, 5000)
-      }).catch(error => {
-        console.error('Room deletion failed:', error)
-      })
+    if (window.confirm('Are you sure you want to delete this room?')) {
+      socket.emit('delete_room', roomId)
     }
   }
 
