@@ -61,19 +61,24 @@ function App() {
   }, [])
 
   return (
-    <div className='h-screen flex flex-col relative bg-gradient-to-br from-cream-50 via-cream-100 to-cream-200 overflow-hidden'>
-      <div className='absolute inset-0 z-0'>
+    <div className='min-h-screen flex flex-col bg-gradient-to-br from-cream-50 via-cream-100 to-cream-200'>
+      {/* Background Effects */}
+      <div className='fixed inset-0 pointer-events-none'>
         <div className='absolute top-0 left-1/4 w-96 h-96 bg-cream-300/30 rounded-full blur-3xl animate-pulse'></div>
         <div className='absolute bottom-1/4 right-1/4 w-96 h-96 bg-cream-400/20 rounded-full blur-3xl animate-pulse'></div>
       </div>
 
       {/* Navbar */}
-      <nav className='h-[80px] backdrop-blur-sm bg-white/70 border-b border-cream-200 sticky top-0 z-50 shadow-sm'>
-        <Navbar />
-      </nav>
+      <div className='sticky top-0 w-full z-50'>
+        <div className='w-full h-20 backdrop-blur-sm bg-white/70 border-b border-cream-200 shadow-sm'>
+          <div className='h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+            <Navbar />
+          </div>
+        </div>
+      </div>
 
-      {/* Main content */}
-      <div className='flex flex-1 relative z-10'>
+      {/* Main Content */}
+      <div className='flex-1 flex relative z-10'>
         {/* Sidebar */}
         <aside className='w-64 bg-white border-r border-cream-200 shadow-sm'>
           <Sidebar
@@ -98,78 +103,82 @@ function App() {
           />
         </aside>
 
-        {/* Main content area */}
-        <main className='flex-1 bg-cream-50/80 p-6 overflow-auto'>
-          <Routes>
-            <Route path='/' element={<HomePage />} />
-            <Route
-              path='/map'
-              element={
-                <MapErrorBoundary>
-                  <MapComponent
-                    setUserPin={setUserPin}
-                    setAllPins={setAllPins}
-                    selectedPin={selectedPin}
-                    setSelectedPin={handlePinSelect}
-                    setEditData={setEditData}
-                  />
-                </MapErrorBoundary>
-              }
-            />
-            <Route
-              path='/users/user/:userId'
-              element={
-                <PrivateRoute>
-                  <UserPage />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path={`/users/update-user/:userId`}
-              element={
-                <PrivateRoute>
-                  <UpdateUserForm />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path={`/pets/add-pet/:userId`}
-              element={
-                <PrivateRoute>
-                  <AddPetForm />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path={`/pets/update-pet/:userId/:petId`}
-              element={
-                <PrivateRoute>
-                  <UpdatePetForm />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path={`/users/update-user/:userId/password-change`}
-              element={
-                <PrivateRoute>
-                  <PasswordChange />
-                </PrivateRoute>
-              }
-            />
-            <Route path='/sign-up' element={<SignUpPage />} />
-            <Route path='/log-in' element={<LogInPage />} />
-            <Route path='*' element={<NotFoundPage />} />
-          </Routes>
+        {/* Main Content Area */}
+        <main className='flex-1 bg-cream-50/80 overflow-auto'>
+          <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6'>
+            <Routes>
+              <Route path='/' element={<HomePage />} />
+              <Route
+                path='/map'
+                element={
+                  <MapErrorBoundary>
+                    <MapComponent
+                      setUserPin={setUserPin}
+                      setAllPins={setAllPins}
+                      selectedPin={selectedPin}
+                      setSelectedPin={handlePinSelect}
+                      setEditData={setEditData}
+                    />
+                  </MapErrorBoundary>
+                }
+              />
+              <Route
+                path='/users/user/:userId'
+                element={
+                  <PrivateRoute>
+                    <UserPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path={`/users/update-user/:userId`}
+                element={
+                  <PrivateRoute>
+                    <UpdateUserForm />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path={`/pets/add-pet/:userId`}
+                element={
+                  <PrivateRoute>
+                    <AddPetForm />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path={`/pets/update-pet/:userId/:petId`}
+                element={
+                  <PrivateRoute>
+                    <UpdatePetForm />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path={`/users/update-user/:userId/password-change`}
+                element={
+                  <PrivateRoute>
+                    <PasswordChange />
+                  </PrivateRoute>
+                }
+              />
+              <Route path='/sign-up' element={<SignUpPage />} />
+              <Route path='/log-in' element={<LogInPage />} />
+              <Route path='*' element={<NotFoundPage />} />
+            </Routes>
+          </div>
         </main>
       </div>
 
       {/* Footer */}
-      <footer className='h-[40px] bg-white border-t border-cream-200 relative z-10 shadow-sm'>
-        <Footer />
-      </footer>
+      <div className='w-full bg-white border-t border-cream-200 shadow-sm z-10'>
+        <div className='h-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+          <Footer />
+        </div>
+      </div>
 
       {/* Chat Widget */}
-      <div className='relative z-50'>
+      <div className='fixed bottom-0 right-0 z-50'>
         <ChatWidget />
       </div>
     </div>
