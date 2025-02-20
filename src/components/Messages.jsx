@@ -100,13 +100,14 @@ const Messages = ({ roomId }) => {
             </p>
             {message.sender?._id !== user?._id && !message.translationFailed && (
               <button
-                className="text-sm mt-1"
+                className="testtest"
                 onClick={() => requestTranslation(message.id)}
               >
                 Translate
               </button>
             )}
             {message.translationFailed && (
+
               <p className="text-xs text-red-500">Translation failed, try again</p>
             )}
           </div>
