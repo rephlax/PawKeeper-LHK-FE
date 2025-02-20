@@ -5,7 +5,6 @@ import { useChat } from '../../context/ChatContext'
 import { calculateAverageRating } from './utils/ratingUtils'
 import { handlePinDelete } from './utils/pinHandlers'
 
-
 const PinCard = ({
   pin,
   index,
@@ -20,9 +19,8 @@ const PinCard = ({
   const { isOpen, setIsOpen } = useChat()
   const { startPrivateChat, socket } = useSocket()
 
-
-  console.log("Here is the user", pin.user._id)
-  const averageRating = calculateAverageRating(pin.user._id)
+  const { _id } = pin.user
+  const averageRating = calculateAverageRating(_id)
 
   const handleChatClick = async (e, userId) => {
     e.stopPropagation()
