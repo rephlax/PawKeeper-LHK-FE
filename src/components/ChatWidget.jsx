@@ -112,7 +112,7 @@ const ChatWidget = () => {
               className='font-medium text-lg cursor-default'
               style={{ paddingLeft: '6px' }}
             >
-              {activeRoom ? 'Chat' : 'Chats'}
+              {activeRoom ? 'Messager' : 'Messager'}
             </h3>
             <div className='flex gap-2'>
               {!activeRoom && (
