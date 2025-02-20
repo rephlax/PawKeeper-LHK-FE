@@ -39,13 +39,13 @@ const RoomList = ({ onRoomSelect, activeRoomId, onCreateRoom }) => {
 
   return (
     <div className='flex flex-col h-full'>
-      <div className='flex justify-between items-center p-4 border-b'>
-        <h3 className='font-medium'>Chatroom list</h3>
+      <div className='flex justify-between items-center p-4 border-b border-cream-200'>
+        <h3 className='font-medium text-cream-800'>{t('Chat-room list')}</h3>
         <button
-          onClick={() => onCreateRoom()}
-          className='p-1 hover:bg-cream-surface rounded'
+          onClick={onCreateRoom}
+          className='p-1.5 hover:bg-cream-50 rounded-md transition-colors duration-200'
         >
-          <Plus className='h-5 w-5' />
+          <Plus className='h-5 w-5 text-cream-600' />
         </button>
       </div>
       <div className='flex-1 overflow-y-auto'>
@@ -53,18 +53,22 @@ const RoomList = ({ onRoomSelect, activeRoomId, onCreateRoom }) => {
           <div
             key={room._id}
             onClick={() => onRoomSelect(room._id)}
-            className={`flex items-center p-3 cursor-pointer hover:bg-cream-50 
-                            ${activeRoomId === room._id ? 'bg-cream-100' : ''}`}
+            className={`flex items-center p-3 cursor-pointer transition-colors duration-200
+              ${
+                activeRoomId === room._id
+                  ? 'bg-cream-50 border-l-4 border-cream-600'
+                  : 'hover:bg-cream-50/50 border-l-4 border-transparent'
+              }`}
           >
             {room.type === 'group' ? (
-              <Hash className='h-4 w-4 mr-2' />
+              <Hash className='h-4 w-4 mr-2 text-cream-600' />
             ) : (
-              <MessageCircle className='h-4 w-4 mr-2' />
+              <MessageCircle className='h-4 w-4 mr-2 text-cream-600' />
             )}
-            <div className='flex-1'>
-              <p className='font-medium'>{room.name}</p>
+            <div className='flex-1 min-w-0'>
+              <p className='font-medium text-cream-800 truncate'>{room.name}</p>
               {room.lastMessage && (
-                <p className='text-sm text-gray-500 truncate'>
+                <p className='text-sm text-cream-600 truncate'>
                   {room.lastMessage.content}
                 </p>
               )}

@@ -98,20 +98,21 @@ const ChatWidget = () => {
       {!isOpen ? (
         <button
           onClick={() => setIsOpen(true)}
-          className='cursor-pointer bg-cream-background text-cream-text p-4 rounded-full hover:bg-cream-surface shadow-lg w-15 h-15 flex items-center justify-center'
+          className='p-3 bg-cream-600 text-white rounded-full shadow-lg hover:bg-cream-700
+                   transform hover:scale-105 transition-all duration-200 
+                   flex items-center justify-center'
         >
-          <MessageSquare className='h-10 w-10' />
+          <MessageSquare className='h-6 w-6' />
         </button>
       ) : (
         <div
-          className='bg-cream-background rounded-lg shadow-xl flex flex-col border-2 border-cream-accent/50 p-4'
+          className='bg-white rounded-xl shadow-xl flex flex-col border border-cream-200
+                   overflow-hidden'
           style={{ width: '320px', height: '480px' }}
         >
-          <div className='bg-cream-background text-cream-text flex justify-between items-center rounded-t-lg'>
-            <h3
-              className='font-medium text-lg cursor-default'
-              style={{ paddingLeft: '6px' }}
-            >
+          {/* Header */}
+          <div className='px-4 py-3 bg-white border-b border-cream-200 flex justify-between items-center'>
+            <h3 className='font-medium text-cream-800'>
               {activeRoom ? 'Messager' : 'Messager'}
             </h3>
             <div className='flex gap-2'>
@@ -119,7 +120,8 @@ const ChatWidget = () => {
                 <>
                   <button
                     onClick={() => setShowUserList(!showUserList)}
-                    className='cursor-pointer hover:bg-cream-surface p-1 rounded'
+                    className='p-1.5 text-cream-600 hover:bg-cream-50 rounded-md
+                             transition-colors duration-200'
                     title={showUserList ? 'Show Chats' : 'Show Users'}
                   >
                     {showUserList ? (
@@ -138,22 +140,25 @@ const ChatWidget = () => {
                     setIsOpen(false)
                   }
                 }}
-                className='cursor-pointer hover:bg-cream-surface p-1 rounded'
+                className='p-1.5 text-cream-600 hover:bg-cream-50 rounded-md
+                         transition-colors duration-200'
               >
                 <X className='h-5 w-5' />
               </button>
             </div>
           </div>
 
+          {/* Chat Invitations Section */}
           <ChatInvitations onAccept={handleRoomSelect} />
 
-          <div className='flex-1 overflow-hidden'>
+          {/* Main Content Area */}
+          <div className='flex-1 overflow-hidden bg-white'>
             {activeRoom ? (
               <div className='flex flex-col h-full'>
                 <div className='flex-1 overflow-hidden'>
                   <Messages roomId={activeRoom} />
                 </div>
-                <div className='p-4 border-t'>
+                <div className='border-t border-cream-200'>
                   <MessageInput roomId={activeRoom} />
                 </div>
               </div>

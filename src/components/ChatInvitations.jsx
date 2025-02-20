@@ -41,18 +41,21 @@ const ChatInvitations = () => {
   if (invitations.length === 0) return null
 
   return (
-    <div className='p-2'>
+    <div className='px-4 py-2 space-y-2'>
       {invitations.map((invitation, index) => (
         <div
           key={index}
-          className='border p-2 rounded mb-2 flex justify-between items-center bg-blue-50'
+          className='flex justify-between items-center p-3 rounded-lg
+                   bg-cream-50 border border-cream-200'
         >
-          <span className='text-sm'>
-            {t('chat.invite')} {invitation.invitedBy}
+          <span className='text-sm text-cream-800'>
+            <span className='font-medium'>{invitation.invitedBy}</span>{' '}
+            {t('chat.invite')}
           </span>
           <button
             onClick={() => acceptInvitation(invitation)}
-            className='px-2 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600'
+            className='px-4 py-1.5 bg-cream-600 text-white text-sm rounded-md
+                     hover:bg-cream-700 transition-colors duration-200'
           >
             {t('chat.accept')}
           </button>
