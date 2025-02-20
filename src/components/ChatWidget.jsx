@@ -76,16 +76,34 @@ const ChatWidget = () => {
     if (socket) {
       if (typeof roomId !== 'string' || roomId.length !== 24) {
         console.error('Invalid room ID:', roomId)
+        alert('Invalid room ID. Please try again.')
         return
       }
 
+      console.log('Attempting to join room:', roomId)
+
       socket.emit('join_room', roomId, room => {
+        console.log('Room join response:', room)
+
         if (room) {
+          console.log('Successfully joined room:', room._id)
           setActiveRoom(room)
           setIsOpen(true)
           setShowUserList(false)
+        } else {
+          console.error('Failed to join room. No room data returned.')
+          alert('Unable to join the room. Please try again.')
         }
       })
+      setTimeout(() => {
+        if (!socket.connected) {
+          console.error('Socket connection lost while trying to join room')
+          alert('Connection lost. Please check your internet connection.')
+        }
+      }, 5000)
+    } else {
+      console.error('Socket is not connected')
+      alert('Socket connection failed. Please reconnect.')
     }
   }
 
