@@ -14,7 +14,7 @@ export async function calculateAverageRating(id) {
     const user = await axios.get(`${BACKEND_URL}/users/user/${id}`, {
       headers: { authorization: `Bearer ${webToken}` },
     })
-
+      console.log(user)
     if (
       !user.reviewsReceived ||
       !Array.isArray(user.reviewsReceived) ||
