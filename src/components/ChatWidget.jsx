@@ -80,8 +80,11 @@ const ChatWidget = () => {
         return
       }
 
-      socket.emit('join_room', roomId)
-      setActiveRoom(roomId)
+      socket.emit('join_room', roomId, room => {
+        if (room) {
+          setActiveRoom(room)
+        }
+      })
     }
   }
 
@@ -115,10 +118,10 @@ const ChatWidget = () => {
           {/* Header */}
           <div className='px-4 py-3 bg-white border-b border-cream-200 flex justify-between items-center'>
             <h3 className='font-medium text-cream-800'>
-              {activeRoom && activeRoom.participants && user
+              {activeRoom?.participants
                 ? t('chat.speakingTo', {
                     username: activeRoom.participants
-                      .filter(p => p._id !== user._id)
+                      .filter(p => p._id !== user?._id)
                       .map(p => p.username)
                       .join(', '),
                   })
@@ -168,10 +171,10 @@ const ChatWidget = () => {
             {activeRoom ? (
               <div className='flex flex-col h-full'>
                 <div className='flex-1 overflow-hidden'>
-                  <Messages roomId={activeRoom} />
+                  <Messages roomId={activeRoom._id} />
                 </div>
                 <div className='border-t border-cream-200'>
-                  <MessageInput roomId={activeRoom} />
+                  <MessageInput roomId={activeRoom._id} />
                 </div>
               </div>
             ) : showUserList ? (
@@ -179,7 +182,7 @@ const ChatWidget = () => {
             ) : (
               <RoomList
                 onRoomSelect={handleRoomSelect}
-                activeRoomId={activeRoom}
+                activeRoomId={activeRoom?._id}
                 onCreateRoom={() => setShowCreateRoom(true)}
               />
             )}
