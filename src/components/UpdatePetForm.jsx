@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useParams, useNavigate } from 'react-router-dom'
 import PageWrapper from './PageWrapper'
+import { useTranslation } from 'react-i18next'
 
 const webToken = localStorage.getItem('authToken')
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005'
 
 const UpdatePet = () => {
+  const { t } = useTranslation()
   const { userId, petId } = useParams()
   const [petName, setPetName] = useState('')
   const [petAge, setPetAge] = useState('')
@@ -99,13 +101,13 @@ const UpdatePet = () => {
       <div className='bg-white rounded-lg shadow-lg border border-cream-200'>
         <div className='p-6 sm:p-8'>
           <h2 className='text-2xl font-bold text-cream-800 mb-6 text-center'>
-            Update Pet
+            {t('userpage.pets.update')}
           </h2>
           <form onSubmit={handleUpdatePet} className='space-y-6'>
             <div className='space-y-4'>
               <label className='block'>
                 <span className='text-sm font-medium text-cream-700'>
-                  Pet Name:
+                {t('userpage.pets.name')}:
                 </span>
                 <input
                   type='text'
@@ -119,7 +121,7 @@ const UpdatePet = () => {
 
               <label className='block'>
                 <span className='text-sm font-medium text-cream-700'>
-                  Pet Age:
+                {t('userpage.pets.age')}:
                 </span>
                 <input
                   type='text'
@@ -133,7 +135,7 @@ const UpdatePet = () => {
 
               <div className='space-y-2'>
                 <span className='block text-sm font-medium text-cream-700'>
-                  Pet Picture:
+                {t('userpage.pets.picture')}:
                 </span>
                 <div className='flex gap-3'>
                   <input
@@ -153,7 +155,7 @@ const UpdatePet = () => {
                              hover:bg-cream-700 transition-colors duration-200
                              disabled:bg-cream-400 disabled:cursor-not-allowed'
                   >
-                    {uploading ? 'Uploading...' : 'Upload Image'}
+                    {uploading ? t('userpage.pets.uploading') : t('userpage.pets.uploadImage')}
                   </button>
                 </div>
               </div>
@@ -164,7 +166,7 @@ const UpdatePet = () => {
               className='w-full px-4 py-2 bg-cream-600 text-white rounded-lg
                        hover:bg-cream-700 transition-colors duration-200'
             >
-              Update Pet
+              {t('userpage.pets.update')}
             </button>
           </form>
         </div>

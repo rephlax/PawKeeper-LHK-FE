@@ -39,7 +39,10 @@
       "deletepet": "Excluir animal",
       "nopets": "Nenhum animal de estimação",
       "addpet": "Adicionar animal",
-      "update": "Atualizar informações do pet"
+      "update": "Atualizar informações do pet",
+      "picture": "Foto do pet",
+      "uploading": "Enviando...",
+      "uploadImage": "Enviar imagem"
     },
     "update": "Atualizar informações do usuário",
     "deleteuser": "Excluir usuário",

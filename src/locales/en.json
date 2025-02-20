@@ -42,7 +42,10 @@
       "deletepet": "Delete pet",
       "nopets": "No pets owned",
       "addpet": "Add pet",
-      "update": "Update pet info"
+      "update": "Update pet info",
+      "picture": "Pet picture",
+      "uploading": "Uploading...",
+      "uploadImage": "Upload Image"
     },
     "update": "Update user information",
     "deleteuser": "Delete user",
