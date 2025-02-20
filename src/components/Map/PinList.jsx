@@ -21,21 +21,30 @@ const PinCard = ({
   const [averageRating, setAverageRating] = useState(0)
   const [loadingRating, setLoadingRating] = useState(true)
 
-  useEffect(() => {
-    const fetchRating = async () => {
-      try {
-        const rating = await calculateAverageRating(pin.user._id)
-        setAverageRating(rating)
-      } catch (error) {
-        console.error('Error fetching rating:', error)
-        setAverageRating(0)
-      } finally {
-        setLoadingRating(false)
-      }
-    }
+  const userId = pin.user?._id || pin.userId || pin.user
 
-    fetchRating()
-  }, [pin.user._id])
+useEffect(() => {
+  if (!userId) {
+    console.error('User ID not found in pin:', pin)
+    setAverageRating(0)
+    setLoadingRating(false)
+    return
+  }
+
+  const fetchRating = async () => {
+    try {
+      const rating = await calculateAverageRating(userId)
+      setAverageRating(rating)
+    } catch (error) {
+      console.error('Error fetching rating:', error)
+      setAverageRating(0)
+    } finally {
+      setLoadingRating(false)
+    }
+  }
+
+  fetchRating()
+}, [userId])
 
   const handleChatClick = async (e, userId) => {
     e.stopPropagation()
