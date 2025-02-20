@@ -9,7 +9,12 @@ const RoomList = ({ onRoomSelect, activeRoomId, onCreateRoom }) => {
   const { t } = useTranslation()
 
   useEffect(() => {
-    if (!socket) return
+    if (!socket) {
+      console.log('Socket not available')
+      return
+    }
+
+    console.log('Socket is connected:', socket.connected)
 
     socket.emit('get_rooms')
 
@@ -31,7 +36,13 @@ const RoomList = ({ onRoomSelect, activeRoomId, onCreateRoom }) => {
     })
 
     socket.on('room_deleted', roomId => {
+      console.log('Room deleted event received for roomId:', roomId)
       setRooms(prev => prev.filter(room => room._id !== roomId))
+    })
+
+    socket.on('error', error => {
+      console.error('Socket error:', error)
+      alert(`Error: ${error.message || 'Unknown error'}`)
     })
 
     return () => {
@@ -39,6 +50,7 @@ const RoomList = ({ onRoomSelect, activeRoomId, onCreateRoom }) => {
       socket.off('room_created')
       socket.off('room_joined')
       socket.off('room_deleted')
+      socket.off('error')
     }
   }, [socket])
 
@@ -52,13 +64,34 @@ const RoomList = ({ onRoomSelect, activeRoomId, onCreateRoom }) => {
 
     const roomToDelete = rooms.find(room => room._id === roomId)
 
-    if (!roomToDelete || roomToDelete.creator.toString() !== user?._id) {
+    if (!roomToDelete) {
+      console.error('Room not found in state')
+      return
+    }
+
+    console.log('Room creator ID:', roomToDelete.creator)
+    console.log('Current user ID:', user?._id)
+
+    if (roomToDelete.creator.toString() !== user?._id) {
       alert('You are not authorized to delete this room')
       return
     }
 
     if (window.confirm('Are you sure you want to delete this room?')) {
-      socket.emit('delete_room', roomId)
+      console.log('Emitting delete_room event with ID:', roomId)
+
+      socket.emit('delete_room', roomId, response => {
+        console.log('Delete room response:', response)
+        if (response && response.success) {
+          console.log('Room deleted successfully')
+        } else {
+          console.error(
+            'Failed to delete room:',
+            response?.error || 'Unknown error',
+          )
+          alert(`Failed to delete room: ${response?.error || 'Unknown error'}`)
+        }
+      })
     }
   }
 

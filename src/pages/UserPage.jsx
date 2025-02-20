@@ -114,13 +114,15 @@ const UserPage = () => {
                 {user && user._id === userId && (
                   <div className='py-4 border-t border-cream-200'>
                     <p className='text-cream-700 mb-2'>
-                    {t('userpage.sitterstatus')}:
+                      {t('userpage.sitterstatus')}:
                       <span
                         className={
                           userInfo.sitter ? 'text-green-600' : 'text-cream-600'
                         }
                       >
-                        {userInfo.sitter ? t('userpage.active') : t('userpage.inactive')}
+                        {userInfo.sitter
+                          ? t('userpage.active')
+                          : t('userpage.inactive')}
                       </span>
                     </p>
                     <button
@@ -147,52 +149,64 @@ const UserPage = () => {
                     pets.map((pet, index) => (
                       <div
                         key={pet._id || index}
-                        className='p-4 bg-cream-50 rounded-lg space-y-2'
+                        className='p-4 bg-cream-50 rounded-lg flex gap-4'
                       >
-                        <div className='grid gap-2'>
-                          <p>
-                            <span className='font-medium text-cream-700'>
-                              {t('userpage.pets.name')}:
-                            </span>
-                            <span className='ml-2 text-cream-600'>
-                              {pet.petName}
-                            </span>
-                          </p>
-                          <p>
-                            <span className='font-medium text-cream-700'>
-                              {t('userpage.pets.age')}:
-                            </span>
-                            <span className='ml-2 text-cream-600'>
-                              {pet.petAge}
-                            </span>
-                          </p>
-                          <p>
-                            <span className='font-medium text-cream-700'>
-                              {t('userpage.pets.species')}:
-                            </span>
-                            <span className='ml-2 text-cream-600'>
-                              {pet.petSpecies}
-                            </span>
-                          </p>
+                        {/* Pet Image */}
+                        <div className='w-24 h-24 flex-shrink-0'>
+                          <img
+                            src={pet.petPicture || defaultPet}
+                            alt={pet.petName || 'Pet'}
+                            className='w-full h-full object-cover rounded-lg border-2 border-cream-200'
+                          />
                         </div>
 
-                        <div className='flex gap-2 pt-2'>
-                          <button
-                            onClick={() => handleDeletePet(pet._id)}
-                            className='px-3 py-1 bg-red-500 text-white rounded-lg 
-                                 hover:bg-red-600 transition-colors duration-200'
-                          >
-                            {t('userpage.pets.deletepet')}
-                          </button>
+                        {/* Pet Info */}
+                        <div className='flex-1 min-w-0 flex flex-col justify-between'>
+                          <div className='grid gap-2'>
+                            <p>
+                              <span className='font-medium text-cream-700'>
+                                {t('userpage.pets.name')}:
+                              </span>
+                              <span className='ml-2 text-cream-600'>
+                                {pet.petName}
+                              </span>
+                            </p>
+                            <p>
+                              <span className='font-medium text-cream-700'>
+                                {t('userpage.pets.age')}:
+                              </span>
+                              <span className='ml-2 text-cream-600'>
+                                {pet.petAge}
+                              </span>
+                            </p>
+                            <p>
+                              <span className='font-medium text-cream-700'>
+                                {t('userpage.pets.species')}:
+                              </span>
+                              <span className='ml-2 text-cream-600'>
+                                {pet.petSpecies}
+                              </span>
+                            </p>
+                          </div>
 
-                          <Link to={`/pets/update-pet/${userId}/${pet._id}`}>
+                          <div className='flex gap-2 pt-2'>
                             <button
-                              className='px-3 py-1 bg-cream-600 text-white rounded-lg 
-                                       hover:bg-cream-700 transition-colors duration-200'
+                              onClick={() => handleDeletePet(pet._id)}
+                              className='px-3 py-1 bg-red-500 text-white rounded-lg 
+                                   hover:bg-red-600 transition-colors duration-200'
                             >
-                              {t('userpage.pets.update')}
+                              {t('userpage.pets.deletepet')}
                             </button>
-                          </Link>
+
+                            <Link to={`/pets/update-pet/${userId}/${pet._id}`}>
+                              <button
+                                className='px-3 py-1 bg-cream-600 text-white rounded-lg 
+                                         hover:bg-cream-700 transition-colors duration-200'
+                              >
+                                {t('userpage.pets.update')}
+                              </button>
+                            </Link>
+                          </div>
                         </div>
                       </div>
                     ))
