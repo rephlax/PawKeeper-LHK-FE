@@ -3,6 +3,7 @@ import { AuthContext } from '../context/AuthContext'
 import axios from 'axios'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import PageWrapper from './PageWrapper'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005'
 
