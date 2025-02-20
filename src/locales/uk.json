@@ -71,6 +71,8 @@
       "offline": "Не в мережі"
     },
     "enterName": "Введіть назву чату...",
+    "deleteRoom": "Видалити чат",
+    "confirmDelete": "Ви впевнені, що хочете видалити цей чат?",
     "speakingTo": "Ви розмовляєте з %{username}"
   },
   "addpet": {

@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useSocket } from '../context/SocketContext'
-import { Plus, Hash, MessageCircle } from 'lucide-react'
+import { Plus, Hash, MessageCircle, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 const RoomList = ({ onRoomSelect, activeRoomId, onCreateRoom }) => {
   const [rooms, setRooms] = useState([])
-  const { socket } = useSocket()
+  const { socket, user } = useSocket()
   const { t } = useTranslation()
 
   useEffect(() => {
@@ -13,12 +13,10 @@ const RoomList = ({ onRoomSelect, activeRoomId, onCreateRoom }) => {
 
     socket.emit('get_rooms')
 
-    // Listen for rooms list
     socket.on('rooms_list', roomsList => {
       setRooms(roomsList)
     })
 
-    // Listen for room updates
     socket.on('room_created', newRoom => {
       setRooms(prev => [...prev, newRoom])
     })
@@ -32,12 +30,24 @@ const RoomList = ({ onRoomSelect, activeRoomId, onCreateRoom }) => {
       })
     })
 
+    socket.on('room_deleted', roomId => {
+      setRooms(prev => prev.filter(room => room._id !== roomId))
+    })
+
     return () => {
       socket.off('rooms_list')
       socket.off('room_created')
       socket.off('room_joined')
+      socket.off('room_deleted')
     }
   }, [socket])
+
+  const handleDeleteRoom = (e, roomId) => {
+    e.stopPropagation()
+    if (window.confirm(t('chat.confirmDelete'))) {
+      socket.emit('delete_room', roomId)
+    }
+  }
 
   return (
     <div className='flex flex-col h-full'>
@@ -55,26 +65,38 @@ const RoomList = ({ onRoomSelect, activeRoomId, onCreateRoom }) => {
           <div
             key={room._id}
             onClick={() => onRoomSelect(room._id)}
-            className={`flex items-center p-3 cursor-pointer transition-colors duration-200
+            className={`flex items-center p-3 cursor-pointer transition-colors duration-200 group
               ${
                 activeRoomId === room._id
                   ? 'bg-cream-50 border-l-4 border-cream-600'
                   : 'hover:bg-cream-50/50 border-l-4 border-transparent'
               }`}
           >
-            {room.type === 'group' ? (
-              <Hash className='h-4 w-4 mr-2 text-cream-600' />
-            ) : (
-              <MessageCircle className='h-4 w-4 mr-2 text-cream-600' />
-            )}
-            <div className='flex-1 min-w-0'>
-              <p className='font-medium text-cream-800 truncate'>{room.name}</p>
-              {room.lastMessage && (
-                <p className='text-sm text-cream-600 truncate'>
-                  {room.lastMessage.content}
-                </p>
+            <div className='flex-1 flex items-center'>
+              {room.type === 'group' ? (
+                <Hash className='h-4 w-4 mr-2 text-cream-600' />
+              ) : (
+                <MessageCircle className='h-4 w-4 mr-2 text-cream-600' />
               )}
+              <div className='flex-1 min-w-0'>
+                <p className='font-medium text-cream-800 truncate'>
+                  {room.name}
+                </p>
+                {room.lastMessage && (
+                  <p className='text-sm text-cream-600 truncate'>
+                    {room.lastMessage.content}
+                  </p>
+                )}
+              </div>
             </div>
+            <button
+              onClick={e => handleDeleteRoom(e, room._id)}
+              className='p-1.5 text-cream-400 hover:text-red-500 rounded-md 
+                       transition-colors duration-200 opacity-0 group-hover:opacity-100'
+              title={t('chat.deleteRoom')}
+            >
+              <Trash2 className='h-4 w-4' />
+            </button>
           </div>
         ))}
       </div>
