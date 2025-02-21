@@ -4,6 +4,7 @@ import { useSocket } from '../../context/SocketContext'
 import { useMap } from '../../context/MapContext'
 import axios from 'axios'
 import { X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
@@ -24,6 +25,7 @@ const PinForm = ({
     availability: initialData?.availability || 'Part Time',
     hourlyRate: initialData?.hourlyRate || 0,
   })
+  const { t } = useTranslation()
 
   useEffect(() => {
     console.log(initialData)
@@ -147,7 +149,7 @@ const PinForm = ({
         {/* Form Header */}
         <div className='flex justify-between items-center mb-4'>
           <h2 className='text-lg font-semibold text-cream-800'>
-            {isEditing ? 'Edit Your Pin' : 'Create Location Pin'}
+            {isEditing ? t(mapontrols.editpin) : t(mapontrols.createpin)}
           </h2>
           <button
             onClick={onClose}
@@ -161,7 +163,7 @@ const PinForm = ({
         <div className='space-y-3'>
           <div>
             <label className='block text-sm font-medium text-cream-700 mb-1'>
-              Title
+            {t(lables.title)}
             </label>
             <input
               type='text'
@@ -178,7 +180,7 @@ const PinForm = ({
 
           <div>
             <label className='block text-sm font-medium text-cream-700 mb-1'>
-              Description
+            {t(lables.description)}
             </label>
             <textarea
               name='description'
@@ -195,7 +197,7 @@ const PinForm = ({
 
           <div>
             <label className='block text-sm font-medium text-cream-700 mb-1'>
-              Services
+            {t(lables.services)}
             </label>
             <select
               name='services'
@@ -207,20 +209,20 @@ const PinForm = ({
                        transition duration-200 h-24'
               disabled={isLoading}
             >
-              <option value='Dog Walking'>Dog Walking</option>
-              <option value='Cat Sitting'>Cat Sitting</option>
-              <option value='Pet Boarding'>Pet Boarding</option>
-              <option value='Pet Grooming'>Pet Grooming</option>
-              <option value='Dog Training'>Dog Training</option>
+              <option value='Dog Walking'>{t(services.dogWalking)}</option>
+              <option value='Cat Sitting'>{t(services.catSitting)}</option>
+              <option value='Pet Boarding'>{t(services.petBoarding)}</option>
+              <option value='Pet Grooming'>{t(services.petGrooming)}</option>
+              <option value='Dog Training'>{t(services.dogTraining)}</option>
             </select>
             <p className='mt-1 text-xs text-cream-600'>
-              Hold Ctrl/Cmd to select multiple services
+            {t(instructions.controlKeyNotice)}
             </p>
           </div>
 
           <div>
             <label className='block text-sm font-medium text-cream-700 mb-1'>
-              Availability
+            {t(lables.availability)}
             </label>
             <select
               name='availability'
@@ -231,15 +233,15 @@ const PinForm = ({
                        transition duration-200'
               disabled={isLoading}
             >
-              <option value='Full Time'>Full Time</option>
-              <option value='Part Time'>Part Time</option>
-              <option value='Weekends Only'>Weekends Only</option>
+              <option value='Full Time'>{t(services.fullTime)}</option>
+              <option value='Part Time'>{t(services.partTime)}</option>
+              <option value='Weekends Only'>{t(services.weekendsOnly)}</option>
             </select>
           </div>
 
           <div>
             <label className='block text-sm font-medium text-cream-700 mb-1'>
-              Hourly Rate ($)
+            {t(lables.hourlyRate)} ($)
             </label>
             <input
               type='number'
@@ -259,12 +261,12 @@ const PinForm = ({
         {/* Instructions */}
         <div className='bg-cream-50 rounded-md p-3 border border-cream-200 text-sm'>
           <h3 className='font-medium text-cream-800 mb-1'>
-            Pin Location Instructions
+          {t(instructions.pinLocationInstructions)}
           </h3>
           <ul className='list-disc list-inside text-xs text-cream-700 space-y-0.5'>
-            <li>Your pin will be placed at the center of the map</li>
-            <li>Move the map to adjust the pin location before saving</li>
-            <li>Use the zoom controls to get a precise location</li>
+            <li>{t(pinInstructions.pinPlaced)}</li>
+            <li>{t(instructions.moveMapTip)}</li>
+            <li>{t(instructions.zoomTip)}</li>
           </ul>
         </div>
 
@@ -287,10 +289,10 @@ const PinForm = ({
                      disabled:bg-cream-400 disabled:cursor-not-allowed'
           >
             {isLoading
-              ? 'Processing...'
+              ? t('buttons.processing')
               : isEditing
-                ? 'Update Pin'
-                : 'Create Pin'}
+                ? t('buttons.updatePin')
+                : t('buttons.createPin')}
           </button>
         </div>
       </div>

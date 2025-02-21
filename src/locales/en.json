@@ -130,5 +130,14 @@
     "home": "Home",
     "nav":"Navigation",
     "profile":"Profile"
+  },
+  "mapcontrols": {
+    "nositter":"No sitter selected for review",
+    "findlocation":"Find My Location",
+    "controls":"Map controls",
+    "createpin":"Create location pin",
+    "editpin":"Edit your pin",
+    "chat":"Chat with sitter",
+    "review":"Leave a review"
   }
 }
