@@ -128,5 +128,48 @@
     "home": "Início",
     "nav": "Navegação",
     "profile": "Perfil"
+  },
+  "mapcontrols": {
+    "nositter":"Nenhum cuidador selecionado para revisão",
+    "findlocation":"Encontrar Minha Localização",
+    "controls":"Controles do Mapa",
+    "createpin":"Criar pino de localização",
+    "editpin":"Editar seu pino",
+    "chat":"Conversar com o cuidador",
+    "review":"Deixar um comentário"
+  },
+  "services": {
+    "dogWalking": "Passeio com Cachorros",
+    "catSitting": "Cuidados com Gatos",
+    "petBoarding": "Hospedagem para Animais",
+    "petGrooming": "Tosa para Animais",
+    "dogTraining": "Treinamento de Cachorros",
+    "fullTime": "Tempo Integral",
+    "partTime": "Meio Período",
+    "weekendsOnly": "Apenas Finais de Semana"
+  },
+  "labels": {
+    "services": "Serviços",
+    "description": "Descrição",
+    "title": "Título",
+    "availability": "Disponibilidade",
+    "hourlyRate": "Taxa por Hora ($)"
+  },
+  "placeholders": {
+    "petSittingLocation": "Localização do Cuidador de Animais"
+  },
+  "instructions": {
+    "controlKeyNotice": "Mantenha Ctrl/Cmd para selecionar vários serviços",
+    "pinLocationInstructions": "Instruções de Localização do Pino"
+  },
+  "pinInstructions": {
+    "pinPlaced": "Seu pino será colocado no centro do mapa",
+    "moveMapTip": "Mova o mapa para ajustar a localização do pino antes de salvar",
+    "zoomTip": "Use os controles de zoom para obter uma localização precisa"
+  },
+  "buttons": {
+    "processing": "Processando...",
+    "updatePin": "Atualizar Pino",
+    "createPin": "Criar Pino"
   }
 }

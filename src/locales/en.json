@@ -139,5 +139,39 @@
     "editpin":"Edit your pin",
     "chat":"Chat with sitter",
     "review":"Leave a review"
+  },
+  "services": {
+    "dogWalking": "Dog Walking",
+    "catSitting": "Cat Sitting",
+    "petBoarding": "Pet Boarding",
+    "petGrooming": "Pet Grooming",
+    "dogTraining": "Dog Training",
+    "fullTime": "Full Time",
+    "partTime": "Part Time",
+    "weekendsOnly": "Weekends Only"
+  },
+  "labels": {
+    "services": "Services",
+    "description": "Description",
+    "title": "Title",
+    "availability": "Availability",
+    "hourlyRate": "Hourly Rate ($)"
+  },
+  "placeholders": {
+    "petSittingLocation": "'s Pet Sitting Location"
+  },
+  "instructions": {
+    "controlKeyNotice": "Hold Ctrl/Cmd to select multiple services",
+    "pinLocationInstructions": "Pin Location Instructions"
+  },
+  "pinInstructions": {
+    "pinPlaced": "Your pin will be placed at the center of the map",
+    "moveMapTip": "Move the map to adjust the pin location before saving",
+    "zoomTip": "Use the zoom controls to get a precise location"
+  },
+  "buttons": {
+    "processing": "Processing...",
+    "updatePin": "Update Pin",
+    "createPin": "Create Pin"
   }
 }
