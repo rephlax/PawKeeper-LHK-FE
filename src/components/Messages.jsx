@@ -112,7 +112,7 @@ const Messages = ({ roomId }) => {
                   message.timeStamp || message.timestamp,
                 ).toLocaleTimeString()}
               </p>
-              {message.sender?._id !== user?._id &&
+              {/* {message.sender?._id !== user?._id &&
                 !message.translationFailed && (
                   <button
                     onClick={() => requestTranslation(message.id)}
@@ -120,13 +120,13 @@ const Messages = ({ roomId }) => {
                   >
                     {t('chat.translate')}
                   </button>
-                )}
+                )} */}
             </div>
-            {message.translationFailed && (
+            {/* {message.translationFailed && (
               <p className='text-xs text-red-500 mt-1'>
                 {t('chat.translationFailed')}
               </p>
-            )}
+            )} */}
           </div>
         </div>
       ))}
