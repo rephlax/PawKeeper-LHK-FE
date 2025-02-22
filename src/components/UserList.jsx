@@ -76,7 +76,6 @@ const UserList = () => {
     flexDirection: 'column',
     height: '100%',
     padding: '1rem',
-    width: '40%',
   }
 
   // Header
