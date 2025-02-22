@@ -149,7 +149,7 @@ const PinForm = ({
         {/* Form Header */}
         <div className='flex justify-between items-center mb-4'>
           <h2 className='text-lg font-semibold text-cream-800'>
-            {isEditing ? t(mapontrols.editpin) : t(mapontrols.createpin)}
+            {isEditing ? t(mapcontrols.editpin) : t(mapcontrols.createpin)}
           </h2>
           <button
             onClick={onClose}
@@ -163,7 +163,7 @@ const PinForm = ({
         <div className='space-y-3'>
           <div>
             <label className='block text-sm font-medium text-cream-700 mb-1'>
-            {t(lables.title)}
+            {t(labels.title)}
             </label>
             <input
               type='text'
@@ -180,7 +180,7 @@ const PinForm = ({
 
           <div>
             <label className='block text-sm font-medium text-cream-700 mb-1'>
-            {t(lables.description)}
+            {t(labels.description)}
             </label>
             <textarea
               name='description'
@@ -197,7 +197,7 @@ const PinForm = ({
 
           <div>
             <label className='block text-sm font-medium text-cream-700 mb-1'>
-            {t(lables.services)}
+            {t(labels.services)}
             </label>
             <select
               name='services'
@@ -222,7 +222,7 @@ const PinForm = ({
 
           <div>
             <label className='block text-sm font-medium text-cream-700 mb-1'>
-            {t(lables.availability)}
+            {t(labels.availability)}
             </label>
             <select
               name='availability'
@@ -241,7 +241,7 @@ const PinForm = ({
 
           <div>
             <label className='block text-sm font-medium text-cream-700 mb-1'>
-            {t(lables.hourlyRate)} ($)
+            {t(labels.hourlyRate)} ($)
             </label>
             <input
               type='number'
