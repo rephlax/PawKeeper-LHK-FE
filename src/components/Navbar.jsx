@@ -40,12 +40,12 @@ const Navbar = () => {
     width: '20%',
     height: '20%',
     objectFit: 'contain',
-    transition: 'transform 0.2s',
+    transition: 'transform 0.3s',
   }
 
   // Logo hover
   const handleLogoHover = e => {
-    e.currentTarget.style.transform = 'scale(1.05)'
+    e.currentTarget.style.transform = 'scale(1.025)'
   }
 
   const handleLogoLeave = e => {
