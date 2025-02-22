@@ -20,7 +20,7 @@ const UserPage = () => {
   // Container
   const containerStyle = {
     maxWidth: '800px',
-    width: '30%',
+    width: '500px',
     margin: '2rem auto',
     borderRadius: '0.75rem',
     boxShadow:
