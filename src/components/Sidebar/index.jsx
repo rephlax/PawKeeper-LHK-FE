@@ -31,14 +31,14 @@ const Sidebar = ({
   const { isMapLoaded } = useMap()
   const { isOpen, setIsOpen } = useChat()
 
-  // Root container styles - all structural styling is inline
+  // Root container
   const containerStyle = {
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
   }
 
-  // Inner container styles - all structural styling is inline
+  // Inner container
   const innerContainerStyle = {
     display: 'flex',
     flexDirection: 'column',
@@ -46,27 +46,27 @@ const Sidebar = ({
     width: '100%',
   }
 
-  // Controls container styles - all structural styling is inline
+  // Controls container
   const controlsContainerStyle = {
     flexShrink: '0',
   }
 
-  // List container styles - all structural styling is inline
+  // List container
   const listContainerStyle = {
     flex: '1',
     overflowY: 'auto',
   }
 
-  // List content styles - all structural styling is inline
+  // List content
   const listContentStyle = {
-    padding: '1rem', // p-4
+    padding: '1rem',
   }
 
-  // List title styles - all structural styling is inline
+  // List title
   const listTitleStyle = {
-    fontSize: '1.125rem', // text-lg
+    fontSize: '1.125rem',
     fontWeight: '600',
-    marginBottom: '1rem', // mb-4
+    marginBottom: '1rem',
   }
 
   const handleResetStates = useCallback(() => {
