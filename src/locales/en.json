@@ -140,6 +140,23 @@
     "chat": "Chat with sitter",
     "review": "Leave a review"
   },
+  "pinform": {
+    "title": "Location Title",
+    "description": "Service Description",
+    "services": "Pet Services",
+    "availability": "Availability",
+    "hourlyRate": "Hourly Rate",
+    "controlKeyNotice": "Hold Ctrl/Cmd to select multiple services",
+    "pinLocationInstructions": "Pin Location Instructions",
+    "moveMapTip": "Move the map to adjust the pin location before saving",
+    "zoomTip": "Use the zoom controls to get a precise location",
+    "pinPlaced": "Your pin will be placed at the center of the map"
+  },
+  "availability": {
+    "fullTime": "Full Time",
+    "partTime": "Part Time",
+    "weekendsOnly": "Weekends Only"
+  },
   "services": {
     "dogWalking": "Dog Walking",
     "catSitting": "Cat Sitting",

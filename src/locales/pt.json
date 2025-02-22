@@ -173,5 +173,22 @@
     "processing": "Processando...",
     "updatePin": "Atualizar Pino",
     "createPin": "Criar Pino"
+  },
+  "pinform": {
+    "title": "Título da Localização",
+    "description": "Descrição do Serviço",
+    "services": "Serviços para Animais",
+    "availability": "Disponibilidade",
+    "hourlyRate": "Taxa por Hora",
+    "controlKeyNotice": "Mantenha Ctrl/Cmd para selecionar vários serviços",
+    "pinLocationInstructions": "Instruções de Localização do Pino",
+    "moveMapTip": "Mova o mapa para ajustar a localização do pino antes de salvar",
+    "zoomTip": "Use os controles de zoom para obter uma localização precisa",
+    "pinPlaced": "Seu pino será colocado no centro do mapa"
+  },
+  "availability": {
+    "fullTime": "Tempo Integral",
+    "partTime": "Meio Período",
+    "weekendsOnly": "Apenas Finais de Semana"
   }
 }
