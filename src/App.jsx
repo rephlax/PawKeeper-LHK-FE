@@ -99,7 +99,7 @@ function App() {
         </aside>
 
         {/* Main Content Area */}
-        <main className='flex-1 bg-cream-50/80 overflow-auto'>
+        <main className='flex-1 bg-cream-50/80 overflow-y-auto max-h-[calc(100vh-8rem)]'>
           {location.pathname === '/map' ? (
             <Routes>
               <Route
@@ -118,7 +118,7 @@ function App() {
               />
             </Routes>
           ) : (
-            <div className='min-h-full flex items-center justify-center'>
+            <div className='w-full'>
               <Routes>
                 <Route path='/' element={<HomePage />} />
                 <Route
