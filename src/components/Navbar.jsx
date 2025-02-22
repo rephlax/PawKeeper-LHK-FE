@@ -149,12 +149,7 @@ const Navbar = () => {
         </div>
 
         <div style={linksContainerStyle}>
-          {!isSignedIn ? (
-            <>
-              <NavLink to='/sign-up'>{t('navbar.signup')}</NavLink>
-              <NavLink to='/log-in'>{t('navbar.login')}</NavLink>
-            </>
-          ) : (
+          {isSignedIn ? (
             <>
               <NavLink to='/map'>
                 <MapPin
@@ -176,6 +171,11 @@ const Navbar = () => {
               >
                 {t('navbar.logout')}
               </button>
+            </>
+          ) : (
+            <>
+              <NavLink to='/sign-up'>{t('navbar.signup')}</NavLink>
+              <NavLink to='/log-in'>{t('navbar.login')}</NavLink>
             </>
           )}
 
