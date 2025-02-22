@@ -17,28 +17,13 @@ const UserPage = () => {
   const { userId } = useParams()
   const webToken = localStorage.getItem('authToken')
 
-  // Page wrapper - contains the scrollable area
-  const pageWrapperStyle = {
-    height: '100%',
-    overflow: 'hidden',
-    flexDirection: 'column',
-  }
-
-  // Scrollable area
-  const scrollableAreaStyle = {
-    flex: '1',
-    overflowY: 'auto',
-    padding: '2rem',
-  }
-
   // Container
   const containerStyle = {
     maxWidth: '800px',
-    margin: '0 auto',
+    margin: '2rem auto',
     borderRadius: '0.75rem',
     boxShadow:
       '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-    overflow: 'hidden',
     borderWidth: '1px',
     borderStyle: 'solid',
     padding: '2rem',
@@ -316,348 +301,307 @@ const UserPage = () => {
   }
 
   return (
-    <div style={pageWrapperStyle}>
-      <div
-        style={scrollableAreaStyle}
-        className='scrollbar-thin scrollbar-thumb-cream-300 scrollbar-track-transparent'
-      >
-        <div style={containerStyle} className='bg-white border-cream-200'>
-          <div style={contentContainerStyle}>
-            <h1 style={titleStyle} className='text-cream-800'>
-              {t('userpage.title')}
-            </h1>
+    <div style={containerStyle} className='bg-white border-cream-200'>
+      <div style={contentContainerStyle}>
+        <h1 style={titleStyle} className='text-cream-800'>
+          {t('userpage.title')}
+        </h1>
 
-            {userInfo && userInfo ? (
+        {userInfo && userInfo ? (
+          <div
+            style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}
+          >
+            <div style={profileContainerStyle}>
+              <div style={profileImageContainerStyle}>
+                <img
+                  src={userInfo.profilePicture || defaultUser}
+                  style={profileImageStyle}
+                  className='border-cream-200'
+                  alt={userInfo.profilePicture ? 'Profile' : 'Default profile'}
+                />
+              </div>
+
+              <h2 style={userNameStyle} className='text-cream-700'>
+                {t('userpage.welcome')}, {userInfo.username}!
+              </h2>
+            </div>
+
+            <div style={infoCardStyle} className='bg-white border-cream-200'>
+              <div style={gridContainerStyle}>
+                <p style={flexBetweenStyle}>
+                  <span style={labelStyle} className='text-cream-700'>
+                    {t('forms.emailLabel')}:
+                  </span>
+                  <span className='text-cream-600'>{userInfo.email}</span>
+                </p>
+                <p style={flexBetweenStyle}>
+                  <span style={labelStyle} className='text-cream-700'>
+                    {t('userpage.rating')}:
+                  </span>
+                  <span className='text-cream-600'>{userInfo.rating}</span>
+                </p>
+              </div>
+
+              {/* Sitter Status Toggle */}
+              {user && user._id === userId && (
+                <div style={sitterToggleStyle} className='border-cream-200'>
+                  <p
+                    style={{ marginBottom: '0.5rem' }}
+                    className='text-cream-700'
+                  >
+                    {t('userpage.sitterstatus')}:
+                    <span
+                      className={
+                        userInfo.sitter ? 'text-green-600' : 'text-cream-600'
+                      }
+                      style={{ marginLeft: '0.5rem' }}
+                    >
+                      {userInfo.sitter
+                        ? t('userpage.active')
+                        : t('userpage.inactive')}
+                    </span>
+                  </p>
+                  <button
+                    onClick={handleSitterToggle}
+                    style={buttonStyle}
+                    className='bg-cream-600'
+                    onMouseOver={e =>
+                      handleButtonHover(e, 'bg-cream-600', 'bg-cream-700')
+                    }
+                    onMouseOut={e =>
+                      handleButtonLeave(e, 'bg-cream-700', 'bg-cream-600')
+                    }
+                  >
+                    {userInfo.sitter
+                      ? t('userpage.deactivatesitterstatus')
+                      : t('userpage.becomesitter')}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Pets Section */}
+            <div style={petsSectionStyle} className='bg-white border-cream-200'>
+              <h3 style={sectionTitleStyle} className='text-cream-800'>
+                {t('userpage.pets.allpets')}
+              </h3>
+
               <div
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '2rem',
+                  gap: '1rem',
                 }}
               >
-                <div style={profileContainerStyle}>
-                  <div style={profileImageContainerStyle}>
-                    <img
-                      src={userInfo.profilePicture || defaultUser}
-                      style={profileImageStyle}
-                      className='border-cream-200'
-                      alt={
-                        userInfo.profilePicture ? 'Profile' : 'Default profile'
-                      }
-                    />
-                  </div>
+                {pets.length > 0 ? (
+                  pets.map((pet, index) => (
+                    <div
+                      key={pet._id || index}
+                      style={petCardStyle}
+                      className='bg-cream-50'
+                    >
+                      {/* Pet Image */}
+                      <div style={petImageContainerStyle}>
+                        <img
+                          src={pet.petPicture || defaultPet}
+                          alt={pet.petName || 'Pet'}
+                          style={petImageStyle}
+                          className='border-cream-200'
+                        />
+                      </div>
 
-                  <h2 style={userNameStyle} className='text-cream-700'>
-                    {t('userpage.welcome')}, {userInfo.username}!
-                  </h2>
-                </div>
-
-                <div
-                  style={infoCardStyle}
-                  className='bg-white border-cream-200'
-                >
-                  <div style={gridContainerStyle}>
-                    <p style={flexBetweenStyle}>
-                      <span style={labelStyle} className='text-cream-700'>
-                        {t('forms.emailLabel')}:
-                      </span>
-                      <span className='text-cream-600'>{userInfo.email}</span>
-                    </p>
-                    <p style={flexBetweenStyle}>
-                      <span style={labelStyle} className='text-cream-700'>
-                        {t('userpage.rating')}:
-                      </span>
-                      <span className='text-cream-600'>{userInfo.rating}</span>
-                    </p>
-                  </div>
-
-                  {/* Sitter Status Toggle */}
-                  {user && user._id === userId && (
-                    <div style={sitterToggleStyle} className='border-cream-200'>
-                      <p
-                        style={{ marginBottom: '0.5rem' }}
-                        className='text-cream-700'
-                      >
-                        {t('userpage.sitterstatus')}:
-                        <span
-                          className={
-                            userInfo.sitter
-                              ? 'text-green-600'
-                              : 'text-cream-600'
-                          }
-                          style={{ marginLeft: '0.5rem' }}
-                        >
-                          {userInfo.sitter
-                            ? t('userpage.active')
-                            : t('userpage.inactive')}
-                        </span>
-                      </p>
-                      <button
-                        onClick={handleSitterToggle}
-                        style={buttonStyle}
-                        className='bg-cream-600'
-                        onMouseOver={e =>
-                          handleButtonHover(e, 'bg-cream-600', 'bg-cream-700')
-                        }
-                        onMouseOut={e =>
-                          handleButtonLeave(e, 'bg-cream-700', 'bg-cream-600')
-                        }
-                      >
-                        {userInfo.sitter
-                          ? t('userpage.deactivatesitterstatus')
-                          : t('userpage.becomesitter')}
-                      </button>
-                    </div>
-                  )}
-                </div>
-
-                {/* Pets Section */}
-                <div
-                  style={petsSectionStyle}
-                  className='bg-white border-cream-200'
-                >
-                  <h3 style={sectionTitleStyle} className='text-cream-800'>
-                    {t('userpage.pets.allpets')}
-                  </h3>
-
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '1rem',
-                    }}
-                  >
-                    {pets.length > 0 ? (
-                      pets.map((pet, index) => (
-                        <div
-                          key={pet._id || index}
-                          style={petCardStyle}
-                          className='bg-cream-50'
-                        >
-                          {/* Pet Image */}
-                          <div style={petImageContainerStyle}>
-                            <img
-                              src={pet.petPicture || defaultPet}
-                              alt={pet.petName || 'Pet'}
-                              style={petImageStyle}
-                              className='border-cream-200'
-                            />
-                          </div>
-
-                          {/* Pet Info */}
-                          <div style={petInfoStyle}>
-                            <div style={petInfoGridStyle}>
-                              <p>
-                                <span
-                                  style={labelStyle}
-                                  className='text-cream-700'
-                                >
-                                  {t('userpage.pets.name')}:
-                                </span>
-                                <span
-                                  className='text-cream-600'
-                                  style={{ marginLeft: '0.5rem' }}
-                                >
-                                  {pet.petName}
-                                </span>
-                              </p>
-                              <p>
-                                <span
-                                  style={labelStyle}
-                                  className='text-cream-700'
-                                >
-                                  {t('userpage.pets.age')}:
-                                </span>
-                                <span
-                                  className='text-cream-600'
-                                  style={{ marginLeft: '0.5rem' }}
-                                >
-                                  {pet.petAge}
-                                </span>
-                              </p>
-                              <p>
-                                <span
-                                  style={labelStyle}
-                                  className='text-cream-700'
-                                >
-                                  {t('userpage.pets.species')}:
-                                </span>
-                                <span
-                                  className='text-cream-600'
-                                  style={{ marginLeft: '0.5rem' }}
-                                >
-                                  {pet.petSpecies}
-                                </span>
-                              </p>
-                            </div>
-
-                            <div style={petActionsStyle}>
-                              <button
-                                onClick={() => handleDeletePet(pet._id)}
-                                style={{
-                                  ...buttonStyle,
-                                  padding: '0.25rem 0.75rem',
-                                }}
-                                className='bg-red-500'
-                                onMouseOver={e =>
-                                  handleButtonHover(
-                                    e,
-                                    'bg-red-500',
-                                    'bg-red-600',
-                                  )
-                                }
-                                onMouseOut={e =>
-                                  handleButtonLeave(
-                                    e,
-                                    'bg-red-600',
-                                    'bg-red-500',
-                                  )
-                                }
-                              >
-                                {t('userpage.pets.deletepet')}
-                              </button>
-
-                              <Link
-                                to={`/pets/update-pet/${userId}/${pet._id}`}
-                                style={linkWrapperStyle}
-                              >
-                                <button
-                                  style={{
-                                    ...buttonStyle,
-                                    padding: '0.25rem 0.75rem',
-                                  }}
-                                  className='bg-cream-600'
-                                  onMouseOver={e =>
-                                    handleButtonHover(
-                                      e,
-                                      'bg-cream-600',
-                                      'bg-cream-700',
-                                    )
-                                  }
-                                  onMouseOut={e =>
-                                    handleButtonLeave(
-                                      e,
-                                      'bg-cream-700',
-                                      'bg-cream-600',
-                                    )
-                                  }
-                                >
-                                  {t('userpage.pets.update')}
-                                </button>
-                              </Link>
-                            </div>
-                          </div>
+                      {/* Pet Info */}
+                      <div style={petInfoStyle}>
+                        <div style={petInfoGridStyle}>
+                          <p>
+                            <span style={labelStyle} className='text-cream-700'>
+                              {t('userpage.pets.name')}:
+                            </span>
+                            <span
+                              className='text-cream-600'
+                              style={{ marginLeft: '0.5rem' }}
+                            >
+                              {pet.petName}
+                            </span>
+                          </p>
+                          <p>
+                            <span style={labelStyle} className='text-cream-700'>
+                              {t('userpage.pets.age')}:
+                            </span>
+                            <span
+                              className='text-cream-600'
+                              style={{ marginLeft: '0.5rem' }}
+                            >
+                              {pet.petAge}
+                            </span>
+                          </p>
+                          <p>
+                            <span style={labelStyle} className='text-cream-700'>
+                              {t('userpage.pets.species')}:
+                            </span>
+                            <span
+                              className='text-cream-600'
+                              style={{ marginLeft: '0.5rem' }}
+                            >
+                              {pet.petSpecies}
+                            </span>
+                          </p>
                         </div>
-                      ))
-                    ) : (
-                      <p
-                        style={{ textAlign: 'center', padding: '1rem 0' }}
-                        className='text-cream-600'
-                      >
-                        {t('userpage.pets.nopets')}.
-                      </p>
-                    )}
 
-                    <Link
-                      to={`/pets/add-pet/${userId}`}
-                      style={linkWrapperStyle}
-                    >
-                      <button
-                        style={buttonStyle}
-                        className='bg-green-500'
-                        onMouseOver={e =>
-                          handleButtonHover(e, 'bg-green-500', 'bg-green-600')
-                        }
-                        onMouseOut={e =>
-                          handleButtonLeave(e, 'bg-green-600', 'bg-green-500')
-                        }
-                      >
-                        {t('userpage.pets.addpet')}
-                      </button>
-                    </Link>
-                  </div>
-                </div>
+                        <div style={petActionsStyle}>
+                          <button
+                            onClick={() => handleDeletePet(pet._id)}
+                            style={{
+                              ...buttonStyle,
+                              padding: '0.25rem 0.75rem',
+                            }}
+                            className='bg-red-500'
+                            onMouseOver={e =>
+                              handleButtonHover(e, 'bg-red-500', 'bg-red-600')
+                            }
+                            onMouseOut={e =>
+                              handleButtonLeave(e, 'bg-red-600', 'bg-red-500')
+                            }
+                          >
+                            {t('userpage.pets.deletepet')}
+                          </button>
 
-                {/* Action Buttons */}
-                <div style={actionsContainerStyle}>
-                  <Link
-                    to={`/users/update-user/${userId}`}
-                    style={linkWrapperStyle}
+                          <Link
+                            to={`/pets/update-pet/${userId}/${pet._id}`}
+                            style={linkWrapperStyle}
+                          >
+                            <button
+                              style={{
+                                ...buttonStyle,
+                                padding: '0.25rem 0.75rem',
+                              }}
+                              className='bg-cream-600'
+                              onMouseOver={e =>
+                                handleButtonHover(
+                                  e,
+                                  'bg-cream-600',
+                                  'bg-cream-700',
+                                )
+                              }
+                              onMouseOut={e =>
+                                handleButtonLeave(
+                                  e,
+                                  'bg-cream-700',
+                                  'bg-cream-600',
+                                )
+                              }
+                            >
+                              {t('userpage.pets.update')}
+                            </button>
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p
+                    style={{ textAlign: 'center', padding: '1rem 0' }}
+                    className='text-cream-600'
                   >
-                    <button
-                      style={buttonStyle}
-                      className='bg-cream-600'
-                      onMouseOver={e =>
-                        handleButtonHover(e, 'bg-cream-600', 'bg-cream-700')
-                      }
-                      onMouseOut={e =>
-                        handleButtonLeave(e, 'bg-cream-700', 'bg-cream-600')
-                      }
-                    >
-                      {t('userpage.update')}
-                    </button>
-                  </Link>
+                    {t('userpage.pets.nopets')}.
+                  </p>
+                )}
 
+                <Link to={`/pets/add-pet/${userId}`} style={linkWrapperStyle}>
                   <button
-                    onClick={handleDeleteUser}
                     style={buttonStyle}
-                    className='bg-red-500'
+                    className='bg-green-500'
                     onMouseOver={e =>
-                      handleButtonHover(e, 'bg-red-500', 'bg-red-600')
+                      handleButtonHover(e, 'bg-green-500', 'bg-green-600')
                     }
                     onMouseOut={e =>
-                      handleButtonLeave(e, 'bg-red-600', 'bg-red-500')
+                      handleButtonLeave(e, 'bg-green-600', 'bg-green-500')
                     }
                   >
-                    {t('userpage.deleteuser')}
+                    {t('userpage.pets.addpet')}
                   </button>
-
-                  <button
-                    onClick={handleLogout}
-                    style={buttonStyle}
-                    className='bg-cream-400'
-                    onMouseOver={e =>
-                      handleButtonHover(e, 'bg-cream-400', 'bg-cream-500')
-                    }
-                    onMouseOut={e =>
-                      handleButtonLeave(e, 'bg-cream-500', 'bg-cream-400')
-                    }
-                  >
-                    {t('userpage.logout')}
-                  </button>
-
-                  <Link
-                    to={`/users/update-user/${userId}/password-change`}
-                    style={linkWrapperStyle}
-                  >
-                    <button
-                      style={buttonStyle}
-                      className='bg-cream-600'
-                      onMouseOver={e =>
-                        handleButtonHover(e, 'bg-cream-600', 'bg-cream-700')
-                      }
-                      onMouseOut={e =>
-                        handleButtonLeave(e, 'bg-cream-700', 'bg-cream-600')
-                      }
-                    >
-                      {t('userpage.newpass')}
-                    </button>
-                  </Link>
-                </div>
+                </Link>
               </div>
-            ) : (
-              <div style={loadingContainerStyle}>
-                <div
-                  style={loadingSpinnerStyle}
-                  className='border-b-cream-600'
-                ></div>
-                <p style={{ marginLeft: '0.75rem' }} className='text-cream-600'>
-                  {t('userpage.loading')}...
-                </p>
-              </div>
-            )}
+            </div>
+
+            {/* Action Buttons */}
+            <div style={actionsContainerStyle}>
+              <Link
+                to={`/users/update-user/${userId}`}
+                style={linkWrapperStyle}
+              >
+                <button
+                  style={buttonStyle}
+                  className='bg-cream-600'
+                  onMouseOver={e =>
+                    handleButtonHover(e, 'bg-cream-600', 'bg-cream-700')
+                  }
+                  onMouseOut={e =>
+                    handleButtonLeave(e, 'bg-cream-700', 'bg-cream-600')
+                  }
+                >
+                  {t('userpage.update')}
+                </button>
+              </Link>
+
+              <button
+                onClick={handleDeleteUser}
+                style={buttonStyle}
+                className='bg-red-500'
+                onMouseOver={e =>
+                  handleButtonHover(e, 'bg-red-500', 'bg-red-600')
+                }
+                onMouseOut={e =>
+                  handleButtonLeave(e, 'bg-red-600', 'bg-red-500')
+                }
+              >
+                {t('userpage.deleteuser')}
+              </button>
+
+              <button
+                onClick={handleLogout}
+                style={buttonStyle}
+                className='bg-cream-400'
+                onMouseOver={e =>
+                  handleButtonHover(e, 'bg-cream-400', 'bg-cream-500')
+                }
+                onMouseOut={e =>
+                  handleButtonLeave(e, 'bg-cream-500', 'bg-cream-400')
+                }
+              >
+                {t('userpage.logout')}
+              </button>
+
+              <Link
+                to={`/users/update-user/${userId}/password-change`}
+                style={linkWrapperStyle}
+              >
+                <button
+                  style={buttonStyle}
+                  className='bg-cream-600'
+                  onMouseOver={e =>
+                    handleButtonHover(e, 'bg-cream-600', 'bg-cream-700')
+                  }
+                  onMouseOut={e =>
+                    handleButtonLeave(e, 'bg-cream-700', 'bg-cream-600')
+                  }
+                >
+                  {t('userpage.newpass')}
+                </button>
+              </Link>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div style={loadingContainerStyle}>
+            <div
+              style={loadingSpinnerStyle}
+              className='border-b-cream-600'
+            ></div>
+            <p style={{ marginLeft: '0.75rem' }} className='text-cream-600'>
+              {t('userpage.loading')}...
+            </p>
+          </div>
+        )}
       </div>
     </div>
   )

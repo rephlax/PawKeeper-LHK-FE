@@ -73,9 +73,9 @@ function App() {
       </div>
 
       {/* Main Content */}
-      <div className='flex-1 flex relative z-10'>
+      <div className='flex-1 flex relative z-10 h-[calc(100vh-8rem)]'>
         {/* Sidebar */}
-        <aside className='w-64 bg-white border-r border-cream-200 shadow-sm'>
+        <aside className='w-64 bg-white border-r border-cream-200 shadow-sm h-full overflow-y-auto'>
           <Sidebar
             isMapPage={isMapPage}
             userPin={userPin}
@@ -99,7 +99,7 @@ function App() {
         </aside>
 
         {/* Main Content Area */}
-        <main className='flex-1 bg-cream-50/80 overflow-auto'>
+        <main className='flex-1 bg-cream-50/80 overflow-auto h-full'>
           {location.pathname === '/map' ? (
             <Routes>
               <Route
@@ -118,7 +118,7 @@ function App() {
               />
             </Routes>
           ) : (
-            <div className='min-h-full flex items-center justify-center'>
+            <div className='h-full overflow-y-auto'>
               <Routes>
                 <Route path='/' element={<HomePage />} />
                 <Route
