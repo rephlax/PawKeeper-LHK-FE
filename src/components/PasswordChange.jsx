@@ -42,16 +42,6 @@ const PasswordChange = () => {
     textAlign: 'center',
   }
 
-  // Middle container
-  const middleContainerStyle = {
-    borderRadius: '0.75rem',
-    boxShadow:
-      '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    padding: '2rem',
-  }
-
   // Form container
   const formContainerStyle = {
     borderRadius: '0.5rem',
@@ -155,70 +145,68 @@ const PasswordChange = () => {
         <h2 style={titleStyle} className='text-cream-800'>
           Change Password
         </h2>
-        <div style={middleContainerStyle} className='bg-white border-cream-200'>
-          <form
-            onSubmit={handlePasswordChange}
-            style={formContainerStyle}
-            className='bg-white border-cream-200'
+        <form
+          onSubmit={handlePasswordChange}
+          style={formContainerStyle}
+          className='bg-white border-cream-200'
+        >
+          <div style={fieldsContainerStyle}>
+            <label style={labelStyle}>
+              <span style={labelTextStyle} className='text-cream-700'>
+                {t('password.current')}
+              </span>
+              <input
+                type='password'
+                value={currentPassword}
+                onChange={e => setCurrentPassword(e.target.value)}
+                style={inputStyle}
+                className='border-cream-300'
+                onFocus={handleInputFocus}
+                onBlur={handleInputBlur}
+              />
+            </label>
+
+            <label style={labelStyle}>
+              <span style={labelTextStyle} className='text-cream-700'>
+                {t('password.new')}
+              </span>
+              <input
+                type='password'
+                value={newPassword}
+                onChange={e => setNewPassword(e.target.value)}
+                style={inputStyle}
+                className='border-cream-300'
+                onFocus={handleInputFocus}
+                onBlur={handleInputBlur}
+              />
+            </label>
+
+            <label style={labelStyle}>
+              <span style={labelTextStyle} className='text-cream-700'>
+                {t('password.confirm')}
+              </span>
+              <input
+                type='password'
+                value={newPasswordConf}
+                onChange={e => setNewPasswordConf(e.target.value)}
+                style={inputStyle}
+                className='border-cream-300'
+                onFocus={handleInputFocus}
+                onBlur={handleInputBlur}
+              />
+            </label>
+          </div>
+
+          <button
+            type='submit'
+            style={submitButtonStyle}
+            className='bg-cream-600 text-white'
+            onMouseOver={handleSubmitButtonHover}
+            onMouseOut={handleSubmitButtonLeave}
           >
-            <div style={fieldsContainerStyle}>
-              <label style={labelStyle}>
-                <span style={labelTextStyle} className='text-cream-700'>
-                  {t('password.current')}
-                </span>
-                <input
-                  type='password'
-                  value={currentPassword}
-                  onChange={e => setCurrentPassword(e.target.value)}
-                  style={inputStyle}
-                  className='border-cream-300'
-                  onFocus={handleInputFocus}
-                  onBlur={handleInputBlur}
-                />
-              </label>
-
-              <label style={labelStyle}>
-                <span style={labelTextStyle} className='text-cream-700'>
-                  {t('password.new')}
-                </span>
-                <input
-                  type='password'
-                  value={newPassword}
-                  onChange={e => setNewPassword(e.target.value)}
-                  style={inputStyle}
-                  className='border-cream-300'
-                  onFocus={handleInputFocus}
-                  onBlur={handleInputBlur}
-                />
-              </label>
-
-              <label style={labelStyle}>
-                <span style={labelTextStyle} className='text-cream-700'>
-                  {t('password.confirm')}
-                </span>
-                <input
-                  type='password'
-                  value={newPasswordConf}
-                  onChange={e => setNewPasswordConf(e.target.value)}
-                  style={inputStyle}
-                  className='border-cream-300'
-                  onFocus={handleInputFocus}
-                  onBlur={handleInputBlur}
-                />
-              </label>
-            </div>
-
-            <button
-              type='submit'
-              style={submitButtonStyle}
-              className='bg-cream-600 text-white'
-              onMouseOver={handleSubmitButtonHover}
-              onMouseOut={handleSubmitButtonLeave}
-            >
-              {t('password.change')}
-            </button>
-          </form>
-        </div>
+            {t('password.change')}
+          </button>
+        </form>
       </div>
     </div>
   )
