@@ -26,11 +26,50 @@ const Sidebar = ({
   setEditData,
   startChat,
   map,
+  resetStates,
 }) => {
   const { isMapLoaded } = useMap()
   const { isOpen, setIsOpen } = useChat()
 
-  const resetStates = useCallback(() => {
+  // Root container styles - all structural styling is inline
+  const containerStyle = {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  }
+
+  // Inner container styles - all structural styling is inline
+  const innerContainerStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+    width: '100%',
+  }
+
+  // Controls container styles - all structural styling is inline
+  const controlsContainerStyle = {
+    flexShrink: '0',
+  }
+
+  // List container styles - all structural styling is inline
+  const listContainerStyle = {
+    flex: '1',
+    overflowY: 'auto',
+  }
+
+  // List content styles - all structural styling is inline
+  const listContentStyle = {
+    padding: '1rem', // p-4
+  }
+
+  // List title styles - all structural styling is inline
+  const listTitleStyle = {
+    fontSize: '1.125rem', // text-lg
+    fontWeight: '600',
+    marginBottom: '1rem', // mb-4
+  }
+
+  const handleResetStates = useCallback(() => {
     if (setIsCreatingReview) setIsCreatingReview(false)
     if (setIsEditing) setIsEditing(false)
     if (setEditData) setEditData(null)
@@ -38,9 +77,9 @@ const Sidebar = ({
 
   useEffect(() => {
     if (!selectedPin) {
-      resetStates()
+      handleResetStates()
     }
-  }, [selectedPin, resetStates])
+  }, [selectedPin, handleResetStates])
 
   const handleStartChat = useCallback(
     userId => {
@@ -88,7 +127,7 @@ const Sidebar = ({
     if (!socket) return
 
     const handlePinCreated = () => {
-      resetStates()
+      handleResetStates()
       if (setIsCreatingPin) setIsCreatingPin(false)
     }
 
@@ -115,7 +154,7 @@ const Sidebar = ({
     }
   }, [
     socket,
-    resetStates,
+    handleResetStates,
     setIsCreatingPin,
     setIsEditing,
     setEditData,
@@ -127,9 +166,9 @@ const Sidebar = ({
   }
 
   return (
-    <div className='h-full flex flex-col bg-white'>
-      <div className='flex flex-col h-full w-full'>
-        <div className='shrink-0'>
+    <div style={containerStyle} className='bg-white'>
+      <div style={innerContainerStyle}>
+        <div style={controlsContainerStyle}>
           <MapControls
             user={user}
             socket={socket}
@@ -150,9 +189,9 @@ const Sidebar = ({
         </div>
 
         {!isCreatingPin && !isCreatingReview && (
-          <div className='flex-1 overflow-y-auto bg-cream-50'>
-            <div className='p-4'>
-              <h2 className='text-lg font-semibold text-cream-800 mb-4'>
+          <div style={listContainerStyle} className='bg-cream-50'>
+            <div style={listContentStyle}>
+              <h2 style={listTitleStyle} className='text-cream-800'>
                 Available Pet Sitters
               </h2>
               <PinList
