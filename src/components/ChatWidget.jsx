@@ -251,7 +251,7 @@ const ChatWidget = () => {
   // Main content area
   const contentAreaStyle = {
     flex: '1',
-    overflow: 'hidden',
+    overflowY: 'auto',
   }
 
   // Active chat
@@ -264,7 +264,7 @@ const ChatWidget = () => {
   // Messages container
   const messagesContainerStyle = {
     flex: '1',
-    overflow: 'hidden',
+    overflowY: 'auto',
   }
 
   // Input container

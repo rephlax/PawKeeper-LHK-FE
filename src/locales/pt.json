@@ -8,6 +8,9 @@
     "logout": "Sair",
     "profile": "Perfil"
   },
+  "footer": {
+    "contact": "Contate-nos"
+  },
   "signuppage": {
     "title": "Torne-se um PawKeeper",
     "usernameLabel": "Nome de usuário",
@@ -100,7 +103,6 @@
     "enablelocation": "Ativar serviços de localização",
     "allowlocation": "Permitir acesso à localização",
     "showsitters": "Para mostrar cuidadores de animais na sua área, precisamos da sua localização."
-
   },
   "sendmessage": "Enviar",
   "password": {
@@ -130,13 +132,13 @@
     "profile": "Perfil"
   },
   "mapcontrols": {
-    "nositter":"Nenhum cuidador selecionado para revisão",
-    "findlocation":"Encontrar Minha Localização",
-    "controls":"Controles do Mapa",
-    "createpin":"Criar pino de localização",
-    "editpin":"Editar seu pino",
-    "chat":"Conversar com o cuidador",
-    "review":"Deixar um comentário"
+    "nositter": "Nenhum cuidador selecionado para revisão",
+    "findlocation": "Encontrar Minha Localização",
+    "controls": "Controles do Mapa",
+    "createpin": "Criar pino de localização",
+    "editpin": "Editar seu pino",
+    "chat": "Conversar com o cuidador",
+    "review": "Deixar um comentário"
   },
   "services": {
     "dogWalking": "Passeio com Cachorros",

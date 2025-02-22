@@ -53,8 +53,8 @@
     "newpass": "Change password",
     "loading": "Loading user information",
     "sitterstatus": "Pet sitter status",
-    "active":"Active",
-    "inactive":"Inactive",
+    "active": "Active",
+    "inactive": "Inactive",
     "deactivatesitterstatus": "Deactivate sitter status",
     "becomesitter": "Become a sitter"
   },
@@ -100,9 +100,9 @@
     "createpin": "Create your pet sitter pin",
     "startchat": "Start chat",
     "notnow": "Not now",
-    "enablelocation":"Enable location services",
-    "allowlocation":"Allow Location Access",
-    "showsitters":"To show pet sitters in your area, we need your location."
+    "enablelocation": "Enable location services",
+    "allowlocation": "Allow Location Access",
+    "showsitters": "To show pet sitters in your area, we need your location."
   },
   "sendmessage": "Send",
   "password": {
@@ -128,17 +128,17 @@
   },
   "sidebar": {
     "home": "Home",
-    "nav":"Navigation",
-    "profile":"Profile"
+    "nav": "Navigation",
+    "profile": "Profile"
   },
   "mapcontrols": {
-    "nositter":"No sitter selected for review",
-    "findlocation":"Find My Location",
-    "controls":"Map controls",
-    "createpin":"Create location pin",
-    "editpin":"Edit your pin",
-    "chat":"Chat with sitter",
-    "review":"Leave a review"
+    "nositter": "No sitter selected for review",
+    "findlocation": "Find My Location",
+    "controls": "Map controls",
+    "createpin": "Create location pin",
+    "editpin": "Edit your pin",
+    "chat": "Chat with sitter",
+    "review": "Leave a review"
   },
   "services": {
     "dogWalking": "Dog Walking",
