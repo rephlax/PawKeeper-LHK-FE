@@ -120,8 +120,8 @@ const Navbar = () => {
 
   // Map icon
   const mapIconStyle = {
-    height: '15%',
-    width: '15%',
+    height: '1.5rem',
+    width: '1.5rem',
   }
 
   // Map icon hover
