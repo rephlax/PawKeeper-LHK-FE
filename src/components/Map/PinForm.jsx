@@ -149,7 +149,7 @@ const PinForm = ({
         {/* Form Header */}
         <div className='flex justify-between items-center mb-4'>
           <h2 className='text-lg font-semibold text-cream-800'>
-            {isEditing ? t(mapcontrols.editpin) : t(mapcontrols.createpin)}
+            {isEditing ? t('mapcontrols.editpin') : t('mapcontrols.createpin')}
           </h2>
           <button
             onClick={onClose}
