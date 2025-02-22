@@ -72,6 +72,9 @@ const UserList = () => {
 
   // Container
   const containerStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
     padding: '1rem',
   }
 
@@ -86,6 +89,9 @@ const UserList = () => {
     display: 'flex',
     flexDirection: 'column',
     gap: '0.5rem',
+    overflowY: 'auto',
+    flex: '1',
+    paddingRight: '0.25rem',
   }
 
   // User item
@@ -198,7 +204,10 @@ const UserList = () => {
       <h3 style={headerStyle} className='text-cream-800'>
         {t('userlist.available')}
       </h3>
-      <div style={userListStyle}>
+      <div
+        style={userListStyle}
+        className='scrollbar-thin scrollbar-thumb-cream-300 scrollbar-track-cream-50'
+      >
         {users.map(userItem => {
           const isOnline = isUserOnline(userItem._id)
 
