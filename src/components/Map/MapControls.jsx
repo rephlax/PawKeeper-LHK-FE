@@ -132,7 +132,7 @@ const MapControls = ({
             />
           ) : (
             <div className='text-red-500 p-4 bg-red-50 rounded-lg'>
-              {t(mapcontrols.nositter)}
+              {t('mapcontrols.nositter')}
             </div>
           )
         ) : (
@@ -149,12 +149,12 @@ const MapControls = ({
 
   return (
     <div className='p-4 space-y-4'>
-      <h2 className='text-lg font-medium text-cream-800'>{t(mapcontrols.controls)}</h2>
+      <h2 className='text-lg font-medium text-cream-800'>{t('mapcontrols.controls')}</h2>
 
       <div className='space-y-2'>
         <button className='flex items-center w-full px-3 py-2 text-sm text-cream-700 hover:bg-cream-50 rounded-md'>
           <Compass className='h-4 w-4 mr-2' />
-          <span>{t(mapcontrols.findlocation)}</span>
+          <span>{t('mapcontrols.findlocation')}</span>
         </button>
       </div>
 
@@ -194,7 +194,7 @@ const MapControls = ({
               className='flex items-center space-x-3 w-full p-3 text-cream-700 hover:bg-cream-50 rounded-lg transition-colors duration-200'
             >
               <Edit className='h-5 w-5' />
-              <span>{t(mapcontrols.editpin)}</span>
+              <span>{t('mapcontrols.editpin')}</span>
             </button>
           ) : (
             <button
@@ -202,7 +202,7 @@ const MapControls = ({
               className='flex items-center space-x-3 w-full p-3 bg-cream-600 text-white hover:bg-cream-700 rounded-lg transition-colors duration-200'
             >
               <MapPin className='h-5 w-5' />
-              <span>{t(mapcontrols.createpin)}</span>
+              <span>{t('mapcontrols.createpin')}</span>
             </button>
           )}
         </div>
@@ -215,14 +215,14 @@ const MapControls = ({
             className='flex items-center space-x-3 w-full p-3 bg-cream-600 text-white hover:bg-cream-700 rounded-lg transition-colors duration-200'
           >
             <MessageCircle className='h-5 w-5' />
-            <span>{t(mapcontrols.chat)}</span>
+            <span>{t('mapcontrols.chat')}</span>
           </button>
           <button
             onClick={handleReviewClick}
             className='flex items-center space-x-3 w-full p-3 border-2 border-cream-400 text-cream-700 hover:bg-cream-50 rounded-lg transition-colors duration-200'
           >
             <Star className='h-5 w-5' />
-            <span>{t(mapcontrols.review)}</span>
+            <span>{t('mapcontrols.review')}</span>
           </button>
         </div>
       )}
