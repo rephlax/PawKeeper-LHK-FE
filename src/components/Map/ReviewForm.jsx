@@ -8,8 +8,32 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 const StarRating = ({ rating, setRating, disabled }) => {
   const [hover, setHover] = useState(0)
 
+  // Star rating container
+  const ratingContainerStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.25rem',
+  }
+
+  // Star button
+  const starButtonStyle = {
+    padding: '0.25rem',
+    transition: 'colors 0.2s',
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    opacity: disabled ? '0.5' : '1',
+    background: 'transparent',
+    border: 'none',
+  }
+
+  // Star icon
+  const starIconStyle = {
+    width: '1.5rem',
+    height: '1.5rem',
+    transition: 'colors 0.2s',
+  }
+
   return (
-    <div className='flex items-center gap-1'>
+    <div style={ratingContainerStyle}>
       {[1, 2, 3, 4, 5].map(star => (
         <button
           key={star}
@@ -18,18 +42,15 @@ const StarRating = ({ rating, setRating, disabled }) => {
           onClick={() => setRating(star)}
           onMouseEnter={() => setHover(star)}
           onMouseLeave={() => setHover(0)}
-          className={`
-            p-1 transition-colors duration-200
-            ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
-          `}
+          style={starButtonStyle}
         >
           <Star
-            className={`w-6 h-6 transition-colors duration-200 
-              ${
-                star <= (hover || rating)
-                  ? 'fill-cream-500 text-cream-500'
-                  : 'text-cream-300'
-              }`}
+            style={starIconStyle}
+            className={
+              star <= (hover || rating)
+                ? 'fill-cream-500 text-cream-500'
+                : 'text-cream-300'
+            }
           />
         </button>
       ))}
@@ -44,6 +65,215 @@ const ReviewForm = ({ onClose, targetUserId, sitterName }) => {
     description: '',
     rating: '',
   })
+
+  // Container
+  const containerStyle = {
+    height: '100%',
+    overflowY: 'auto',
+    padding: '1rem',
+  }
+
+  // Form
+  const formStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem',
+  }
+
+  // Header container
+  const headerStyle = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  }
+
+  // Title
+  const titleStyle = {
+    fontSize: '1.25rem',
+    fontWeight: '600',
+  }
+
+  // Close button
+  const closeButtonStyle = {
+    background: 'transparent',
+    border: 'none',
+    cursor: 'pointer',
+    padding: '0.25rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'color 0.2s',
+  }
+
+  // Close icon
+  const closeIconStyle = {
+    height: '1.25rem',
+    width: '1.25rem',
+  }
+
+  // Close button hover
+  const handleCloseButtonHover = e => {
+    e.target.classList.remove('text-cream-600')
+    e.target.classList.add('text-cream-800')
+  }
+
+  const handleCloseButtonLeave = e => {
+    e.target.classList.remove('text-cream-800')
+    e.target.classList.add('text-cream-600')
+  }
+
+  // Fields container
+  const fieldsContainerStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.75rem',
+  }
+
+  // Field container
+  const fieldContainerStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+  }
+
+  // Label
+  const labelStyle = {
+    display: 'block',
+    fontSize: '0.875rem',
+    fontWeight: '500',
+    marginBottom: '0.25rem',
+  }
+
+  // Input
+  const inputStyle = {
+    width: '100%',
+    padding: '0.5rem 1rem',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderRadius: '0.5rem',
+    transition: 'all 0.2s',
+  }
+
+  // Input focus
+  const handleInputFocus = e => {
+    e.target.classList.remove('border-cream-300')
+    e.target.classList.add('border-transparent', 'ring-2', 'ring-cream-400')
+  }
+
+  const handleInputBlur = e => {
+    e.target.classList.remove('border-transparent', 'ring-2', 'ring-cream-400')
+    e.target.classList.add('border-cream-300')
+  }
+
+  // Textarea extends input
+  const textareaStyle = {
+    ...inputStyle,
+    minHeight: '120px',
+    resize: 'vertical',
+  }
+
+  // Actions container
+  const actionsContainerStyle = {
+    paddingTop: '1rem',
+    borderTopWidth: '1px',
+    borderTopStyle: 'solid',
+    display: 'flex',
+    gap: '0.75rem',
+  }
+
+  // Cancel button
+  const cancelButtonStyle = {
+    flex: '1',
+    padding: '0.5rem 1rem',
+    borderWidth: '2px',
+    borderStyle: 'solid',
+    borderRadius: '0.5rem',
+    transition: 'background-color 0.2s',
+    cursor: isLoading ? 'not-allowed' : 'pointer',
+    opacity: isLoading ? '0.5' : '1',
+  }
+
+  // Cancel button hover
+  const handleCancelButtonHover = e => {
+    if (!isLoading) {
+      e.target.classList.remove('bg-transparent')
+      e.target.classList.add('bg-cream-50')
+    }
+  }
+
+  const handleCancelButtonLeave = e => {
+    if (!isLoading) {
+      e.target.classList.remove('bg-cream-50')
+      e.target.classList.add('bg-transparent')
+    }
+  }
+
+  // Submit button
+  const submitButtonStyle = {
+    flex: '1',
+    padding: '0.5rem 1rem',
+    borderRadius: '0.5rem',
+    transition: 'background-color 0.2s',
+    cursor: isLoading ? 'not-allowed' : 'pointer',
+  }
+
+  // Submit button hover
+  const handleSubmitButtonHover = e => {
+    if (!isLoading) {
+      e.target.classList.remove('bg-cream-600')
+      e.target.classList.add('bg-cream-700')
+    }
+  }
+
+  const handleSubmitButtonLeave = e => {
+    if (!isLoading) {
+      e.target.classList.remove('bg-cream-700')
+      e.target.classList.add('bg-cream-600')
+    }
+  }
+
+  // Loading overlay
+  const loadingOverlayStyle = {
+    position: 'absolute',
+    inset: '0',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: '0.5rem',
+  }
+
+  // Loading spinner
+  const spinnerStyle = {
+    height: '2rem',
+    width: '2rem',
+    borderRadius: '9999px',
+    borderStyle: 'solid',
+    borderWidth: '2px',
+    borderColor: 'transparent',
+    borderBottomWidth: '2px',
+    borderBottomStyle: 'solid',
+    animation: 'spin 1s linear infinite',
+  }
+
+  // Add spinner animation
+  const spinKeyframes = `
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  `
+
+  React.useEffect(() => {
+    // Add the keyframes to the document
+    const styleElement = document.createElement('style')
+    styleElement.innerHTML = spinKeyframes
+    document.head.appendChild(styleElement)
+
+    return () => {
+      // Clean up the style element when the component unmounts
+      document.head.removeChild(styleElement)
+    }
+  }, [])
 
   const handleInputChange = e => {
     const { name, value } = e.target
@@ -91,24 +321,27 @@ const ReviewForm = ({ onClose, targetUserId, sitterName }) => {
   }
 
   return (
-    <div className='h-full overflow-y-auto p-4'>
-      <form onSubmit={handleSubmit} className='space-y-4'>
-        <div className='flex justify-between items-center'>
-          <h2 className='text-xl font-semibold text-cream-800'>
+    <div style={containerStyle}>
+      <form onSubmit={handleSubmit} style={formStyle}>
+        <div style={headerStyle}>
+          <h2 style={titleStyle} className='text-cream-800'>
             Write a review for {sitterName}
           </h2>
           <button
             type='button'
             onClick={onClose}
-            className='text-cream-600 hover:text-cream-800'
+            style={closeButtonStyle}
+            className='text-cream-600'
+            onMouseOver={handleCloseButtonHover}
+            onMouseOut={handleCloseButtonLeave}
           >
-            <X className='h-5 w-5' />
+            <X style={closeIconStyle} />
           </button>
         </div>
 
-        <div className='space-y-3'>
-          <div>
-            <label className='block text-sm font-medium text-cream-700 mb-1'>
+        <div style={fieldsContainerStyle}>
+          <div style={fieldContainerStyle}>
+            <label style={labelStyle} className='text-cream-700'>
               Rating
             </label>
             <StarRating
@@ -118,8 +351,8 @@ const ReviewForm = ({ onClose, targetUserId, sitterName }) => {
             />
           </div>
 
-          <div>
-            <label className='block text-sm font-medium text-cream-700 mb-1'>
+          <div style={fieldContainerStyle}>
+            <label style={labelStyle} className='text-cream-700'>
               Title
             </label>
             <input
@@ -128,16 +361,17 @@ const ReviewForm = ({ onClose, targetUserId, sitterName }) => {
               value={formData.title}
               onChange={handleInputChange}
               placeholder='Summarize your experience'
-              className='w-full px-4 py-2 border border-cream-300 rounded-lg 
-                       focus:ring-2 focus:ring-cream-400 focus:border-transparent 
-                       transition duration-200 placeholder:text-cream-400'
+              style={inputStyle}
+              className='border-cream-300 placeholder:text-cream-400'
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
               disabled={isLoading}
               required
             />
           </div>
 
-          <div>
-            <label className='block text-sm font-medium text-cream-700 mb-1'>
+          <div style={fieldContainerStyle}>
+            <label style={labelStyle} className='text-cream-700'>
               Review
             </label>
             <textarea
@@ -145,46 +379,46 @@ const ReviewForm = ({ onClose, targetUserId, sitterName }) => {
               value={formData.description}
               onChange={handleInputChange}
               placeholder='Share the details of your experience...'
-              className='w-full px-4 py-2 border border-cream-300 rounded-lg 
-                       focus:ring-2 focus:ring-cream-400 focus:border-transparent 
-                       transition duration-200 placeholder:text-cream-400
-                       min-h-[120px] resize-y'
+              style={textareaStyle}
+              className='border-cream-300 placeholder:text-cream-400'
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
               disabled={isLoading}
               required
             />
           </div>
         </div>
 
-        <div className='pt-4 border-t border-cream-200'>
-          <div className='flex gap-3'>
-            <button
-              type='button'
-              onClick={onClose}
-              className='flex-1 px-4 py-2 border-2 border-cream-400 text-cream-700 
-                       rounded-lg hover:bg-cream-50 transition-colors duration-200
-                       disabled:opacity-50 disabled:cursor-not-allowed'
-              disabled={isLoading}
-            >
-              Cancel
-            </button>
-            <button
-              type='submit'
-              disabled={isLoading}
-              className='flex-1 px-4 py-2 bg-cream-600 text-white rounded-lg 
-                       hover:bg-cream-700 transition-colors duration-200
-                       disabled:bg-cream-400 disabled:cursor-not-allowed'
-            >
-              {isLoading ? 'Submitting...' : 'Submit Review'}
-            </button>
-          </div>
+        <div style={actionsContainerStyle} className='border-cream-200'>
+          <button
+            type='button'
+            onClick={onClose}
+            style={cancelButtonStyle}
+            className='border-cream-400 text-cream-700 bg-transparent'
+            onMouseOver={handleCancelButtonHover}
+            onMouseOut={handleCancelButtonLeave}
+            disabled={isLoading}
+          >
+            Cancel
+          </button>
+          <button
+            type='submit'
+            disabled={isLoading}
+            style={submitButtonStyle}
+            className={isLoading ? 'bg-cream-400' : 'bg-cream-600 text-white'}
+            onMouseOver={handleSubmitButtonHover}
+            onMouseOut={handleSubmitButtonLeave}
+          >
+            {isLoading ? 'Submitting...' : 'Submit Review'}
+          </button>
         </div>
 
         {isLoading && (
           <div
-            className='absolute inset-0 bg-white/50 backdrop-blur-sm 
-                        flex items-center justify-center rounded-lg'
+            style={loadingOverlayStyle}
+            className='bg-white/50 backdrop-blur-sm'
           >
-            <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-cream-600' />
+            <div style={spinnerStyle} className='border-b-cream-600' />
           </div>
         )}
       </form>

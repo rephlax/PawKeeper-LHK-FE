@@ -214,103 +214,101 @@ const AddPetForm = () => {
   }
 
   return (
-    <PageWrapper maxWidth='md'>
-      <div style={containerStyle} className='bg-white border-cream-200'>
-        <div style={contentStyle}>
-          <h2 style={titleStyle} className='text-cream-800'>
-            Add New Pet
-          </h2>
-          <form style={formStyle} onSubmit={handleCreatePet}>
-            <div style={fieldsContainerStyle}>
-              <label style={labelStyle}>
-                <span style={labelTextStyle} className='text-cream-700'>
-                  {t('addpet.name')}:
-                </span>
-                <input
-                  type='text'
-                  value={petName}
-                  onChange={e => setPetName(e.target.value)}
-                  style={inputStyle}
-                  className='border-cream-300'
-                  onFocus={handleInputFocus}
-                  onBlur={handleInputBlur}
-                />
-              </label>
+    <div style={containerStyle} className='bg-white border-cream-200'>
+      <div style={contentStyle}>
+        <h2 style={titleStyle} className='text-cream-800'>
+          Add New Pet
+        </h2>
+        <form style={formStyle} onSubmit={handleCreatePet}>
+          <div style={fieldsContainerStyle}>
+            <label style={labelStyle}>
+              <span style={labelTextStyle} className='text-cream-700'>
+                {t('addpet.name')}:
+              </span>
+              <input
+                type='text'
+                value={petName}
+                onChange={e => setPetName(e.target.value)}
+                style={inputStyle}
+                className='border-cream-300'
+                onFocus={handleInputFocus}
+                onBlur={handleInputBlur}
+              />
+            </label>
 
-              <label style={labelStyle}>
-                <span style={labelTextStyle} className='text-cream-700'>
-                  {t('addpet.age')}:
-                </span>
-                <input
-                  type='number'
-                  value={petAge}
-                  onChange={e => setPetAge(e.target.value)}
-                  style={inputStyle}
-                  className='border-cream-300'
-                  onFocus={handleInputFocus}
-                  onBlur={handleInputBlur}
-                />
-              </label>
+            <label style={labelStyle}>
+              <span style={labelTextStyle} className='text-cream-700'>
+                {t('addpet.age')}:
+              </span>
+              <input
+                type='number'
+                value={petAge}
+                onChange={e => setPetAge(e.target.value)}
+                style={inputStyle}
+                className='border-cream-300'
+                onFocus={handleInputFocus}
+                onBlur={handleInputBlur}
+              />
+            </label>
 
-              <label style={labelStyle}>
-                <span style={labelTextStyle} className='text-cream-700'>
-                  {t('addpet.species')}:
-                </span>
-                <input
-                  type='text'
-                  value={petSpecies}
-                  onChange={e => setPetSpecies(e.target.value)}
-                  style={inputStyle}
-                  className='border-cream-300'
-                  onFocus={handleInputFocus}
-                  onBlur={handleInputBlur}
-                />
-              </label>
+            <label style={labelStyle}>
+              <span style={labelTextStyle} className='text-cream-700'>
+                {t('addpet.species')}:
+              </span>
+              <input
+                type='text'
+                value={petSpecies}
+                onChange={e => setPetSpecies(e.target.value)}
+                style={inputStyle}
+                className='border-cream-300'
+                onFocus={handleInputFocus}
+                onBlur={handleInputBlur}
+              />
+            </label>
 
-              <div style={fileContainerStyle}>
-                <span style={labelTextStyle} className='text-cream-700'>
-                  {t('addpet.petpicture')}:
-                </span>
-                <div style={fileWrapperStyle}>
-                  <input
-                    type='file'
-                    accept='image/*'
-                    onChange={handleImageChange}
-                    style={fileInputStyle}
-                    className='border-cream-300 text-cream-700 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-medium file:bg-cream-100 file:text-cream-700 hover:file:bg-cream-200'
-                  />
-                  <button
-                    type='button'
-                    onClick={handleUpload}
-                    disabled={uploading}
-                    style={uploadButtonStyle}
-                    className={
-                      uploading
-                        ? 'bg-cream-400 text-white disabled:cursor-not-allowed'
-                        : 'bg-cream-600 text-white'
-                    }
-                    onMouseOver={handleUploadButtonHover}
-                    onMouseOut={handleUploadButtonLeave}
-                  >
-                    {uploading ? 'Uploading...' : 'Upload Image'}
-                  </button>
-                </div>
+            <div style={fileContainerStyle}>
+              <span style={labelTextStyle} className='text-cream-700'>
+                {t('addpet.petpicture')}:
+              </span>
+              <div style={fileWrapperStyle}>
+                <input
+                  type='file'
+                  accept='image/*'
+                  onChange={handleImageChange}
+                  style={fileInputStyle}
+                  className='border-cream-300 text-cream-700 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-medium file:bg-cream-100 file:text-cream-700 hover:file:bg-cream-200'
+                />
+                <button
+                  type='button'
+                  onClick={handleUpload}
+                  disabled={uploading}
+                  style={uploadButtonStyle}
+                  className={
+                    uploading
+                      ? 'bg-cream-400 text-white disabled:cursor-not-allowed'
+                      : 'bg-cream-600 text-white'
+                  }
+                  onMouseOver={handleUploadButtonHover}
+                  onMouseOut={handleUploadButtonLeave}
+                >
+                  {uploading ? 'Uploading...' : 'Upload Image'}
+                </button>
               </div>
             </div>
+          </div>
 
-            <button
-              type='submit'
-              style={submitButtonStyle}
-              className='bg-cream-600 text-white'
-              onMouseOver={handleSubmitButtonHover}
-              onMouseOut={handleSubmitButtonLeave}
-            >
-              {t('addpet.addpet')}
-            </button>
-          </form>
-        </div>
+          <button
+            type='submit'
+            style={submitButtonStyle}
+            className='bg-cream-600 text-white'
+            onMouseOver={handleSubmitButtonHover}
+            onMouseOut={handleSubmitButtonLeave}
+          >
+            {t('addpet.addpet')}
+          </button>
+        </form>
       </div>
-    </PageWrapper>
+    </div>
   )
 }
 

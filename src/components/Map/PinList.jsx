@@ -23,28 +23,159 @@ const PinCard = ({
 
   const userId = pin.user?._id || pin.userId || pin.user
 
-useEffect(() => {
-  if (!userId) {
-    console.error('User ID not found in pin:', pin)
-    setAverageRating(0)
-    setLoadingRating(false)
-    return
+  // Card container
+  const cardContainerStyle = {
+    padding: '1rem',
+    marginBottom: '0.5rem',
+    borderRadius: '0.5rem',
+    cursor: 'pointer',
+    transition: 'all 0.2s',
+    borderWidth: isSelected ? '2px' : '1px',
+    borderStyle: 'solid',
   }
 
-  const fetchRating = async () => {
-    try {
-      const rating = await calculateAverageRating(userId)
-      setAverageRating(rating)
-    } catch (error) {
-      console.error('Error fetching rating:', error)
+  // Content container
+  const contentContainerStyle = {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '0.75rem',
+  }
+
+  // Index badge
+  const indexBadgeStyle = {
+    width: '2rem',
+    height: '2rem',
+    borderRadius: '9999px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontWeight: 'bold',
+    color: 'white',
+  }
+
+  // Content wrapper
+  const contentWrapperStyle = {
+    flex: '1',
+  }
+
+  // Title
+  const titleStyle = {
+    fontWeight: 'bold',
+    fontSize: '1.125rem',
+  }
+
+  // Description
+  const descriptionStyle = {
+    fontSize: '0.875rem',
+    marginBottom: '0.5rem',
+  }
+
+  // Info container
+  const infoContainerStyle = {
+    fontSize: '0.875rem',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.25rem',
+  }
+
+  // Rating display
+  const ratingDisplayStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.25rem',
+  }
+
+  // Star icon
+  const starIconStyle = {
+    width: '1rem',
+    height: '1rem',
+  }
+
+  // Label
+  const labelStyle = {
+    fontWeight: '500',
+  }
+
+  // Actions container
+  const actionsContainerStyle = {
+    marginTop: '0.75rem',
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '0.5rem',
+  }
+
+  // Button base
+  const buttonBaseStyle = {
+    padding: '0.25rem 0.75rem',
+    borderRadius: '0.5rem',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.25rem',
+    fontSize: '0.875rem',
+    transition: 'background-color 0.2s',
+  }
+
+  // Primary button hover
+  const handlePrimaryButtonHover = e => {
+    e.target.classList.remove('bg-cream-600')
+    e.target.classList.add('bg-cream-700')
+  }
+
+  const handlePrimaryButtonLeave = e => {
+    e.target.classList.remove('bg-cream-700')
+    e.target.classList.add('bg-cream-600')
+  }
+
+  // Delete button hover
+  const handleDeleteButtonHover = e => {
+    e.target.classList.remove('bg-red-500')
+    e.target.classList.add('bg-red-600')
+  }
+
+  const handleDeleteButtonLeave = e => {
+    e.target.classList.remove('bg-red-600')
+    e.target.classList.add('bg-red-500')
+  }
+
+  // Secondary button hover
+  const handleSecondaryButtonHover = e => {
+    e.target.classList.remove('bg-transparent')
+    e.target.classList.add('bg-cream-50')
+  }
+
+  const handleSecondaryButtonLeave = e => {
+    e.target.classList.remove('bg-cream-50')
+    e.target.classList.add('bg-transparent')
+  }
+
+  // Button icon
+  const buttonIconStyle = {
+    width: '1rem',
+    height: '1rem',
+  }
+
+  useEffect(() => {
+    if (!userId) {
+      console.error('User ID not found in pin:', pin)
       setAverageRating(0)
-    } finally {
       setLoadingRating(false)
+      return
     }
-  }
 
-  fetchRating()
-}, [userId])
+    const fetchRating = async () => {
+      try {
+        const rating = await calculateAverageRating(userId)
+        setAverageRating(rating)
+      } catch (error) {
+        console.error('Error fetching rating:', error)
+        setAverageRating(0)
+      } finally {
+        setLoadingRating(false)
+      }
+    }
+
+    fetchRating()
+  }, [userId])
 
   const handleChatClick = async (e, userId) => {
     e.stopPropagation()
@@ -75,32 +206,39 @@ useEffect(() => {
   return (
     <div
       onClick={onClick}
-      className={`p-4 mb-2 rounded-lg cursor-pointer transition-all duration-200
-        ${
-          isSelected
-            ? 'bg-cream-100 border-2 border-cream-500'
-            : 'bg-white hover:bg-cream-50 border border-cream-200'
-        }`}
+      style={cardContainerStyle}
+      className={`${
+        isSelected
+          ? 'bg-cream-100 border-cream-500'
+          : 'bg-white hover:bg-cream-50 border-cream-200'
+      }`}
     >
-      <div className='flex items-start gap-3'>
+      <div style={contentContainerStyle}>
         <div
-          className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white
-            ${isOwnPin ? 'bg-cream-600' : 'bg-cream-500'}`}
+          style={indexBadgeStyle}
+          className={isOwnPin ? 'bg-cream-600' : 'bg-cream-500'}
         >
           {index + 1}
         </div>
 
-        <div className='flex-1'>
-          <h3 className='font-bold text-lg text-cream-800'>{pin.title}</h3>
-          <p className='text-cream-600 text-sm mb-2'>{pin.description}</p>
+        <div style={contentWrapperStyle}>
+          <h3 style={titleStyle} className='text-cream-800'>
+            {pin.title}
+          </h3>
+          <p style={descriptionStyle} className='text-cream-600'>
+            {pin.description}
+          </p>
 
-          <div className='text-sm text-cream-600 space-y-1'>
+          <div style={infoContainerStyle} className='text-cream-600'>
             <p>
               {loadingRating ? (
                 'Loading rating...'
               ) : averageRating > 0 ? (
-                <span className='flex items-center gap-1'>
-                  <Star className='w-4 h-4 fill-cream-500 text-cream-500' />
+                <span style={ratingDisplayStyle}>
+                  <Star
+                    style={starIconStyle}
+                    className='fill-cream-500 text-cream-500'
+                  />
                   {averageRating.toFixed(1)}/5
                 </span>
               ) : (
@@ -108,28 +246,29 @@ useEffect(() => {
               )}
             </p>
             <p>
-              <span className='font-medium'>Services:</span>{' '}
+              <span style={labelStyle}>Services:</span>{' '}
               {pin.services.join(', ')}
             </p>
             <p>
-              <span className='font-medium'>Availability:</span>{' '}
-              {pin.availability}
+              <span style={labelStyle}>Availability:</span> {pin.availability}
             </p>
             <p>
-              <span className='font-medium'>Rate:</span> ${pin.hourlyRate}/hr
+              <span style={labelStyle}>Rate:</span> ${pin.hourlyRate}/hr
             </p>
           </div>
 
           {user && (
-            <div className='mt-3 flex flex-wrap gap-2'>
+            <div style={actionsContainerStyle}>
               {isOwnPin ? (
                 <>
                   <button
                     onClick={e => handleEdit(e, pin)}
-                    className='px-3 py-1 bg-cream-600 text-white rounded-lg hover:bg-cream-700 
-                           transition-colors duration-200 flex items-center gap-1 text-sm'
+                    style={buttonBaseStyle}
+                    className='bg-cream-600 text-white'
+                    onMouseOver={handlePrimaryButtonHover}
+                    onMouseOut={handlePrimaryButtonLeave}
                   >
-                    <Edit className='w-4 h-4' />
+                    <Edit style={buttonIconStyle} />
                     Edit Pin
                   </button>
                   <button
@@ -137,10 +276,12 @@ useEffect(() => {
                       e.stopPropagation()
                       handlePinDelete(pin._id, socket, setPins)
                     }}
-                    className='px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 
-                           transition-colors duration-200 flex items-center gap-1 text-sm'
+                    style={buttonBaseStyle}
+                    className='bg-red-500 text-white'
+                    onMouseOver={handleDeleteButtonHover}
+                    onMouseOut={handleDeleteButtonLeave}
                   >
-                    <Delete className='w-4 h-4' />
+                    <Delete style={buttonIconStyle} />
                     Delete Pin
                   </button>
                 </>
@@ -148,10 +289,12 @@ useEffect(() => {
                 <>
                   <button
                     onClick={e => handleChatClick(e, pin.user)}
-                    className='px-3 py-1 bg-cream-600 text-white rounded-lg hover:bg-cream-700 
-                             transition-colors duration-200 flex items-center gap-1 text-sm'
+                    style={buttonBaseStyle}
+                    className='bg-cream-600 text-white'
+                    onMouseOver={handlePrimaryButtonHover}
+                    onMouseOut={handlePrimaryButtonLeave}
                   >
-                    <MessageCircle className='w-4 h-4' />
+                    <MessageCircle style={buttonIconStyle} />
                     Chat
                   </button>
                   <button
@@ -159,11 +302,16 @@ useEffect(() => {
                       e.stopPropagation()
                       onReview(pin)
                     }}
-                    className='px-3 py-1 border border-cream-400 text-cream-700 rounded-lg 
-                             hover:bg-cream-50 transition-colors duration-200 
-                             flex items-center gap-1 text-sm'
+                    style={{
+                      ...buttonBaseStyle,
+                      borderWidth: '1px',
+                      borderStyle: 'solid',
+                    }}
+                    className='border-cream-400 text-cream-700 bg-transparent'
+                    onMouseOver={handleSecondaryButtonHover}
+                    onMouseOut={handleSecondaryButtonLeave}
                   >
-                    <Star className='w-4 h-4' />
+                    <Star style={buttonIconStyle} />
                     Review
                   </button>
                 </>
@@ -188,17 +336,42 @@ const PinList = ({
 }) => {
   const safePins = Array.isArray(pins) ? pins : []
 
+  // Empty state container
+  const emptyStateStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%',
+    padding: '1rem',
+  }
+
+  // Empty state icon
+  const emptyIconStyle = {
+    width: '2rem',
+    height: '2rem',
+    marginBottom: '0.5rem',
+  }
+
+  // List container
+  const listContainerStyle = {
+    height: '100%',
+    overflowY: 'auto',
+    paddingLeft: '1rem',
+    paddingRight: '1rem',
+  }
+
   if (!safePins.length) {
     return (
-      <div className='flex flex-col items-center justify-center h-full p-4 text-cream-600'>
-        <MapPin className='w-8 h-8 mb-2' />
+      <div style={emptyStateStyle} className='text-cream-600'>
+        <MapPin style={emptyIconStyle} />
         <p>No pins found in this area</p>
       </div>
     )
   }
 
   return (
-    <div className='h-full overflow-y-auto px-4'>
+    <div style={listContainerStyle}>
       {safePins.map((pin, index) => (
         <PinCard
           key={pin._id}

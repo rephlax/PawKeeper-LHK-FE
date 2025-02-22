@@ -65,6 +65,183 @@ const MapComponent = ({
   const [initError, setInitError] = useState(null)
   const isProcessing = isLoading || isLocating || !isMapLoaded
 
+  // Container
+  const containerStyle = {
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+  }
+
+  // Location prompt overlay
+  const promptOverlayStyle = {
+    position: 'absolute',
+    inset: '0',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: '30',
+    backdropFilter: 'blur(4px)',
+  }
+
+  // Prompt dialog
+  const promptDialogStyle = {
+    padding: '1.5rem',
+    borderRadius: '0.5rem',
+    boxShadow:
+      '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+    maxWidth: '28rem',
+    textAlign: 'center',
+  }
+
+  // Dialog title
+  const dialogTitleStyle = {
+    fontSize: '1.25rem',
+    fontWeight: '600',
+    marginBottom: '1rem',
+  }
+
+  // Dialog text
+  const dialogTextStyle = {
+    marginBottom: '1rem',
+  }
+
+  // Button container
+  const buttonContainerStyle = {
+    display: 'flex',
+    gap: '0.75rem',
+    justifyContent: 'center',
+  }
+
+  // Primary button
+  const primaryButtonStyle = {
+    padding: '0.5rem 1rem',
+    borderRadius: '0.5rem',
+    transition: 'background-color 0.2s',
+  }
+
+  // Primary button hover
+  const handlePrimaryButtonHover = e => {
+    e.target.classList.remove('bg-cream-600')
+    e.target.classList.add('bg-cream-700')
+  }
+
+  const handlePrimaryButtonLeave = e => {
+    e.target.classList.remove('bg-cream-700')
+    e.target.classList.add('bg-cream-600')
+  }
+
+  // Secondary button
+  const secondaryButtonStyle = {
+    padding: '0.5rem 1rem',
+    borderWidth: '2px',
+    borderStyle: 'solid',
+    borderRadius: '0.5rem',
+    transition: 'background-color 0.2s',
+  }
+
+  // Secondary button hover
+  const handleSecondaryButtonHover = e => {
+    e.target.classList.remove('bg-transparent')
+    e.target.classList.add('bg-cream-50')
+  }
+
+  const handleSecondaryButtonLeave = e => {
+    e.target.classList.remove('bg-cream-50')
+    e.target.classList.add('bg-transparent')
+  }
+
+  // Error message
+  const errorMessageStyle = {
+    position: 'absolute',
+    top: '1rem',
+    left: '1rem',
+    zIndex: '10',
+    padding: '0.75rem 1rem',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderRadius: '0.5rem',
+    boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+    maxWidth: '28rem',
+  }
+
+  // Loading overlay
+  const loadingOverlayStyle = {
+    position: 'absolute',
+    inset: '0',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: '20',
+    backdropFilter: 'blur(4px)',
+  }
+
+  // Loading dialog
+  const loadingDialogStyle = {
+    padding: '1.5rem',
+    borderRadius: '0.5rem',
+    boxShadow:
+      '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '0.75rem',
+  }
+
+  // Loading spinner
+  const spinnerStyle = {
+    height: '2rem',
+    width: '2rem',
+    borderRadius: '9999px',
+    borderBottom: '2px solid',
+    animation: 'spin 1s linear infinite',
+  }
+
+  // Add spinner animation
+  const spinKeyframes = `
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  `
+
+  useEffect(() => {
+    // Add the keyframes to the document
+    const styleElement = document.createElement('style')
+    styleElement.innerHTML = spinKeyframes
+    document.head.appendChild(styleElement)
+
+    return () => {
+      // Clean up the style element when the component unmounts
+      document.head.removeChild(styleElement)
+    }
+  }, [])
+
+  // Map error
+  const mapErrorStyle = {
+    position: 'absolute',
+    inset: '0',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
+
+  // Map error message
+  const mapErrorMessageStyle = {
+    padding: '1.5rem',
+    borderRadius: '0.5rem',
+    boxShadow:
+      '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+  }
+
+  // Map container
+  const mapContainerStyle = {
+    width: '100%',
+    height: '100%',
+    borderRadius: '0.5rem',
+    overflow: 'hidden',
+  }
+
   const getAuthConfig = useCallback(
     () => ({
       headers: {
@@ -497,29 +674,35 @@ const MapComponent = ({
   const { t } = useTranslation()
   return (
     <MapErrorBoundary>
-      <div className='relative w-full h-full'>
+      <div style={containerStyle}>
         {showLocationPrompt && (
-          <div className='absolute inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-30'>
-            <div className='bg-white p-6 rounded-lg shadow-lg max-w-md text-center'>
-              <h3 className='text-xl font-semibold text-cream-800 mb-4'>
+          <div style={promptOverlayStyle} className='bg-black/30'>
+            <div style={promptDialogStyle} className='bg-white'>
+              <h3 style={dialogTitleStyle} className='text-cream-800'>
                 {t('map.enablelocation')}
               </h3>
-              <p className='mb-4 text-cream-700'>
-              {t('map.showsitters')}
+              <p style={dialogTextStyle} className='text-cream-700'>
+                {t('map.showsitters')}
               </p>
-              <div className='flex gap-3 justify-center'>
+              <div style={buttonContainerStyle}>
                 <button
                   onClick={() => {
                     setShowLocationPrompt(false)
                     requestLocation()
                   }}
-                  className='px-4 py-2 bg-cream-600 text-white rounded-lg hover:bg-cream-700 transition-colors duration-200'
+                  style={primaryButtonStyle}
+                  className='bg-cream-600 text-white'
+                  onMouseOver={handlePrimaryButtonHover}
+                  onMouseOut={handlePrimaryButtonLeave}
                 >
                   {t('map.allowlocation')}
                 </button>
                 <button
                   onClick={() => setShowLocationPrompt(false)}
-                  className='px-4 py-2 border-2 border-cream-400 text-cream-700 rounded-lg hover:bg-cream-50 transition-colors duration-200'
+                  style={secondaryButtonStyle}
+                  className='border-cream-400 text-cream-700 bg-transparent'
+                  onMouseOver={handleSecondaryButtonHover}
+                  onMouseOut={handleSecondaryButtonLeave}
                 >
                   {t('map.notnow')}
                 </button>
@@ -529,15 +712,18 @@ const MapComponent = ({
         )}
 
         {locationError && (
-          <div className='absolute top-4 left-4 z-10 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg shadow-sm max-w-md'>
+          <div
+            style={errorMessageStyle}
+            className='bg-red-50 border-red-200 text-red-700'
+          >
             <p>{locationError}</p>
           </div>
         )}
 
         {isProcessing ? (
-          <div className='absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-20'>
-            <div className='bg-white p-6 rounded-lg shadow-lg flex flex-col items-center gap-3'>
-              <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-cream-600'></div>
+          <div style={loadingOverlayStyle} className='bg-white/80'>
+            <div style={loadingDialogStyle} className='bg-white'>
+              <div style={spinnerStyle} className='border-b-cream-600'></div>
               <p className='text-cream-700'>
                 {isLocating
                   ? 'Getting your location...'
@@ -548,17 +734,17 @@ const MapComponent = ({
             </div>
           </div>
         ) : initError ? (
-          <div className='absolute inset-0 flex items-center justify-center'>
-            <div className='bg-red-50 p-6 rounded-lg shadow-lg text-red-700'>
+          <div style={mapErrorStyle}>
+            <div
+              style={mapErrorMessageStyle}
+              className='bg-red-50 text-red-700'
+            >
               {initError}
             </div>
           </div>
         ) : null}
 
-        <div
-          ref={mapContainer}
-          className='w-full h-full rounded-lg overflow-hidden'
-        />
+        <div ref={mapContainer} style={mapContainerStyle} />
       </div>
     </MapErrorBoundary>
   )

@@ -39,6 +39,182 @@ const MapControls = ({
   const { map, flyTo } = useMap()
   const { t } = useTranslation()
 
+  // Main container
+  const mainContainerStyle = {
+    padding: '1rem',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem',
+  }
+
+  // Form container
+  const formContainerStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem',
+    padding: '1.5rem',
+    borderRadius: '0.5rem',
+    boxShadow:
+      '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+  }
+
+  // Error message
+  const errorMessageStyle = {
+    padding: '1rem',
+    borderRadius: '0.5rem',
+    marginTop: '0.5rem',
+  }
+
+  // Heading
+  const headingStyle = {
+    fontSize: '1.125rem',
+    fontWeight: '500',
+  }
+
+  // Section container
+  const sectionStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.5rem',
+  }
+
+  // Button
+  const basicButtonStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    width: '100%',
+    padding: '0.5rem 0.75rem',
+    borderRadius: '0.375rem',
+    fontSize: '0.875rem',
+    transition: 'background-color 0.2s',
+  }
+
+  // Basic button hover
+  const handleBasicButtonHover = e => {
+    e.target.classList.remove('bg-transparent')
+    e.target.classList.add('bg-cream-50')
+  }
+
+  const handleBasicButtonLeave = e => {
+    e.target.classList.remove('bg-cream-50')
+    e.target.classList.add('bg-transparent')
+  }
+
+  // Icon
+  const iconStyle = {
+    height: '1rem',
+    width: '1rem',
+    marginRight: '0.5rem',
+  }
+
+  // Search container
+  const searchContainerStyle = {
+    position: 'relative',
+    display: 'flex',
+  }
+
+  // Search icon
+  const searchIconStyle = {
+    position: 'absolute',
+    right: '0.5rem',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    height: '1rem',
+    width: '1rem',
+  }
+
+  // Search input container
+  const searchInputContainerStyle = {
+    flex: '1',
+    position: 'relative',
+  }
+
+  // Search input
+  const searchInputStyle = {
+    width: '100%',
+    padding: '0.375rem 0.75rem',
+    paddingRight: '2rem',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderRadius: '0.375rem',
+    fontSize: '0.875rem',
+  }
+
+  // Search results container
+  const searchResultsStyle = {
+    position: 'absolute',
+    width: '100%',
+    zIndex: '10',
+    marginTop: '0.25rem',
+    backgroundColor: 'white',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderRadius: '0.5rem',
+    boxShadow:
+      '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+    maxHeight: '15rem',
+    overflowY: 'auto',
+  }
+
+  // Search result item
+  const searchResultItemStyle = {
+    width: '100%',
+    padding: '0.75rem',
+    textAlign: 'left',
+    borderBottom: '1px solid #fef3c7',
+    cursor: 'pointer',
+    transition: 'background-color 0.2s',
+    border: 'none',
+  }
+
+  // Search result item hover
+  const handleSearchItemHover = e => {
+    e.target.style.backgroundColor = '#fef3c7'
+  }
+
+  const handleSearchItemLeave = e => {
+    e.target.style.backgroundColor = 'white'
+  }
+
+  // Action button
+  const actionButtonStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.75rem',
+    width: '100%',
+    padding: '0.75rem',
+    borderRadius: '0.5rem',
+    transition: 'background-color 0.2s',
+  }
+
+  // Primary button hover
+  const handlePrimaryButtonHover = e => {
+    e.target.classList.remove('bg-cream-600')
+    e.target.classList.add('bg-cream-700')
+  }
+
+  const handlePrimaryButtonLeave = e => {
+    e.target.classList.remove('bg-cream-700')
+    e.target.classList.add('bg-cream-600')
+  }
+
+  // Secondary button hover
+  const handleSecondaryButtonHover = e => {
+    e.target.classList.remove('bg-transparent')
+    e.target.classList.add('bg-cream-50')
+  }
+
+  const handleSecondaryButtonLeave = e => {
+    e.target.classList.remove('bg-cream-50')
+    e.target.classList.add('bg-transparent')
+  }
+
+  // Action icon
+  const actionIconStyle = {
+    height: '1.25rem',
+    width: '1.25rem',
+  }
+
   const searchPlaces = debounce(async query => {
     if (!query.trim()) {
       setSearchResults([])
@@ -107,22 +283,7 @@ const MapControls = ({
 
   if (isCreatingPin || isCreatingReview) {
     return (
-      <div className='space-y-4 p-6 bg-white rounded-lg shadow-md'>
-        {/* <div className='flex justify-between items-center mb-6'>
-          <h2 className='text-xl font-semibold text-cream-800'>
-            {isCreatingReview
-              ? 'Write a Review'
-              : isEditing
-                ? 'Edit Your Pin'
-                : 'Create Location Pin'}
-          </h2>
-          <button
-            onClick={handleCloseForm}
-            className='p-2 hover:bg-cream-50 rounded-full transition-colors duration-200'
-          >
-            <X className='h-5 w-5 text-cream-600' />
-          </button>
-        </div> */}
+      <div style={formContainerStyle} className='bg-white'>
         {isCreatingReview ? (
           selectedPin?.user ? (
             <ReviewForm
@@ -131,7 +292,7 @@ const MapControls = ({
               sitterName={selectedPin.title}
             />
           ) : (
-            <div className='text-red-500 p-4 bg-red-50 rounded-lg'>
+            <div style={errorMessageStyle} className='text-red-500 bg-red-50'>
               {t('mapcontrols.nositter')}
             </div>
           )
@@ -148,34 +309,45 @@ const MapControls = ({
   }
 
   return (
-    <div className='p-4 space-y-4'>
-      <h2 className='text-lg font-medium text-cream-800'>{t('mapcontrols.controls')}</h2>
+    <div style={mainContainerStyle}>
+      <h2 style={headingStyle} className='text-cream-800'>
+        {t('mapcontrols.controls')}
+      </h2>
 
-      <div className='space-y-2'>
-        <button className='flex items-center w-full px-3 py-2 text-sm text-cream-700 hover:bg-cream-50 rounded-md'>
-          <Compass className='h-4 w-4 mr-2' />
+      <div style={sectionStyle}>
+        <button
+          style={basicButtonStyle}
+          className='text-cream-700 bg-transparent'
+          onMouseOver={handleBasicButtonHover}
+          onMouseOut={handleBasicButtonLeave}
+        >
+          <Compass style={iconStyle} />
           <span>{t('mapcontrols.findlocation')}</span>
         </button>
       </div>
 
-      <div className='space-y-2'>
-        <div className='search-container'>
-          <Search className='absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-cream-400' />
-          <div className='flex-1 relative'>
+      <div style={sectionStyle}>
+        <div style={searchContainerStyle}>
+          <Search style={searchIconStyle} className='text-cream-400' />
+          <div style={searchInputContainerStyle}>
             <input
               type='text'
               placeholder='Search location...'
-              className='w-full px-3 py-1.5 text-sm pr-8 border border-cream-300 rounded-md'
+              style={searchInputStyle}
+              className='border-cream-300'
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
             />
             {searchResults.length > 0 && (
-              <div className='search-results'>
+              <div style={searchResultsStyle} className='border-cream-200'>
                 {searchResults.map(place => (
                   <button
                     key={place.id}
                     onClick={() => handleSearchItemClick(place)}
-                    className='search-result-item'
+                    style={searchResultItemStyle}
+                    className='text-cream-700 border-cream-100'
+                    onMouseOver={handleSearchItemHover}
+                    onMouseOut={handleSearchItemLeave}
                   >
                     {place.place_name}
                   </button>
@@ -187,21 +359,27 @@ const MapControls = ({
       </div>
 
       {user && user.sitter === true && (
-        <div className='space-y-2'>
+        <div style={sectionStyle}>
           {userPin ? (
             <button
               onClick={handleEditClick}
-              className='flex items-center space-x-3 w-full p-3 text-cream-700 hover:bg-cream-50 rounded-lg transition-colors duration-200'
+              style={actionButtonStyle}
+              className='text-cream-700 bg-transparent'
+              onMouseOver={handleSecondaryButtonHover}
+              onMouseOut={handleSecondaryButtonLeave}
             >
-              <Edit className='h-5 w-5' />
+              <Edit style={actionIconStyle} />
               <span>{t('mapcontrols.editpin')}</span>
             </button>
           ) : (
             <button
               onClick={handleCreateClick}
-              className='flex items-center space-x-3 w-full p-3 bg-cream-600 text-white hover:bg-cream-700 rounded-lg transition-colors duration-200'
+              style={actionButtonStyle}
+              className='bg-cream-600 text-white'
+              onMouseOver={handlePrimaryButtonHover}
+              onMouseOut={handlePrimaryButtonLeave}
             >
-              <MapPin className='h-5 w-5' />
+              <MapPin style={actionIconStyle} />
               <span>{t('mapcontrols.createpin')}</span>
             </button>
           )}
@@ -209,19 +387,29 @@ const MapControls = ({
       )}
 
       {selectedPin && selectedPin.user !== user?._id && user && (
-        <div className='space-y-2'>
+        <div style={sectionStyle}>
           <button
             onClick={() => startChat(selectedPin.user)}
-            className='flex items-center space-x-3 w-full p-3 bg-cream-600 text-white hover:bg-cream-700 rounded-lg transition-colors duration-200'
+            style={actionButtonStyle}
+            className='bg-cream-600 text-white'
+            onMouseOver={handlePrimaryButtonHover}
+            onMouseOut={handlePrimaryButtonLeave}
           >
-            <MessageCircle className='h-5 w-5' />
+            <MessageCircle style={actionIconStyle} />
             <span>{t('mapcontrols.chat')}</span>
           </button>
           <button
             onClick={handleReviewClick}
-            className='flex items-center space-x-3 w-full p-3 border-2 border-cream-400 text-cream-700 hover:bg-cream-50 rounded-lg transition-colors duration-200'
+            style={{
+              ...actionButtonStyle,
+              borderWidth: '2px',
+              borderStyle: 'solid',
+            }}
+            className='border-cream-400 text-cream-700 bg-transparent'
+            onMouseOver={handleSecondaryButtonHover}
+            onMouseOut={handleSecondaryButtonLeave}
           >
-            <Star className='h-5 w-5' />
+            <Star style={actionIconStyle} />
             <span>{t('mapcontrols.review')}</span>
           </button>
         </div>
