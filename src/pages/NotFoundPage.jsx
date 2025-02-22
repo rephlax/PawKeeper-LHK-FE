@@ -26,8 +26,8 @@ const NotFoundPage = () => {
   // Image container
   const imageContainerStyle = {
     position: 'relative',
-    width: '16rem',
-    height: '16rem',
+    width: '32rem',
+    height: '32rem',
     margin: '0 auto',
     marginBottom: '2rem',
   }
