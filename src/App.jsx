@@ -118,7 +118,7 @@ function App() {
               />
             </Routes>
           ) : (
-            <div className='w-full'>
+            <div className='w-full min-h-full flex items-center justify-center'>
               <Routes>
                 <Route path='/' element={<HomePage />} />
                 <Route
