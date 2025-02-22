@@ -29,45 +29,145 @@ const ActiveChats = () => {
     }
   }
 
+  // Container
+  const containerStyle = {
+    padding: '1rem',
+  }
+
+  // Heading
+  const headingStyle = {
+    fontWeight: '500',
+    marginBottom: '1rem',
+  }
+
+  // List container
+  const listContainerStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.5rem',
+  }
+
+  // Chat item
+  const chatItemStyle = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '0.75rem',
+    borderRadius: '0.5rem',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    transition: 'background-color 0.2s',
+    cursor: 'pointer',
+  }
+
+  // User info container
+  const userInfoStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.75rem',
+  }
+
+  // Avatar container
+  const avatarContainerStyle = {
+    position: 'relative',
+  }
+
+  // Avatar image
+  const avatarImageStyle = {
+    width: '2.5rem',
+    height: '2.5rem',
+    borderRadius: '9999px',
+    objectFit: 'cover',
+    borderWidth: '2px',
+    borderStyle: 'solid',
+  }
+
+  // Status indicator
+  const statusIndicatorStyle = {
+    position: 'absolute',
+    bottom: '0',
+    right: '0',
+    width: '0.75rem',
+    height: '0.75rem',
+    borderRadius: '9999px',
+    borderWidth: '2px',
+    borderStyle: 'solid',
+    borderColor: 'white',
+  }
+
+  // Text container
+  const textContainerStyle = {
+    minWidth: '0',
+    flexGrow: '1',
+  }
+
+  // Username
+  const usernameStyle = {
+    fontWeight: '500',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  }
+
+  // Message preview
+  const messagePreviewStyle = {
+    fontSize: '0.875rem',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  }
+
+  // Empty state
+  const emptyStateStyle = {
+    textAlign: 'center',
+    fontSize: '0.875rem',
+    padding: '1rem 0',
+  }
+
   return (
-    <div className='p-4'>
-      <h3 className='font-medium text-cream-800 mb-4'>{t('chat.active')}</h3>
-      <div className='space-y-2'>
+    <div style={containerStyle}>
+      <h3 style={headingStyle} className='text-cream-800'>
+        {t('chat.active')}
+      </h3>
+      <div style={listContainerStyle}>
         {activeRooms.map(room => (
           <div
             key={room._id}
             onClick={() => handleChatClick(room._id)}
-            className='flex justify-between items-center p-3 rounded-lg border border-cream-200 
-                     hover:bg-cream-50 transition-colors duration-200 cursor-pointer'
+            style={chatItemStyle}
+            className='border-cream-200 hover:bg-cream-50'
           >
-            <div className='flex items-center gap-3'>
+            <div style={userInfoStyle}>
               {room.participants.map(participant => {
                 if (participant._id !== socket?.user?._id) {
                   return (
-                    <div key={participant._id} className='relative'>
+                    <div key={participant._id} style={avatarContainerStyle}>
                       <img
                         src={participant.profilePicture || defaultUser}
                         alt={participant.username}
-                        className='w-10 h-10 rounded-full object-cover border-2 border-cream-200'
+                        style={avatarImageStyle}
+                        className='border-cream-200'
                       />
                       <div
-                        className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white
-                          ${room.isActive ? 'bg-green-500' : 'bg-cream-400'}`}
+                        style={statusIndicatorStyle}
+                        className={
+                          room.isActive ? 'bg-green-500' : 'bg-cream-400'
+                        }
                       />
                     </div>
                   )
                 }
                 return null
               })}
-              <div className='min-w-0 flex-1'>
-                <p className='font-medium text-cream-800 truncate'>
+              <div style={textContainerStyle}>
+                <p style={usernameStyle} className='text-cream-800'>
                   {room.participants
                     .filter(p => p._id !== socket?.user?._id)
                     .map(p => p.username)
                     .join(', ')}
                 </p>
                 {room.lastMessage && (
-                  <p className='text-sm text-cream-600 truncate'>
+                  <p style={messagePreviewStyle} className='text-cream-600'>
                     {room.lastMessage.content}
                   </p>
                 )}
@@ -76,7 +176,7 @@ const ActiveChats = () => {
           </div>
         ))}
         {activeRooms.length === 0 && (
-          <p className='text-cream-600 text-center text-sm py-4'>
+          <p style={emptyStateStyle} className='text-cream-600'>
             {t('chat.noactive')}
           </p>
         )}

@@ -70,76 +70,204 @@ const UserList = () => {
     }
   }
 
+  // Container
+  const containerStyle = {
+    padding: '1rem',
+  }
+
+  // Header
+  const headerStyle = {
+    fontWeight: '500',
+    marginBottom: '1rem',
+  }
+
+  // User list container
+  const userListStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.5rem',
+  }
+
+  // User item
+  const userItemStyle = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '0.75rem',
+    borderRadius: '0.5rem',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    transition: 'background-color 0.2s',
+  }
+
+  // User info container
+  const userInfoStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.75rem',
+  }
+
+  // Avatar container
+  const avatarContainerStyle = {
+    position: 'relative',
+  }
+
+  // Avatar image
+  const avatarImageStyle = {
+    width: '2.5rem',
+    height: '2.5rem',
+    borderRadius: '9999px',
+    objectFit: 'cover',
+    borderWidth: '2px',
+    borderStyle: 'solid',
+  }
+
+  // Avatar placeholder
+  const avatarPlaceholderStyle = {
+    width: '2.5rem',
+    height: '2.5rem',
+    borderRadius: '9999px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontWeight: '500',
+    borderWidth: '2px',
+    borderStyle: 'solid',
+  }
+
+  // Online status indicator
+  const statusIndicatorStyle = {
+    position: 'absolute',
+    bottom: '0',
+    right: '0',
+    width: '0.75rem',
+    height: '0.75rem',
+    borderRadius: '9999px',
+    borderWidth: '2px',
+    borderStyle: 'solid',
+    borderColor: 'white',
+  }
+
+  // User details container
+  const userDetailsStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+  }
+
+  // Username container
+  const usernameContainerStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+  }
+
+  // Username
+  const usernameStyle = {
+    fontWeight: '500',
+  }
+
+  // Status badge
+  const getStatusBadgeStyle = isOnline => ({
+    fontSize: '0.75rem',
+    paddingLeft: '0.5rem',
+    paddingRight: '0.5rem',
+    paddingTop: '0.125rem',
+    paddingBottom: '0.125rem',
+    borderRadius: '9999px',
+  })
+
+  // User role
+  const userRoleStyle = {
+    fontSize: '0.75rem',
+  }
+
+  // Chat button
+  const getChatButtonStyle = isOnline => ({
+    paddingLeft: '1rem',
+    paddingRight: '1rem',
+    paddingTop: '0.375rem',
+    paddingBottom: '0.375rem',
+    borderRadius: '0.375rem',
+    fontSize: '0.875rem',
+    transition: 'background-color 0.2s',
+    cursor: isOnline ? 'pointer' : 'not-allowed',
+  })
+
   return (
-    <div className='p-4'>
-      <h3 className='font-medium text-cream-800 mb-4'>
+    <div style={containerStyle}>
+      <h3 style={headerStyle} className='text-cream-800'>
         {t('userlist.available')}
       </h3>
-      <div className='space-y-2'>
-        {users.map(user => (
-          <div
-            key={user._id}
-            className='flex justify-between items-center p-3 rounded-lg border border-cream-200
-                     hover:bg-cream-50 transition-colors duration-200'
-          >
-            <div className='flex items-center gap-3'>
-              <div className='relative'>
-                {user.profilePicture ? (
-                  <img
-                    src={user.profilePicture}
-                    alt={user.username}
-                    className='w-10 h-10 rounded-full object-cover border-2 border-cream-200'
-                  />
-                ) : (
-                  <div
-                    className='w-10 h-10 rounded-full bg-cream-100 border-2 border-cream-200
-                               flex items-center justify-center text-cream-600 font-medium'
-                  >
-                    {user.username[0].toUpperCase()}
-                  </div>
-                )}
-                <div
-                  className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white
-                    ${isUserOnline(user._id) ? 'bg-green-500' : 'bg-cream-400'}`}
-                />
-              </div>
-              <div>
-                <div className='flex items-center gap-2'>
-                  <p className='font-medium text-cream-800'>{user.username}</p>
-                  <span
-                    className={`text-xs px-2 py-0.5 rounded-full
-                    ${
-                      isUserOnline(user._id)
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-cream-100 text-cream-600'
-                    }`}
-                  >
-                    {isUserOnline(user._id)
-                      ? t('userlist.online')
-                      : t('userlist.offline')}
-                  </span>
-                </div>
-                {user.sitter && (
-                  <p className='text-xs text-cream-600'>
-                    {t('userlist.petsitter')}
-                  </p>
-                )}
-              </div>
-            </div>
-            <button
-              onClick={() => startPrivateChat(user._id)}
-              disabled={!isUserOnline(user._id)}
-              className={`px-4 py-1.5 rounded-md text-sm transition-colors duration-200
-                ${
-                  isUserOnline(user._id)
-                    ? 'bg-cream-600 text-white hover:bg-cream-700'
-                    : 'bg-cream-100 text-cream-400 cursor-not-allowed'
-                }`}
+      <div style={userListStyle}>
+        {users.map(userItem => {
+          const isOnline = isUserOnline(userItem._id)
+
+          return (
+            <div
+              key={userItem._id}
+              style={userItemStyle}
+              className='border-cream-200 hover:bg-cream-50'
             >
-              {t('userlist.chat')}
-            </button>
-          </div>
-        ))}
+              <div style={userInfoStyle}>
+                <div style={avatarContainerStyle}>
+                  {userItem.profilePicture ? (
+                    <img
+                      src={userItem.profilePicture}
+                      alt={userItem.username}
+                      style={avatarImageStyle}
+                      className='border-cream-200'
+                    />
+                  ) : (
+                    <div
+                      style={avatarPlaceholderStyle}
+                      className='bg-cream-100 border-cream-200 text-cream-600'
+                    >
+                      {userItem.username[0].toUpperCase()}
+                    </div>
+                  )}
+                  <div
+                    style={statusIndicatorStyle}
+                    className={isOnline ? 'bg-green-500' : 'bg-cream-400'}
+                  />
+                </div>
+                <div style={userDetailsStyle}>
+                  <div style={usernameContainerStyle}>
+                    <p style={usernameStyle} className='text-cream-800'>
+                      {userItem.username}
+                    </p>
+                    <span
+                      style={getStatusBadgeStyle(isOnline)}
+                      className={
+                        isOnline
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-cream-100 text-cream-600'
+                      }
+                    >
+                      {isOnline ? t('userlist.online') : t('userlist.offline')}
+                    </span>
+                  </div>
+                  {userItem.sitter && (
+                    <p style={userRoleStyle} className='text-cream-600'>
+                      {t('userlist.petsitter')}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <button
+                onClick={() => startPrivateChat(userItem._id)}
+                disabled={!isOnline}
+                style={getChatButtonStyle(isOnline)}
+                className={
+                  isOnline
+                    ? 'bg-cream-600 text-white hover:bg-cream-700'
+                    : 'bg-cream-100 text-cream-400'
+                }
+              >
+                {t('userlist.chat')}
+              </button>
+            </div>
+          )
+        })}
       </div>
     </div>
   )

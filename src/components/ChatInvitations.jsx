@@ -38,24 +38,67 @@ const ChatInvitations = () => {
     }
   }
 
+  // Container
+  const containerStyle = {
+    paddingLeft: '1rem',
+    paddingRight: '1rem',
+    paddingTop: '0.5rem',
+    paddingBottom: '0.5rem',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.5rem',
+  }
+
+  // Invitation item
+  const invitationItemStyle = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '0.75rem',
+    borderRadius: '0.5rem',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+  }
+
+  // Invitation text
+  const invitationTextStyle = {
+    fontSize: '0.875rem',
+  }
+
+  // Username
+  const usernameStyle = {
+    fontWeight: '500',
+  }
+
+  // Accept button
+  const acceptButtonStyle = {
+    paddingLeft: '1rem',
+    paddingRight: '1rem',
+    paddingTop: '0.375rem',
+    paddingBottom: '0.375rem',
+    fontSize: '0.875rem',
+    borderRadius: '0.375rem',
+    transition: 'background-color 0.2s',
+  }
+
   if (invitations.length === 0) return null
 
   return (
-    <div className='px-4 py-2 space-y-2'>
+    <div style={containerStyle}>
       {invitations.map((invitation, index) => (
         <div
           key={index}
-          className='flex justify-between items-center p-3 rounded-lg
-                   bg-cream-50 border border-cream-200'
+          style={invitationItemStyle}
+          className='bg-cream-50 border-cream-200'
         >
-          <span className='text-sm text-cream-800'>
-            <span className='font-medium'>{invitation.invitedBy}</span>{' '}
+          <span style={invitationTextStyle} className='text-cream-800'>
+            <span style={usernameStyle}>{invitation.invitedBy}</span>{' '}
             {t('chat.invite')}
           </span>
           <button
             onClick={() => acceptInvitation(invitation)}
-            className='px-4 py-1.5 bg-cream-600 text-white text-sm rounded-md
-                     hover:bg-cream-700 transition-colors duration-200'
+            style={acceptButtonStyle}
+            className='bg-cream-600 text-white hover:bg-cream-700'
           >
             {t('chat.accept')}
           </button>

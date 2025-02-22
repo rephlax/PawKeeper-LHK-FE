@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { debounce } from 'lodash'
-import PageWrapper from '../components/PageWrapper'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005'
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN
@@ -27,6 +26,213 @@ const SignUpPage = () => {
   const [searchResults, setSearchResults] = useState([])
 
   const nav = useNavigate()
+
+  // Container
+  const containerStyle = {
+    width: '100%',
+    maxWidth: '42rem',
+    margin: '0 auto',
+    padding: '2rem',
+  }
+
+  // Title
+  const titleStyle = {
+    fontSize: '1.875rem',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: '2rem',
+  }
+
+  // Form
+  const formStyle = {
+    borderRadius: '0.5rem',
+    boxShadow:
+      '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    padding: '1.5rem',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1.5rem',
+  }
+
+  // Label
+  const labelBlockStyle = {
+    display: 'block',
+    marginBottom: '1rem',
+  }
+
+  // Label text
+  const labelTextStyle = {
+    fontSize: '0.875rem',
+    fontWeight: '500',
+    display: 'block',
+    marginBottom: '0.25rem',
+  }
+
+  // Input
+  const inputStyle = {
+    display: 'block',
+    width: '100%',
+    padding: '0.5rem 1rem',
+    marginTop: '0.25rem',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderRadius: '0.5rem',
+    transition: 'all 0.2s',
+    outline: 'none',
+  }
+
+  // Input focus/blur
+  const handleInputFocus = e => {
+    e.target.classList.remove('border-cream-300')
+    e.target.classList.add(
+      'border-cream-500',
+      'ring-2',
+      'ring-cream-300',
+      'ring-opacity-50',
+    )
+  }
+
+  const handleInputBlur = e => {
+    e.target.classList.remove(
+      'border-cream-500',
+      'ring-2',
+      'ring-cream-300',
+      'ring-opacity-50',
+    )
+    e.target.classList.add('border-cream-300')
+  }
+
+  // Checkbox container
+  const checkboxContainerStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    padding: '0.5rem 0',
+  }
+
+  // Checkbox
+  const checkboxStyle = {
+    height: '1.25rem',
+    width: '1.25rem',
+    borderRadius: '0.25rem',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+  }
+
+  // Checkbox label
+  const checkboxLabelStyle = {
+    marginLeft: '0.5rem',
+  }
+
+  // Sitter section
+  const sitterSectionStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1.5rem',
+    paddingTop: '1rem',
+    borderTopWidth: '1px',
+    borderTopStyle: 'solid',
+  }
+
+  // Location container
+  const locationContainerStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem',
+  }
+
+  // Search results container
+  const searchResultsContainerStyle = {
+    position: 'absolute',
+    zIndex: '10',
+    width: '100%',
+    marginTop: '0.25rem',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderRadius: '0.5rem',
+    boxShadow:
+      '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+    maxHeight: '15rem',
+    overflowY: 'auto',
+  }
+
+  // Search result item
+  const searchResultItemStyle = {
+    width: '100%',
+    padding: '0.75rem',
+    textAlign: 'left',
+    borderBottomWidth: '1px',
+    borderBottomStyle: 'solid',
+    cursor: 'pointer',
+    border: 'none',
+  }
+
+  // Location button
+  const locationButtonStyle = {
+    width: '100%',
+    padding: '0.5rem 1rem',
+    borderRadius: '0.5rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '0.5rem',
+    cursor: 'pointer',
+    border: 'none',
+    transition: 'background-color 0.2s',
+    color: 'white',
+  }
+
+  // Button hover
+  const handleButtonHover = (e, fromColor, toColor) => {
+    e.target.classList.remove(fromColor)
+    e.target.classList.add(toColor)
+  }
+
+  const handleButtonLeave = (e, fromColor, toColor) => {
+    e.target.classList.remove(fromColor)
+    e.target.classList.add(toColor)
+  }
+
+  // Grid container
+  const gridContainerStyle = {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gap: '1rem',
+  }
+
+  // Submit button
+  const submitButtonStyle = {
+    width: '100%',
+    marginTop: '1.5rem',
+    padding: '0.5rem 1rem',
+    borderRadius: '0.5rem',
+    cursor: 'pointer',
+    border: 'none',
+    transition: 'background-color 0.2s',
+    color: 'white',
+    fontWeight: '500',
+  }
+
+  // Upload button
+  const uploadButtonStyle = {
+    padding: '0.5rem 1rem',
+    borderRadius: '0.5rem',
+    cursor: 'pointer',
+    border: 'none',
+    transition: 'background-color 0.2s',
+    color: 'white',
+  }
+
+  // File input
+  const fileInputStyle = {
+    flex: '1',
+    padding: '0.5rem 1rem',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderRadius: '0.5rem',
+  }
 
   const handleImageChange = e => {
     setImageFile(e.target.files[0])
@@ -178,221 +384,253 @@ const SignUpPage = () => {
   }
 
   return (
-    <PageWrapper>
-      <div className='w-full max-w-2xl mx-auto'>
-        <h1 className='text-3xl font-bold text-cream-800 text-center mb-8'>
-          {t('signuppage.title')}
-        </h1>
-        <div className='bg-white rounded-xl shadow-lg border border-cream-200 p-8'>
-          <form
-            onSubmit={handleSubmit}
-            className='bg-white rounded-lg shadow-lg border border-cream-200 p-6 space-y-6'
+    <div style={containerStyle}>
+      <h1 style={titleStyle} className='text-cream-800'>
+        {t('signuppage.title')}
+      </h1>
+
+      <form
+        onSubmit={handleSubmit}
+        style={formStyle}
+        className='bg-white border-cream-200'
+      >
+        {/* Basic Information */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <label style={labelBlockStyle}>
+            <span style={labelTextStyle} className='text-cream-700'>
+              {t('forms.emailLabel')}
+            </span>
+            <input
+              type='email'
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+              style={inputStyle}
+              className='border-cream-300 bg-white text-cream-900 placeholder-cream-400'
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
+            />
+          </label>
+
+          <label style={labelBlockStyle}>
+            <span style={labelTextStyle} className='text-cream-700'>
+              {t('forms.passwordLabel')}
+            </span>
+            <input
+              type='password'
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+              style={inputStyle}
+              className='border-cream-300 bg-white text-cream-900 placeholder-cream-400'
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
+            />
+          </label>
+
+          <label style={labelBlockStyle}>
+            <span style={labelTextStyle} className='text-cream-700'>
+              {t('signuppage.usernameLabel')}
+            </span>
+            <input
+              type='text'
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              required
+              style={inputStyle}
+              className='border-cream-300 bg-white text-cream-900 placeholder-cream-400'
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
+            />
+          </label>
+
+          {/* Profile Picture Upload */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.5rem',
+            }}
           >
-            {/* Basic Information */}
-            <div className='space-y-4'>
-              <label className='block'>
-                <span className='text-sm font-medium text-cream-700'>
-                  {t('forms.emailLabel')}
-                </span>
-                <input
-                  type='email'
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  required
-                  className='mt-1 block w-full px-4 py-2 border border-cream-300 rounded-lg 
-                       focus:ring-2 focus:ring-cream-400 focus:border-transparent 
-                       transition duration-200'
-                />
-              </label>
+            <span style={labelTextStyle} className='text-cream-700'>
+              {t('signuppage.profilePictureLabel')}
+            </span>
+            <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <input
+                type='file'
+                accept='image/*'
+                onChange={handleImageChange}
+                style={fileInputStyle}
+                className='border-cream-300 text-cream-700'
+              />
+              <button
+                type='button'
+                onClick={handleUpload}
+                disabled={uploading}
+                style={uploadButtonStyle}
+                className={
+                  uploading ? 'bg-cream-400 cursor-not-allowed' : 'bg-cream-600'
+                }
+                onMouseOver={e => {
+                  if (!uploading)
+                    handleButtonHover(e, 'bg-cream-600', 'bg-cream-700')
+                }}
+                onMouseOut={e => {
+                  if (!uploading)
+                    handleButtonLeave(e, 'bg-cream-700', 'bg-cream-600')
+                }}
+              >
+                {uploading ? 'Uploading...' : 'Upload Image'}
+              </button>
+            </div>
+          </div>
+        </div>
 
-              <label className='block'>
-                <span className='text-sm font-medium text-cream-700'>
-                  {t('forms.passwordLabel')}
-                </span>
-                <input
-                  type='password'
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  required
-                  className='mt-1 block w-full px-4 py-2 border border-cream-300 rounded-lg 
-                       focus:ring-2 focus:ring-cream-400 focus:border-transparent 
-                       transition duration-200'
-                />
-              </label>
+        {/* Sitter Toggle */}
+        <div style={checkboxContainerStyle}>
+          <label style={{ display: 'inline-flex', alignItems: 'center' }}>
+            <input
+              type='checkbox'
+              checked={sitter}
+              onChange={e => setSitter(e.target.checked)}
+              style={checkboxStyle}
+              className='text-cream-600 border-cream-300'
+            />
+            <span style={checkboxLabelStyle} className='text-cream-700'>
+              {t('signuppage.sitterLabel')}
+            </span>
+          </label>
+        </div>
 
-              <label className='block'>
-                <span className='text-sm font-medium text-cream-700'>
-                  {t('signuppage.usernameLabel')}
-                </span>
+        {/* Sitter-specific Fields */}
+        {sitter && (
+          <div style={sitterSectionStyle} className='border-cream-200'>
+            <label style={labelBlockStyle}>
+              <span style={labelTextStyle} className='text-cream-700'>
+                {t('signuppage.rateLabel')}
+              </span>
+              <input
+                type='number'
+                value={rate}
+                onChange={e => setRate(e.target.value)}
+                required={sitter}
+                min='0'
+                style={inputStyle}
+                className='border-cream-300 bg-white text-cream-900 placeholder-cream-400'
+                onFocus={handleInputFocus}
+                onBlur={handleInputBlur}
+              />
+            </label>
+
+            <div style={locationContainerStyle}>
+              <span style={labelTextStyle} className='text-cream-700'>
+                {t('signuppage.locationLabel')}
+              </span>
+
+              <div style={{ position: 'relative' }}>
                 <input
                   type='text'
-                  value={username}
-                  onChange={e => setUsername(e.target.value)}
-                  required
-                  className='mt-1 block w-full px-4 py-2 border border-cream-300 rounded-lg 
-                       focus:ring-2 focus:ring-cream-400 focus:border-transparent 
-                       transition duration-200'
+                  placeholder='Search for a location'
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  style={inputStyle}
+                  className='border-cream-300 bg-white text-cream-900 placeholder-cream-400'
+                  onFocus={handleInputFocus}
+                  onBlur={handleInputBlur}
                 />
-              </label>
 
-              {/* Profile Picture Upload */}
-              <div className='space-y-2'>
-                <span className='text-sm font-medium text-cream-700'>
-                  {t('signuppage.profilePictureLabel')}
-                </span>
-                <div className='flex gap-3'>
-                  <input
-                    type='file'
-                    accept='image/*'
-                    onChange={handleImageChange}
-                    className='flex-1 px-4 py-2 border border-cream-300 rounded-lg 
-                         text-cream-700 file:mr-4 file:py-2 file:px-4 file:border-0
-                         file:text-sm file:font-medium file:bg-cream-100
-                         file:text-cream-700 hover:file:bg-cream-200'
-                  />
-                  <button
-                    type='button'
-                    onClick={handleUpload}
-                    disabled={uploading}
-                    className='px-4 py-2 bg-cream-600 text-white rounded-lg
-                         hover:bg-cream-700 transition-colors duration-200
-                         disabled:bg-cream-400 disabled:cursor-not-allowed'
+                {searchResults.length > 0 && (
+                  <div
+                    style={searchResultsContainerStyle}
+                    className='bg-white border-cream-200'
                   >
-                    {uploading ? 'Uploading...' : 'Upload Image'}
-                  </button>
-                </div>
+                    {searchResults.map(place => (
+                      <button
+                        key={place.id}
+                        type='button'
+                        onClick={() => handlePlaceSelect(place)}
+                        style={searchResultItemStyle}
+                        className='text-cream-700 border-b-cream-100 hover:bg-cream-50'
+                        onMouseOver={e => {
+                          e.target.classList.add('bg-cream-50')
+                        }}
+                        onMouseOut={e => {
+                          e.target.classList.remove('bg-cream-50')
+                        }}
+                      >
+                        {place.place_name}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
 
-            {/* Sitter Toggle */}
-            <div className='flex items-center gap-2 py-2'>
-              <label className='inline-flex items-center'>
-                <input
-                  type='checkbox'
-                  checked={sitter}
-                  onChange={e => setSitter(e.target.checked)}
-                  className='form-checkbox h-5 w-5 text-cream-600 rounded
-                       border-cream-300 focus:ring-cream-400'
-                />
-                <span className='ml-2 text-cream-700'>
-                  {t('signuppage.sitterLabel')}
-                </span>
-              </label>
-            </div>
+              <button
+                type='button'
+                onClick={getCurrentLocation}
+                style={locationButtonStyle}
+                className='bg-cream-500'
+                onMouseOver={e =>
+                  handleButtonHover(e, 'bg-cream-500', 'bg-cream-600')
+                }
+                onMouseOut={e =>
+                  handleButtonLeave(e, 'bg-cream-600', 'bg-cream-500')
+                }
+              >
+                Get Current Location
+              </button>
 
-            {/* Sitter-specific Fields */}
-            {sitter && (
-              <div className='space-y-6 pt-4 border-t border-cream-200'>
-                <label className='block'>
-                  <span className='text-sm font-medium text-cream-700'>
-                    {t('signuppage.rateLabel')}
+              <div style={gridContainerStyle}>
+                <label style={labelBlockStyle}>
+                  <span style={labelTextStyle} className='text-cream-700'>
+                    {t('signuppage.latitudePlaceholder')}
                   </span>
                   <input
                     type='number'
-                    value={rate}
-                    onChange={e => setRate(e.target.value)}
+                    value={latitude}
+                    onChange={e => setLatitude(e.target.value)}
                     required={sitter}
-                    min='0'
-                    className='mt-1 block w-full px-4 py-2 border border-cream-300 rounded-lg 
-                         focus:ring-2 focus:ring-cream-400 focus:border-transparent 
-                         transition duration-200'
+                    style={inputStyle}
+                    className='border-cream-300 bg-white text-cream-900 placeholder-cream-400'
+                    onFocus={handleInputFocus}
+                    onBlur={handleInputBlur}
                   />
                 </label>
 
-                <div className='space-y-4'>
-                  <span className='text-sm font-medium text-cream-700'>
-                    {t('signuppage.locationLabel')}
+                <label style={labelBlockStyle}>
+                  <span style={labelTextStyle} className='text-cream-700'>
+                    {t('signuppage.longitudePlaceholder')}
                   </span>
-
-                  <div className='relative'>
-                    <input
-                      type='text'
-                      placeholder='Search for a location'
-                      value={searchQuery}
-                      onChange={e => setSearchQuery(e.target.value)}
-                      className='w-full px-4 py-2 border border-cream-300 rounded-lg 
-                           focus:ring-2 focus:ring-cream-400 focus:border-transparent 
-                           transition duration-200'
-                    />
-
-                    {searchResults.length > 0 && (
-                      <div
-                        className='absolute z-10 w-full mt-1 bg-white border border-cream-200 
-                                rounded-lg shadow-lg max-h-60 overflow-y-auto'
-                      >
-                        {searchResults.map(place => (
-                          <button
-                            key={place.id}
-                            type='button'
-                            onClick={() => handlePlaceSelect(place)}
-                            className='w-full p-3 text-left hover:bg-cream-50 
-                                 border-b border-cream-100 last:border-b-0
-                                 text-cream-700 transition-colors duration-200'
-                          >
-                            {place.place_name}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  <button
-                    type='button'
-                    onClick={getCurrentLocation}
-                    className='w-full px-4 py-2 bg-cream-500 text-white rounded-lg
-                         hover:bg-cream-600 transition-colors duration-200
-                         flex items-center justify-center gap-2'
-                  >
-                    Get Current Location
-                  </button>
-
-                  <div className='grid grid-cols-2 gap-4'>
-                    <label className='block'>
-                      <span className='text-sm font-medium text-cream-700'>
-                        {t('signuppage.latitudePlaceholder')}
-                      </span>
-                      <input
-                        type='number'
-                        value={latitude}
-                        onChange={e => setLatitude(e.target.value)}
-                        required={sitter}
-                        className='mt-1 block w-full px-4 py-2 border border-cream-300 rounded-lg 
-                             focus:ring-2 focus:ring-cream-400 focus:border-transparent 
-                             transition duration-200'
-                      />
-                    </label>
-
-                    <label className='block'>
-                      <span className='text-sm font-medium text-cream-700'>
-                        {t('signuppage.longitudePlaceholder')}
-                      </span>
-                      <input
-                        type='number'
-                        value={longitude}
-                        onChange={e => setLongitude(e.target.value)}
-                        required={sitter}
-                        className='mt-1 block w-full px-4 py-2 border border-cream-300 rounded-lg 
-                             focus:ring-2 focus:ring-cream-400 focus:border-transparent 
-                             transition duration-200'
-                      />
-                    </label>
-                  </div>
-                </div>
+                  <input
+                    type='number'
+                    value={longitude}
+                    onChange={e => setLongitude(e.target.value)}
+                    required={sitter}
+                    style={inputStyle}
+                    className='border-cream-300 bg-white text-cream-900 placeholder-cream-400'
+                    onFocus={handleInputFocus}
+                    onBlur={handleInputBlur}
+                  />
+                </label>
               </div>
-            )}
+            </div>
+          </div>
+        )}
 
-            {/* Submit Button */}
-            <button
-              type='submit'
-              className='w-full mt-6 px-4 py-2 bg-cream-600 text-white rounded-lg
-                   hover:bg-cream-700 transition-colors duration-200'
-            >
-              {t('signuppage.signupButton')}
-            </button>
-          </form>
-        </div>
-      </div>
-    </PageWrapper>
+        {/* Submit Button */}
+        <button
+          type='submit'
+          style={submitButtonStyle}
+          className='bg-cream-600'
+          onMouseOver={e =>
+            handleButtonHover(e, 'bg-cream-600', 'bg-cream-700')
+          }
+          onMouseOut={e => handleButtonLeave(e, 'bg-cream-700', 'bg-cream-600')}
+        >
+          {t('signuppage.signupButton')}
+        </button>
+      </form>
+    </div>
   )
 }
 

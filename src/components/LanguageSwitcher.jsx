@@ -12,18 +12,63 @@ function LanguageSwitcher() {
     setMenuOpen(false)
   }
 
+  // Container
+  const containerStyle = {
+    position: 'relative',
+  }
+
+  // Toggle button
+  const toggleButtonStyle = {
+    padding: '0.5rem',
+    borderRadius: '0.5rem',
+    transition: 'all 0.2s',
+  }
+
+  // SVG icon
+  const iconStyle = {
+    width: '20px',
+    height: '20px',
+  }
+
+  // Menu
+  const menuStyle = {
+    position: 'absolute',
+    right: '0',
+    marginTop: '0.5rem',
+    width: '12rem',
+    borderRadius: '0.5rem',
+    overflow: 'hidden',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    zIndex: '50',
+    boxShadow:
+      '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+  }
+
+  // Menu content
+  const menuContentStyle = {
+    padding: '0.25rem 0',
+  }
+
+  // Menu item
+  const menuItemStyle = {
+    width: '100%',
+    padding: '0.5rem 1rem',
+    textAlign: 'left',
+    transition: 'background-color 0.2s',
+  }
+
   return (
-    <div className='relative'>
+    <div style={containerStyle}>
       <button
-        className='p-2 text-cream-700 hover:text-cream-800 hover:bg-cream-50 
-                   rounded-lg transition-colors duration-200'
+        style={toggleButtonStyle}
+        className='text-cream-700 hover:text-cream-800 hover:bg-cream-50'
         onClick={toggleMenu}
         aria-label='Change Language'
       >
         <svg
           xmlns='http://www.w3.org/2000/svg'
-          width='20'
-          height='20'
+          style={iconStyle}
           viewBox='0 0 24 24'
           fill='none'
           stroke='currentColor'
@@ -38,29 +83,26 @@ function LanguageSwitcher() {
       </button>
 
       {menuOpen && (
-        <div
-          className='absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg 
-                      border border-cream-200 overflow-hidden z-50'
-        >
-          <div className='py-1'>
+        <div style={menuStyle} className='bg-white border-cream-200'>
+          <div style={menuContentStyle}>
             <button
               onClick={() => changeLanguage('en')}
-              className='w-full px-4 py-2 text-left text-cream-700 hover:bg-cream-50 
-                       transition-colors duration-200'
+              style={menuItemStyle}
+              className='text-cream-700 hover:bg-cream-50'
             >
               English
             </button>
             <button
               onClick={() => changeLanguage('pt')}
-              className='w-full px-4 py-2 text-left text-cream-700 hover:bg-cream-50 
-                       transition-colors duration-200'
+              style={menuItemStyle}
+              className='text-cream-700 hover:bg-cream-50'
             >
               Português
             </button>
             <button
               onClick={() => changeLanguage('uk')}
-              className='w-full px-4 py-2 text-left text-cream-700 hover:bg-cream-50 
-                       transition-colors duration-200'
+              style={menuItemStyle}
+              className='text-cream-700 hover:bg-cream-50'
             >
               Українська
             </button>

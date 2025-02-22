@@ -173,36 +173,132 @@ const ChatWidget = () => {
     return otherParticipants[0].username
   }
 
+  // Widget container
+  const widgetContainerStyle = {
+    position: 'fixed',
+    bottom: '3.5rem',
+    right: '1rem',
+    zIndex: '50',
+    maxHeight: '600px',
+  }
+
+  // Chat toggle button
+  const chatButtonStyle = {
+    padding: '0.75rem',
+    borderRadius: '9999px',
+    boxShadow:
+      '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '3.5rem',
+    height: '3.5rem',
+    transform: 'scale(1)',
+    transition: 'all 0.2s',
+  }
+
+  // Chat button hover
+  const handleButtonHover = e => {
+    e.currentTarget.style.transform = 'scale(1.05)'
+  }
+
+  const handleButtonLeave = e => {
+    e.currentTarget.style.transform = 'scale(1)'
+  }
+
+  // Chat window
+  const chatWindowStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    overflow: 'hidden',
+    width: '320px',
+    height: '480px',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderRadius: '0.75rem',
+    boxShadow:
+      '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+  }
+
+  // Header
+  const headerStyle = {
+    padding: '0.75rem 1rem',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomWidth: '1px',
+    borderBottomStyle: 'solid',
+  }
+
+  // Header title
+  const headerTitleStyle = {
+    fontWeight: '500',
+  }
+
+  // Header buttons container
+  const headerButtonsStyle = {
+    display: 'flex',
+    gap: '0.5rem',
+  }
+
+  // Icon button
+  const iconButtonStyle = {
+    padding: '0.375rem',
+    borderRadius: '0.375rem',
+    transition: 'background-color 0.2s',
+  }
+
+  // Main content area
+  const contentAreaStyle = {
+    flex: '1',
+    overflow: 'hidden',
+  }
+
+  // Active chat
+  const activeChatStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+  }
+
+  // Messages container
+  const messagesContainerStyle = {
+    flex: '1',
+    overflow: 'hidden',
+  }
+
+  // Input container
+  const inputContainerStyle = {
+    borderTopWidth: '1px',
+    borderTopStyle: 'solid',
+  }
+
   return (
-    <div
-      className='fixed bottom-14 right-4 z-50'
-      style={{ maxHeight: '600px' }}
-    >
+    <div style={widgetContainerStyle}>
       {!isOpen ? (
         <button
           onClick={() => setIsOpen(true)}
-          className='p-3 bg-cream-600 text-white rounded-full shadow-lg hover:bg-cream-700
-                   transform hover:scale-105 transition-all duration-200 
-                   flex items-center justify-center w-14 h-14'
+          style={chatButtonStyle}
+          className='bg-cream-600 text-white hover:bg-cream-700'
+          onMouseOver={handleButtonHover}
+          onMouseOut={handleButtonLeave}
         >
           <MessageSquare className='h-8 w-8' />
         </button>
       ) : (
-        <div
-          className='bg-white rounded-xl shadow-xl flex flex-col border border-cream-200
-                   overflow-hidden'
-          style={{ width: '320px', height: '480px' }}
-        >
+        <div style={chatWindowStyle} className='bg-white border-cream-200'>
           {/* Header */}
-          <div className='px-4 py-3 bg-white border-b border-cream-200 flex justify-between items-center'>
-            <h3 className='font-medium text-cream-800'>{getRoomTitle()}</h3>
-            <div className='flex gap-2'>
+          <div style={headerStyle} className='bg-white border-cream-200'>
+            <h3 style={headerTitleStyle} className='text-cream-800'>
+              {getRoomTitle()}
+            </h3>
+            <div style={headerButtonsStyle}>
               {!activeRoom && (
                 <>
                   <button
                     onClick={() => setShowUserList(!showUserList)}
-                    className='p-1.5 text-cream-600 hover:bg-cream-50 rounded-md
-                             transition-colors duration-200'
+                    style={iconButtonStyle}
+                    className='text-cream-600 hover:bg-cream-50'
                     title={
                       showUserList ? t('chat.showChats') : t('chat.showUsers')
                     }
@@ -223,8 +319,8 @@ const ChatWidget = () => {
                     setIsOpen(false)
                   }
                 }}
-                className='p-1.5 text-cream-600 hover:bg-cream-50 rounded-md
-                         transition-colors duration-200'
+                style={iconButtonStyle}
+                className='text-cream-600 hover:bg-cream-50'
                 title={t('chat.close')}
               >
                 <X className='h-5 w-5' />
@@ -236,13 +332,13 @@ const ChatWidget = () => {
           <ChatInvitations onAccept={handleRoomSelect} />
 
           {/* Main Content Area */}
-          <div className='flex-1 overflow-hidden bg-white'>
+          <div style={contentAreaStyle} className='bg-white'>
             {activeRoom ? (
-              <div className='flex flex-col h-full'>
-                <div className='flex-1 overflow-hidden'>
+              <div style={activeChatStyle}>
+                <div style={messagesContainerStyle}>
                   <Messages roomId={activeRoom._id} />
                 </div>
-                <div className='border-t border-cream-200'>
+                <div style={inputContainerStyle} className='border-cream-200'>
                   <MessageInput roomId={activeRoom._id} />
                 </div>
               </div>

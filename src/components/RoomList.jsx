@@ -96,41 +96,138 @@ const RoomList = ({ onRoomSelect, activeRoomId, onCreateRoom }) => {
     }
   }
 
+  // Container
+  const containerStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+  }
+
+  // Header
+  const headerStyle = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '1rem',
+    borderBottomWidth: '1px',
+    borderBottomStyle: 'solid',
+  }
+
+  // Header title
+  const headerTitleStyle = {
+    fontWeight: '500',
+  }
+
+  // Create room button
+  const createButtonStyle = {
+    padding: '0.375rem',
+    borderRadius: '0.375rem',
+    transition: 'background-color 0.2s',
+  }
+
+  // Room list container
+  const roomListStyle = {
+    flex: '1',
+    overflowY: 'auto',
+  }
+
+  // Room item
+  const getRoomItemStyle = isActive => ({
+    display: 'flex',
+    alignItems: 'center',
+    padding: '0.75rem',
+    cursor: 'pointer',
+    transition: 'background-color 0.2s',
+    borderLeftWidth: '4px',
+    borderLeftStyle: 'solid',
+  })
+
+  // Room content container
+  const roomContentStyle = {
+    flex: '1',
+    display: 'flex',
+    alignItems: 'center',
+  }
+
+  // Room icon
+  const roomIconStyle = {
+    height: '1rem',
+    width: '1rem',
+    marginRight: '0.5rem',
+  }
+
+  // Room text container
+  const roomTextStyle = {
+    flex: '1',
+    minWidth: '0',
+  }
+
+  // Room name
+  const roomNameStyle = {
+    fontWeight: '500',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  }
+
+  // Room last message
+  const lastMessageStyle = {
+    fontSize: '0.875rem',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  }
+
+  // Delete button
+  const deleteButtonStyle = {
+    padding: '0.375rem',
+    borderRadius: '0.375rem',
+    transition: 'all 0.2s',
+    opacity: '0',
+  }
+
   return (
-    <div className='flex flex-col h-full'>
-      <div className='flex justify-between items-center p-4 border-b border-cream-200'>
-        <h3 className='font-medium text-cream-800'>{t('chat.rooms')}</h3>
+    <div style={containerStyle}>
+      <div style={headerStyle} className='border-cream-200'>
+        <h3 style={headerTitleStyle} className='text-cream-800'>
+          {t('chat.rooms')}
+        </h3>
         <button
           onClick={onCreateRoom}
-          className='p-1.5 hover:bg-cream-50 rounded-md transition-colors duration-200'
+          style={createButtonStyle}
+          className='hover:bg-cream-50'
         >
           <Plus className='h-5 w-5 text-cream-600' />
         </button>
       </div>
-      <div className='flex-1 overflow-y-auto'>
+      <div style={roomListStyle}>
         {rooms.map(room => (
           <div
             key={room._id}
             onClick={() => onRoomSelect(room._id)}
-            className={`flex items-center p-3 cursor-pointer transition-colors duration-200 group
+            style={getRoomItemStyle(activeRoomId === room._id)}
+            className={`group
               ${
                 activeRoomId === room._id
-                  ? 'bg-cream-50 border-l-4 border-cream-600'
-                  : 'hover:bg-cream-50/50 border-l-4 border-transparent'
+                  ? 'bg-cream-50 border-cream-600'
+                  : 'hover:bg-cream-50/50 border-transparent'
               }`}
           >
-            <div className='flex-1 flex items-center'>
+            <div style={roomContentStyle}>
               {room.type === 'group' ? (
-                <Hash className='h-4 w-4 mr-2 text-cream-600' />
+                <Hash style={roomIconStyle} className='text-cream-600' />
               ) : (
-                <MessageCircle className='h-4 w-4 mr-2 text-cream-600' />
+                <MessageCircle
+                  style={roomIconStyle}
+                  className='text-cream-600'
+                />
               )}
-              <div className='flex-1 min-w-0'>
-                <p className='font-medium text-cream-800 truncate'>
+              <div style={roomTextStyle}>
+                <p style={roomNameStyle} className='text-cream-800'>
                   {room.name}
                 </p>
                 {room.lastMessage && (
-                  <p className='text-sm text-cream-600 truncate'>
+                  <p style={lastMessageStyle} className='text-cream-600'>
                     {room.lastMessage.content}
                   </p>
                 )}
@@ -139,8 +236,8 @@ const RoomList = ({ onRoomSelect, activeRoomId, onCreateRoom }) => {
             {room.creator.toString() === user?._id && (
               <button
                 onClick={e => handleDeleteRoom(e, room._id)}
-                className='p-1.5 text-cream-400 hover:text-red-500 rounded-md 
-               transition-colors duration-200 opacity-0 group-hover:opacity-100'
+                style={deleteButtonStyle}
+                className='text-cream-400 hover:text-red-500 group-hover:opacity-100'
                 title={t('chat.deleteRoom')}
               >
                 <Trash2 className='h-4 w-4' />

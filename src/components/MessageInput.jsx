@@ -30,26 +30,59 @@ const MessageInput = ({ roomId }) => {
     )
   }
 
+  // Form
+  const formStyle = {
+    display: 'flex',
+    gap: '0.5rem',
+    padding: '1rem',
+    borderTopWidth: '1px',
+    borderTopStyle: 'solid',
+  }
+
+  // Input
+  const inputStyle = {
+    flex: '1',
+    paddingLeft: '0.75rem',
+    paddingRight: '0.75rem',
+    paddingTop: '0.5rem',
+    paddingBottom: '0.5rem',
+    fontSize: '0.875rem',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderRadius: '0.375rem',
+    transition: 'all 0.2s',
+  }
+
+  // Button
+  const buttonStyle = {
+    paddingLeft: '1rem',
+    paddingRight: '1rem',
+    paddingTop: '0.5rem',
+    paddingBottom: '0.5rem',
+    fontSize: '0.875rem',
+    borderRadius: '0.375rem',
+    transition: 'background-color 0.2s',
+  }
+
   return (
     <form
       onSubmit={handleSubmit}
-      className='flex gap-2 p-4 border-t border-cream-200'
+      style={formStyle}
+      className='border-cream-200'
     >
       <input
         type='text'
         value={message}
         onChange={e => setMessage(e.target.value)}
         placeholder={t('chat.typeMessage')}
-        className='flex-1 px-3 py-2 text-sm border border-cream-300 rounded-md
-                 focus:ring-2 focus:ring-cream-400 focus:border-transparent 
-                 transition duration-200 placeholder:text-cream-400'
+        style={inputStyle}
+        className='border-cream-300 focus:ring-2 focus:ring-cream-400 focus:border-transparent placeholder:text-cream-400'
       />
       <button
         type='submit'
         disabled={!message.trim() || !socket}
-        className='px-4 py-2 text-sm bg-cream-600 text-white rounded-md 
-                 hover:bg-cream-700 transition-colors duration-200
-                 disabled:bg-cream-400 disabled:cursor-not-allowed'
+        style={buttonStyle}
+        className='bg-cream-600 text-white hover:bg-cream-700 disabled:bg-cream-400 disabled:cursor-not-allowed'
       >
         {t('chat.send')}
       </button>

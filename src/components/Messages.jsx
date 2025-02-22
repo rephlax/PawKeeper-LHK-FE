@@ -8,7 +8,7 @@ const Messages = ({ roomId }) => {
   const { t } = useTranslation()
   const [messages, setMessages] = useState([])
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
-  const userLanguage = 'en' // Specify the user's language code
+  const userLanguage = 'en'
 
   // Fetch existing messages when room changes
   useEffect(() => {
@@ -81,55 +81,134 @@ const Messages = ({ roomId }) => {
 
   // Request a translation for a message
   const requestTranslation = async messageId => {
-    const targetLanguage = userLanguage // Specify what the user's language is
+    const targetLanguage = userLanguage
     socket.emit('request_translation', { messageId, targetLanguage })
   }
 
+  // Container
+  const containerStyle = {
+    flex: '1',
+    overflowY: 'auto',
+    paddingLeft: '1rem',
+    paddingRight: '1rem',
+    paddingTop: '0.5rem',
+    paddingBottom: '0.5rem',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.75rem',
+  }
+
+  // Message container
+  const getMessageContainerStyle = isOwnMessage => ({
+    display: 'flex',
+    justifyContent: isOwnMessage ? 'flex-end' : 'flex-start',
+  })
+
+  // Message bubble
+  const getMessageBubbleStyle = () => ({
+    maxWidth: '70%',
+    padding: '0.75rem',
+    borderRadius: '0.5rem',
+    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+  })
+
+  // Sender name
+  const senderNameStyle = {
+    fontSize: '0.75rem',
+    opacity: '0.75',
+    marginBottom: '0.25rem',
+    fontWeight: '500',
+  }
+
+  // Message content
+  const messageContentStyle = {
+    fontSize: '0.875rem',
+    wordBreak: 'break-word',
+    lineHeight: '1.5',
+  }
+
+  // Message footer
+  const messageFooterStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: '0.5rem',
+  }
+
+  // Timestamp
+  const timestampStyle = {
+    fontSize: '0.75rem',
+    opacity: '0.75',
+  }
+
+  // Translate button
+  const translateButtonStyle = {
+    fontSize: '0.75rem',
+    textDecoration: 'underline',
+    opacity: '0.75',
+    transition: 'opacity 0.2s',
+  }
+
+  // Translation error message
+  const errorMessageStyle = {
+    fontSize: '0.75rem',
+    marginTop: '0.25rem',
+  }
+
   return (
-    <div className='flex-1 overflow-y-auto px-4 py-2 space-y-3'>
-      {messages.map(message => (
-        <div
-          key={message._id || message.id}
-          className={`flex ${message.sender?._id === user?._id ? 'justify-end' : 'justify-start'}`}
-        >
+    <div style={containerStyle}>
+      {messages.map(message => {
+        const isOwnMessage = message.sender?._id === user?._id
+
+        return (
           <div
-            className={`max-w-[70%] p-3 rounded-lg shadow-sm
-              ${
-                message.sender?._id === user?._id
+            key={message._id || message.id}
+            style={getMessageContainerStyle(isOwnMessage)}
+          >
+            <div
+              style={getMessageBubbleStyle()}
+              className={
+                isOwnMessage
                   ? 'bg-cream-600 text-white'
                   : 'bg-cream-50 text-cream-800 border border-cream-200'
-              }`}
-          >
-            <p className='text-xs opacity-75 mb-1 font-medium'>
-              {message.sender?.username || 'Unknown'}
-            </p>
-            <p className='text-sm break-words leading-relaxed'>
-              {message.content}
-            </p>
-            <div className='flex items-center justify-between mt-2'>
-              <p className='text-xs opacity-75'>
-                {new Date(
-                  message.timeStamp || message.timestamp,
-                ).toLocaleTimeString()}
+              }
+            >
+              <p style={senderNameStyle}>
+                {message.sender?.username || 'Unknown'}
               </p>
-              {/* {message.sender?._id !== user?._id &&
-                !message.translationFailed && (
-                  <button
-                    onClick={() => requestTranslation(message.id)}
-                    className='text-xs underline opacity-75 hover:opacity-100 transition-opacity'
-                  >
-                    {t('chat.translate')}
-                  </button>
-                )} */}
+              <p style={messageContentStyle}>{message.content}</p>
+              <div style={messageFooterStyle}>
+                <p style={timestampStyle}>
+                  {new Date(
+                    message.timeStamp || message.timestamp,
+                  ).toLocaleTimeString()}
+                </p>
+                {/* {!isOwnMessage &&
+                  !message.translationFailed && (
+                    <button
+                      onClick={() => requestTranslation(message.id)}
+                      style={{
+                        ...translateButtonStyle,
+                        ':hover': { opacity: '1' }
+                      }}
+                      className="hover:opacity-100"
+                    >
+                      {t('chat.translate')}
+                    </button>
+                  )} */}
+              </div>
+              {/* {message.translationFailed && (
+                <p 
+                  style={errorMessageStyle}
+                  className="text-red-500"
+                >
+                  {t('chat.translationFailed')}
+                </p>
+              )} */}
             </div>
-            {/* {message.translationFailed && (
-              <p className='text-xs text-red-500 mt-1'>
-                {t('chat.translationFailed')}
-              </p>
-            )} */}
           </div>
-        </div>
-      ))}
+        )
+      })}
       <div ref={messagesEndRef} />
     </div>
   )
