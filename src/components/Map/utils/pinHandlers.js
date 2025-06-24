@@ -1,62 +1,37 @@
-export const handlePinCreation = (isCreatingPin, setIsCreatingPin, socket) => {
-  console.log('Pin creation handler called', { isCreatingPin })
-
-  try {
-    setIsCreatingPin(true)
-
-    if (socket) {
-      socket.emit('toggle_pin_creation', {
-        isCreating: true,
-        isEditing: false,
-      })
-    }
-  } catch (error) {
-    console.error('Error in handlePinCreation:', error)
-  }
-}
-
 export const handlePinEdit = (
   setIsCreatingPin,
   setIsEditing,
   setEditData,
   socket,
-  pinData,
+  pin,
 ) => {
-  console.log('Pin edit handler called')
+  if (setIsCreatingPin) setIsCreatingPin(false)
+  if (setIsEditing) setIsEditing(true)
+  if (setEditData) setEditData(pin)
 
-  try {
-    setIsCreatingPin(true)
-    setIsEditing(true)
-    setEditData(pinData)
-
-    if (socket) {
-      socket.emit('toggle_pin_creation', {
-        isCreating: true,
-        isEditing: true,
-        pinData,
-      })
-    }
-  } catch (error) {
-    console.error('Error in handlePinEdit:', error)
-  }
-}
-
-export const handlePinDelete = (pinId, socket, setPins) => {
-  if (!socket || typeof socket.emit !== 'function') {
-    console.error('Socket is not available')
-    return
-  }
-
-  try {
-    socket.emit('delete_pin', pinId, response => {
-      if (response?.success) {
-        setPins(prevPins => prevPins.filter(pin => pin._id !== pinId))
-      } else {
-        console.error('Failed to delete pin:', response?.error || 'Unknown error')
-      }
+  if (socket) {
+    socket.emit('toggle_pin_creation', {
+      isCreating: false,
+      isEditing: true,
+      pinData: pin,
     })
-  } catch (error) {
-    console.error('Error emitting delete_pin event:', error)
   }
 }
 
+export const handlePinCreate = (socket, pinData) => {
+  if (socket) {
+    socket.emit('create_pin', pinData)
+  }
+}
+
+export const handlePinUpdate = (socket, pinId, pinData) => {
+  if (socket) {
+    socket.emit('update_pin', { pinId, ...pinData })
+  }
+}
+
+export const handlePinDelete = (socket, pinId) => {
+  if (socket) {
+    socket.emit('delete_pin', pinId)
+  }
+}
