@@ -27,12 +27,25 @@ export const sidebarStyles = {
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
+    '@media (max-width: 900px)': {
+      minWidth: '180px',
+    },
+    '@media (max-width: 600px)': {
+      minWidth: '120px',
+      width: '100vw',
+      position: 'fixed',
+      zIndex: 100,
+    },
   },
   innerContainer: {
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
     width: '100%',
+    '@media (max-width: 600px)': {
+      flexDirection: 'row',
+      height: 'auto',
+    },
   },
   controlsSection: {
     flexShrink: '0',

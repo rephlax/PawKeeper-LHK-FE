@@ -7,6 +7,9 @@ export const styles = {
       borderBottomStyle: 'solid',
       boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
       backdropFilter: 'blur(4px)',
+      '@media (max-width: 600px)': {
+        height: '3.5rem',
+      },
     },
     innerContainer: {
       height: '100%',
@@ -14,6 +17,9 @@ export const styles = {
       justifyContent: 'space-between',
       alignItems: 'center',
       padding: '0 1rem',
+      '@media (max-width: 600px)': {
+        padding: '0 0.5rem',
+      },
     },
   },
   logo: {
@@ -26,6 +32,10 @@ export const styles = {
       height: '20%',
       objectFit: 'contain',
       transition: 'transform 0.3s',
+      '@media (max-width: 600px)': {
+        width: '32px',
+        height: '32px',
+      },
     },
   },
   navigation: {
@@ -33,11 +43,19 @@ export const styles = {
       display: 'flex',
       alignItems: 'center',
       gap: '0.25rem',
+      '@media (max-width: 600px)': {
+        gap: '0.1rem',
+      },
     },
     link: {
       padding: '0.5rem 1rem',
       borderRadius: '0.5rem',
       transition: 'all 0.2s',
+      fontSize: '1rem',
+      '@media (max-width: 600px)': {
+        padding: '0.25rem 0.5rem',
+        fontSize: '0.9rem',
+      },
     },
     button: {
       padding: '0.5rem 1rem',

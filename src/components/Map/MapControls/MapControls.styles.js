@@ -4,11 +4,20 @@ export const styles = {
     display: 'flex',
     flexDirection: 'column',
     gap: '1rem',
+    '@media (max-width: 600px)': {
+      padding: '0.5rem',
+      gap: '0.5rem',
+    },
   },
   header: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    '@media (max-width: 600px)': {
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      gap: '0.25rem',
+    },
   },
   title: {
     fontSize: '1.125rem',
@@ -24,6 +33,10 @@ export const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     gap: '0.5rem',
+    '@media (max-width: 600px)': {
+      padding: '0.5rem',
+      fontSize: '0.95rem',
+    },
   },
   secondaryButton: {
     padding: '0.5rem 1rem',

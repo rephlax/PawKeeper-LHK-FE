@@ -31,6 +31,7 @@ function App() {
   const [isCreatingReview, setIsCreatingReview] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [editData, setEditData] = useState(null)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const { user } = useAuth()
   const { socket } = useSocket()
@@ -74,8 +75,32 @@ function App() {
 
       {/* Main Content */}
       <div className='flex-1 flex relative z-10'>
+        {/* Sidebar Toggle Arrow for Mobile */}
+        {!sidebarOpen && (
+          <button
+            className='sm:hidden fixed top-1/2 left-0 z-50 bg-cream-500 border border-cream-200 rounded-r-md p-2 shadow-md focus:outline-none transform -translate-y-1/2'
+            aria-label='Open sidebar'
+            onClick={() => setSidebarOpen(true)}
+          >
+            {/* Right Arrow Icon */}
+            <svg
+              className='w-5 h-5'
+              fill='none'
+              stroke='white'
+              strokeWidth='2'
+              viewBox='0 0 24 24'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                d='M9 5l7 7-7 7'
+              />
+            </svg>
+          </button>
+        )}
+
         {/* Sidebar */}
-        <aside className='w-64 bg-white border-r border-cream-200 shadow-sm'>
+        <aside className='hidden sm:block w-40 md:w-56 lg:w-64 xl:w-72 bg-white border-r border-cream-200 shadow-sm'>
           <Sidebar
             isMapPage={isMapPage}
             userPin={userPin}
@@ -98,8 +123,86 @@ function App() {
           />
         </aside>
 
+        {/* Mobile Sidebar Drawer */}
+        {sidebarOpen && (
+          <>
+            {/* Sidebar Drawer with smooth transition and transparent overlay */}
+            <aside
+              className={`fixed top-0 left-0 h-full w-4/5 max-w-xs sm:max-w-sm md:max-w-md bg-white border-r border-cream-200 shadow-lg z-50 transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+              style={{ willChange: 'transform' }}
+            >
+              <button
+                className='absolute top-2 right-2 p-2 rounded-md bg-cream-500 hover:bg-cream-600 focus:outline-none'
+                aria-label='Close sidebar'
+                onClick={() => setSidebarOpen(false)}
+              >
+                {/* Left Arrow Icon */}
+                <svg
+                  className='w-6 h-6'
+                  fill='none'
+                  stroke='white'
+                  strokeWidth='2'
+                  viewBox='0 0 24 24'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    d='M15 19l-7-7 7-7'
+                  />
+                </svg>
+              </button>
+              <button
+                className='absolute top-1/2 -right-6 z-50 p-2 rounded-full bg-cream-500 hover:bg-cream-600 shadow-md focus:outline-none transform -translate-y-1/2 sm:hidden'
+                aria-label='Close sidebar'
+                onClick={() => setSidebarOpen(false)}
+              >
+                {/* Left Arrow Icon */}
+                <svg
+                  className='w-5 h-5'
+                  fill='none'
+                  stroke='white'
+                  strokeWidth='2'
+                  viewBox='0 0 24 24'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    d='M15 19l-7-7 7-7'
+                  />
+                </svg>
+              </button>
+              <Sidebar
+                isMapPage={isMapPage}
+                userPin={userPin}
+                selectedPin={selectedPin}
+                allPins={allPins}
+                onPinSelect={handlePinSelect}
+                user={user}
+                socket={socket}
+                isCreatingPin={isCreatingPin}
+                setIsCreatingPin={setIsCreatingPin}
+                isCreatingReview={isCreatingReview}
+                setIsCreatingReview={setIsCreatingReview}
+                isEditing={isEditing}
+                setIsEditing={setIsEditing}
+                editData={editData}
+                setEditData={setEditData}
+                startChat={startChat}
+                map={map}
+                resetStates={resetStates}
+              />
+            </aside>
+            {/* Transparent overlay for click-away, but not darkening the background */}
+            <div
+              className='fixed inset-0 z-40 cursor-pointer'
+              style={{ background: 'transparent' }}
+              onClick={() => setSidebarOpen(false)}
+            ></div>
+          </>
+        )}
+
         {/* Main Content Area */}
-        <main className='flex-1 bg-cream-50/80 overflow-y-auto max-h-[calc(100vh-8rem)]'>
+        <main className='flex-1 bg-cream-50/80 overflow-y-auto max-h-[calc(100vh-8rem)] px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12'>
           {location.pathname === '/map' ? (
             <Routes>
               <Route

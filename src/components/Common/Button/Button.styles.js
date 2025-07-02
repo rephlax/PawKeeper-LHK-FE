@@ -11,6 +11,10 @@ export const styles = {
     cursor: 'pointer',
     border: 'none',
     textDecoration: 'none',
+    '@media (max-width: 600px)': {
+      padding: '0.375rem 0.75rem',
+      fontSize: '0.95rem',
+    },
   },
   variants: {
     primary: {
@@ -30,14 +34,23 @@ export const styles = {
     sm: {
       padding: '0.375rem 0.75rem',
       fontSize: '0.875rem',
+      '@media (max-width: 600px)': {
+        fontSize: '0.8rem',
+      },
     },
     md: {
       padding: '0.5rem 1rem',
       fontSize: '1rem',
+      '@media (max-width: 600px)': {
+        fontSize: '0.95rem',
+      },
     },
     lg: {
       padding: '0.75rem 1.5rem',
       fontSize: '1.125rem',
+      '@media (max-width: 600px)': {
+        fontSize: '1rem',
+      },
     },
   },
   disabled: {
