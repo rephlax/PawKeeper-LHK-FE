@@ -9,7 +9,7 @@ import ChatInvitations from '../ChatInvitations'
 import { useSocket } from '../../../context/SocketContext'
 import { useChat } from '../../../context/ChatContext'
 import { useTranslation } from 'react-i18next'
-import { styles } from './chatwidget.styles'
+import { styles } from './ChatWidget.styles'
 
 const ChatWidget = () => {
   const { isOpen, setIsOpen } = useChat()
