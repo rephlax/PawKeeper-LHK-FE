@@ -1,24 +1,24 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
-    /* Base Cream Colours */
-    --color-cream-50: oklch(0.98 0.02 83.24);   /* FFFBF5 */
-    --color-cream-100: oklch(0.96 0.04 83.24);  /* FFF4E6 */
-    --color-cream-200: oklch(0.93 0.06 83.24);  /* FFE8CC */
-    --color-cream-300: oklch(0.89 0.08 83.24);  /* FFD9B3 */
-    --color-cream-400: oklch(0.85 0.10 83.24);  /* FFCB99 */
-    --color-cream-500: oklch(0.82 0.12 83.24);  /* FFBD80 */
-    --color-cream-600: oklch(0.78 0.14 83.24);  /* FFB366 */
-    --color-cream-700: oklch(0.75 0.16 83.24);  /* FFA64D */
-    --color-cream-800: oklch(0.71 0.18 83.24);  /* FF9933 */
-  
-    /* Semantic variables */
-    --color-cream-background: var(--color-cream-50);
-    --color-cream-surface: var(--color-cream-100);
-    --color-cream-border: var(--color-cream-300);
-    --color-cream-accent: var(--color-cream-500);
-    --color-cream-text: var(--color-cream-700);
-    
-    --ease-cream-transition: cubic-bezier(0.4, 0, 0.2, 1);
-    --shadow-cream: 0 4px 6px oklch(0.5 0.05 83.24 / 0.1);
-  }
+  /* Base Cream Colours */
+  --color-cream-50: oklch(0.98 0.02 83.24); /* FFFBF5 */
+  --color-cream-100: oklch(0.96 0.04 83.24); /* FFF4E6 */
+  --color-cream-200: oklch(0.93 0.06 83.24); /* FFE8CC */
+  --color-cream-300: oklch(0.89 0.08 83.24); /* FFD9B3 */
+  --color-cream-400: oklch(0.85 0.1 83.24); /* FFCB99 */
+  --color-cream-500: oklch(0.82 0.12 83.24); /* FFBD80 */
+  --color-cream-600: oklch(0.78 0.14 83.24); /* FFB366 */
+  --color-cream-700: oklch(0.75 0.16 83.24); /* FFA64D */
+  --color-cream-800: oklch(0.71 0.18 83.24); /* FF9933 */
+
+  /* Semantic variables */
+  --color-cream-background: var(--color-cream-50);
+  --color-cream-surface: var(--color-cream-100);
+  --color-cream-border: var(--color-cream-300);
+  --color-cream-accent: var(--color-cream-500);
+  --color-cream-text: var(--color-cream-700);
+
+  --ease-cream-transition: cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-cream: 0 4px 6px oklch(0.5 0.05 83.24 / 0.1);
+}

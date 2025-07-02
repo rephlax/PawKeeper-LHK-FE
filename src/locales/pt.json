@@ -1,0 +1,194 @@
+{
+  "homepage": {
+    "welcome": "Bem-vindo ao PawKeeper"
+  },
+  "navbar": {
+    "login": "Entrar",
+    "signup": "Inscrever-se",
+    "logout": "Sair",
+    "profile": "Perfil"
+  },
+  "footer": {
+    "contact": "Contate-nos"
+  },
+  "signuppage": {
+    "title": "Torne-se um PawKeeper",
+    "usernameLabel": "Nome de usuário",
+    "profilePictureLabel": "Foto de perfil (URL)",
+    "rateLabel": "Taxa",
+    "locationLabel": "Localização",
+    "latitudePlaceholder": "Latitude",
+    "longitudePlaceholder": "Longitude",
+    "sitterLabel": "Você é um cuidador de animais?",
+    "signupButton": "Inscrever-se"
+  },
+  "loginpage": {
+    "title": "Página de Login",
+    "loginButton": "Entrar"
+  },
+  "forms": {
+    "emailLabel": "Email",
+    "passwordLabel": "Senha"
+  },
+  "userpage": {
+    "title": "Página do Usuário",
+    "welcome": "Bem-vindo",
+    "rating": "Avaliação",
+    "pets": {
+      "allpets": "Animais de estimação",
+      "name": "Nome",
+      "age": "Idade",
+      "species": "Espécie",
+      "deletepet": "Excluir animal",
+      "nopets": "Nenhum animal de estimação",
+      "addpet": "Adicionar animal",
+      "update": "Atualizar informações do pet",
+      "picture": "Foto do pet",
+      "uploading": "Enviando...",
+      "uploadImage": "Enviar imagem"
+    },
+    "update": "Atualizar informações do usuário",
+    "deleteuser": "Excluir usuário",
+    "logout": "Sair",
+    "newpass": "Alterar senha",
+    "loading": "Carregando informações do usuário",
+    "sitterstatus": "Status do cuidador de animais",
+    "active": "Ativo",
+    "inactive": "Inativo",
+    "deactivatesitterstatus": "Desativar status de cuidador",
+    "becomesitter": "Tornar-se um cuidador"
+  },
+  "chat": {
+    "active": "Chats ativos",
+    "noactive": "Nenhum chat ativo",
+    "invite": "Convite de chat de",
+    "accept": "Aceitar",
+    "newcreate": "Criar novo chat",
+    "name": "Nome do chat",
+    "type": "Tipo",
+    "group": "Chat em grupo",
+    "direct": "Mensagem direta",
+    "participants": "Selecionar participantes",
+    "cancel": "Cancelar",
+    "create": "Criar",
+    "messenger": "Mensageiro",
+    "showChats": "Mostrar Chats",
+    "showUsers": "Mostrar Usuários",
+    "close": "Fechar",
+    "rooms": "Lista de salas",
+    "translate": "Traduzir",
+    "translationFailed": "Falha na tradução",
+    "typeMessage": "Digite uma mensagem...",
+    "send": "Enviar",
+    "userlist": {
+      "online": "Online",
+      "offline": "Offline"
+    },
+    "enterName": "Digite o nome do chat...",
+    "deleteRoom": "Excluir sala de chat",
+    "confirmDelete": "Tem certeza que deseja excluir esta sala de chat?",
+    "speakingTo": "Você está falando com %{username}"
+  },
+  "addpet": {
+    "name": "Nome do animal",
+    "age": "Idade do animal",
+    "species": "Espécie do animal",
+    "addpet": "Adicionar animal",
+    "petpicture": "Foto do animal"
+  },
+  "map": {
+    "createpin": "Crie seu pin de pet sitter",
+    "startchat": "Iniciar chat",
+    "notnow": "Não agora",
+    "enablelocation": "Ativar serviços de localização",
+    "allowlocation": "Permitir acesso à localização",
+    "showsitters": "Para mostrar cuidadores de animais na sua área, precisamos da sua localização."
+  },
+  "sendmessage": "Enviar",
+  "password": {
+    "current": "Senha atual",
+    "new": "Nova senha",
+    "confirm": "Confirmar senha",
+    "change": "Alterar senha"
+  },
+  "userupdate": {
+    "profilePictureLabel": "Foto de perfil",
+    "submit": "Enviar",
+    "backbutton": "Voltar ao perfil"
+  },
+  "userlist": {
+    "available": "Usuários disponíveis",
+    "petsitter": "Cuidadores de animais",
+    "chat": "Chat",
+    "nousers": "Nenhum usuário disponível"
+  },
+  "notfoundpage": {
+    "notfound": "Página não encontrada",
+    "backhome": "Voltar para a página inicial"
+  },
+  "sidebar": {
+    "home": "Início",
+    "nav": "Navegação",
+    "profile": "Perfil"
+  },
+  "mapcontrols": {
+    "nositter": "Nenhum cuidador selecionado para revisão",
+    "findlocation": "Encontrar Minha Localização",
+    "controls": "Controles do Mapa",
+    "createpin": "Criar pino de localização",
+    "editpin": "Editar seu pino",
+    "chat": "Conversar com o cuidador",
+    "review": "Deixar um comentário"
+  },
+  "services": {
+    "dogWalking": "Passeio com Cachorros",
+    "catSitting": "Cuidados com Gatos",
+    "petBoarding": "Hospedagem para Animais",
+    "petGrooming": "Tosa para Animais",
+    "dogTraining": "Treinamento de Cachorros",
+    "fullTime": "Tempo Integral",
+    "partTime": "Meio Período",
+    "weekendsOnly": "Apenas Finais de Semana"
+  },
+  "labels": {
+    "services": "Serviços",
+    "description": "Descrição",
+    "title": "Título",
+    "availability": "Disponibilidade",
+    "hourlyRate": "Taxa por Hora ($)"
+  },
+  "placeholders": {
+    "petSittingLocation": "Localização do Cuidador de Animais"
+  },
+  "instructions": {
+    "controlKeyNotice": "Mantenha Ctrl/Cmd para selecionar vários serviços",
+    "pinLocationInstructions": "Instruções de Localização do Pino"
+  },
+  "pinInstructions": {
+    "pinPlaced": "Seu pino será colocado no centro do mapa",
+    "moveMapTip": "Mova o mapa para ajustar a localização do pino antes de salvar",
+    "zoomTip": "Use os controles de zoom para obter uma localização precisa"
+  },
+  "buttons": {
+    "processing": "Processando...",
+    "updatePin": "Atualizar Pino",
+    "createPin": "Criar Pino"
+  },
+  "pinform": {
+    "title": "Título da Localização",
+    "description": "Descrição do Serviço",
+    "services": "Serviços para Animais",
+    "availability": "Disponibilidade",
+    "hourlyRate": "Taxa por Hora",
+    "controlKeyNotice": "Mantenha Ctrl/Cmd para selecionar vários serviços",
+    "pinLocationInstructions": "Instruções de Localização do Pino",
+    "moveMapTip": "Mova o mapa para ajustar a localização do pino antes de salvar",
+    "zoomTip": "Use os controles de zoom para obter uma localização precisa",
+    "pinPlaced": "Seu pino será colocado no centro do mapa"
+  },
+  "availability": {
+    "fullTime": "Tempo Integral",
+    "partTime": "Meio Período",
+    "weekendsOnly": "Apenas Finais de Semana"
+  }
+}

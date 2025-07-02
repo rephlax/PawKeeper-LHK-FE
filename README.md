@@ -13,7 +13,7 @@ Pawkeeper is a web application that connects pet owners with pet sitters, allowi
 
 - **Frontend:** React, Vite, Axios
 - **Backend:** Node.js, Express, MongoDB
-- **Other Tools:** Mapbox for map integration
+- **Other Tools:** Mapbox for map integration Swagger for API documentation
 
 ## Setup Instructions
 

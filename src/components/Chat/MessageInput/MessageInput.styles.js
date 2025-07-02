@@ -1,0 +1,30 @@
+export const styles = {
+  form: {
+    display: 'flex',
+    gap: '0.5rem',
+    padding: '1rem',
+    borderTopWidth: '1px',
+    borderTopStyle: 'solid',
+  },
+  input: {
+    flex: '1',
+    paddingLeft: '0.75rem',
+    paddingRight: '0.75rem',
+    paddingTop: '0.5rem',
+    paddingBottom: '0.5rem',
+    fontSize: '0.875rem',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderRadius: '0.375rem',
+    transition: 'all 0.2s',
+  },
+  button: {
+    paddingLeft: '1rem',
+    paddingRight: '1rem',
+    paddingTop: '0.5rem',
+    paddingBottom: '0.5rem',
+    fontSize: '0.875rem',
+    borderRadius: '0.375rem',
+    transition: 'background-color 0.2s',
+  },
+}

@@ -1,0 +1,194 @@
+{
+  "homepage": {
+    "welcome": "Welcome to PawKeeper"
+  },
+  "navbar": {
+    "login": "Log in",
+    "signup": "Sign up",
+    "profile": "Profile",
+    "logout": "Log out"
+  },
+  "footer": {
+    "contact": "Contact us"
+  },
+  "signuppage": {
+    "title": "Become a PawKeeper",
+    "usernameLabel": "Username",
+    "profilePictureLabel": "Profile Picture (URL)",
+    "rateLabel": "Rate",
+    "locationLabel": "Location",
+    "latitudePlaceholder": "Latitude",
+    "longitudePlaceholder": "Longitude",
+    "sitterLabel": "Are you a pet sitter?",
+    "signupButton": "Signup"
+  },
+  "loginpage": {
+    "title": "Log in page",
+    "loginButton": "Login"
+  },
+  "forms": {
+    "emailLabel": "Email",
+    "passwordLabel": "Password"
+  },
+  "userpage": {
+    "title": "User Page",
+    "welcome": "Welcome",
+    "rating": "Rating",
+    "pets": {
+      "allpets": "Owned pets",
+      "name": "Name",
+      "age": "Age",
+      "species": "Species",
+      "deletepet": "Delete pet",
+      "nopets": "No pets owned",
+      "addpet": "Add pet",
+      "update": "Update pet info",
+      "picture": "Pet picture",
+      "uploading": "Uploading...",
+      "uploadImage": "Upload Image"
+    },
+    "update": "Update user information",
+    "deleteuser": "Delete user",
+    "logout": "Log out",
+    "newpass": "Change password",
+    "loading": "Loading user information",
+    "sitterstatus": "Pet sitter status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "deactivatesitterstatus": "Deactivate sitter status",
+    "becomesitter": "Become a sitter"
+  },
+  "chat": {
+    "active": "Active chats",
+    "noactive": "No active chats",
+    "invite": "Chat invitation from",
+    "accept": "Accept",
+    "newcreate": "Create new chat",
+    "name": "Chat name",
+    "type": "Type",
+    "group": "Group chat",
+    "direct": "Direct message",
+    "participants": "Select participants",
+    "cancel": "Cancel",
+    "create": "Create",
+    "messenger": "Messenger",
+    "showChats": "Show Chats",
+    "showUsers": "Show Users",
+    "close": "Close",
+    "rooms": "Chatroom list",
+    "translate": "Translate",
+    "translationFailed": "Translation failed",
+    "typeMessage": "Type a message...",
+    "send": "Send",
+    "userlist": {
+      "online": "Online",
+      "offline": "Offline"
+    },
+    "enterName": "Enter chat name...",
+    "deleteRoom": "Delete chat room",
+    "confirmDelete": "Are you sure you want to delete this chat room?",
+    "speakingTo": "You are speaking to %{username}"
+  },
+  "addpet": {
+    "name": "Pet's name",
+    "age": "Pet's age",
+    "species": "Pet's species",
+    "addpet": "Add pet",
+    "petpicture": "Pet picture"
+  },
+  "map": {
+    "createpin": "Create your pet sitter pin",
+    "startchat": "Start chat",
+    "notnow": "Not now",
+    "enablelocation": "Enable location services",
+    "allowlocation": "Allow Location Access",
+    "showsitters": "To show pet sitters in your area, we need your location."
+  },
+  "sendmessage": "Send",
+  "password": {
+    "current": "Current password",
+    "new": "New password",
+    "confirm": "Confirm password",
+    "change": "Change password"
+  },
+  "userupdate": {
+    "profilePictureLabel": "Profile picture",
+    "submit": "Submit",
+    "backbutton": "Back to profile"
+  },
+  "userlist": {
+    "available": "Available users",
+    "petsitter": "Pet sitter",
+    "chat": "Chat",
+    "nousers": "No users available"
+  },
+  "notfoundpage": {
+    "notfound": "Page is not found",
+    "backhome": "Back to homepage"
+  },
+  "sidebar": {
+    "home": "Home",
+    "nav": "Navigation",
+    "profile": "Profile"
+  },
+  "mapcontrols": {
+    "nositter": "No sitter selected for review",
+    "findlocation": "Find My Location",
+    "controls": "Map controls",
+    "createpin": "Create location pin",
+    "editpin": "Edit your pin",
+    "chat": "Chat with sitter",
+    "review": "Leave a review"
+  },
+  "pinform": {
+    "title": "Location Title",
+    "description": "Service Description",
+    "services": "Pet Services",
+    "availability": "Availability",
+    "hourlyRate": "Hourly Rate",
+    "controlKeyNotice": "Hold Ctrl/Cmd to select multiple services",
+    "pinLocationInstructions": "Pin Location Instructions",
+    "moveMapTip": "Move the map to adjust the pin location before saving",
+    "zoomTip": "Use the zoom controls to get a precise location",
+    "pinPlaced": "Your pin will be placed at the center of the map"
+  },
+  "availability": {
+    "fullTime": "Full Time",
+    "partTime": "Part Time",
+    "weekendsOnly": "Weekends Only"
+  },
+  "services": {
+    "dogWalking": "Dog Walking",
+    "catSitting": "Cat Sitting",
+    "petBoarding": "Pet Boarding",
+    "petGrooming": "Pet Grooming",
+    "dogTraining": "Dog Training",
+    "fullTime": "Full Time",
+    "partTime": "Part Time",
+    "weekendsOnly": "Weekends Only"
+  },
+  "labels": {
+    "services": "Services",
+    "description": "Description",
+    "title": "Title",
+    "availability": "Availability",
+    "hourlyRate": "Hourly Rate ($)"
+  },
+  "placeholders": {
+    "petSittingLocation": "'s Pet Sitting Location"
+  },
+  "instructions": {
+    "controlKeyNotice": "Hold Ctrl/Cmd to select multiple services",
+    "pinLocationInstructions": "Pin Location Instructions"
+  },
+  "pinInstructions": {
+    "pinPlaced": "Your pin will be placed at the center of the map",
+    "moveMapTip": "Move the map to adjust the pin location before saving",
+    "zoomTip": "Use the zoom controls to get a precise location"
+  },
+  "buttons": {
+    "processing": "Processing...",
+    "updatePin": "Update Pin",
+    "createPin": "Create Pin"
+  }
+}
