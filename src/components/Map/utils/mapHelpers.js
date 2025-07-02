@@ -1,6 +1,6 @@
 import mapboxgl from 'mapbox-gl'
 
-export const createMapMarker = (pin, options = {}) => {
+export const createMapMarkers = (pin, options = {}) => {
   const { onClick, isSelected } = options
 
   // Create marker element

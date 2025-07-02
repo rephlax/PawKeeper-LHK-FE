@@ -1,6 +1,6 @@
 import React from 'react'
-import { MapControls } from '../../Map'
-import PinList from '../../Map/PinList'
+import  MapControls  from '../Map/MapControls/index'
+import PinList from '../Map/PinList/index'
 import { sidebarStyles as styles } from './sidebar.styles'
 
 const MapSidebar = ({

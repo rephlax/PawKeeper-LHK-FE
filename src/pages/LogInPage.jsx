@@ -285,7 +285,7 @@ const LogInPage = () => {
         >
           Don't have an account?{' '}
           <Link
-            to='/signup'
+            to='/sign-up'
             className='text-cream-600 hover:text-cream-700 font-medium'
           >
             Sign up

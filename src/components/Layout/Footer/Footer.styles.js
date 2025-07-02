@@ -12,7 +12,7 @@ export const styles = {
       justifyContent: 'space-between',
       alignItems: 'center',
       padding: '0 1rem',
-      '@media (max-width: 640px)': {
+      '@media (maxWidth: 640px)': {
         flexDirection: 'column',
         padding: '0.5rem 1rem',
         height: 'auto',
@@ -24,7 +24,7 @@ export const styles = {
       display: 'flex',
       alignItems: 'center',
       gap: '1rem',
-      '@media (max-width: 640px)': {
+      '@media (maxWidth: 640px)': {
         flexDirection: 'column',
         gap: '0.5rem',
         marginBottom: '0.5rem',
