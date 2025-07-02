@@ -6,7 +6,7 @@ import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { debounce } from 'lodash'
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005'
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005"
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN
 
 const SignUpPage = () => {

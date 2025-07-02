@@ -3,8 +3,7 @@ import { useContext, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AuthContext } from '../context/AuthContext'
 import { useTranslation } from 'react-i18next'
-
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005'
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5005"
 
 const LogInPage = () => {
   const { t } = useTranslation()
@@ -297,3 +296,4 @@ const LogInPage = () => {
 }
 
 export default LogInPage
+

@@ -3,11 +3,18 @@ export const styles = {
     minHeight: '100vh',
     display: 'flex',
     flexDirection: 'column',
+    '@media (max-width: 600px)': {
+      minHeight: 'unset',
+      padding: '0',
+    },
   },
   backgroundEffects: {
     position: 'fixed',
     inset: 0,
     pointerEvents: 'none',
+    '@media (max-width: 600px)': {
+      display: 'none',
+    },
   },
   backgroundBlob1: {
     position: 'absolute',
@@ -19,6 +26,13 @@ export const styles = {
     borderRadius: '9999px',
     filter: 'blur(48px)',
     animation: 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+    '@media (max-width: 900px)': {
+      width: '16rem',
+      height: '16rem',
+    },
+    '@media (max-width: 600px)': {
+      display: 'none',
+    },
   },
   backgroundBlob2: {
     position: 'absolute',
@@ -31,12 +45,22 @@ export const styles = {
     filter: 'blur(48px)',
     animation: 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
     animationDelay: '2s',
+    '@media (max-width: 900px)': {
+      width: '16rem',
+      height: '16rem',
+    },
+    '@media (max-width: 600px)': {
+      display: 'none',
+    },
   },
   header: {
     position: 'sticky',
     top: 0,
     width: '100%',
     zIndex: 50,
+    '@media (max-width: 600px)': {
+      position: 'static',
+    },
   },
   mainContent: {
     flex: 1,
