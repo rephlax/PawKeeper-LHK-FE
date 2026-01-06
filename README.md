@@ -2,6 +2,8 @@
 
 Pawkeeper is a web application that connects pet owners with pet sitters, allowing users to find and book reliable pet care services globally.
 
+**Backend Repository:** [Backend Repository](https://github.com/rephlax/PawKeeper-LHK-BE)
+
 ## Key Features
 
 - **Sitter Listings:** Browse through a list of available pet sitters with user ratings and reviews.
@@ -57,20 +59,100 @@ By default, the application will be available at <http://localhost:5173>. Open t
 
 This project is organized into several key directories, making it modular and easy to navigate:
 
-- **`src/`**: Contains the main source code.
-  - **`components/`**: Reusable components used throughout the application.
-    - **`Navbar.js`**: The navigation bar, accessible on all pages.
-    - **`Footer.js`**: The footer component, featuring links and additional information.
-  - **`pages/`**: Top-level pages managed by React Router for different pathways in the app.
-    - **`HomePage.js`**: The homepage, serving as the landing page.
-    - **`SignUpPage.js`**: The registration page for new users.
-    - **`LogInPage.js`**: Allows existing users to log in.
-    - **`UserPage.js`**: Displays user profiles and settings options.
-    - **`NotFoundPage.js`**: The 404 error page for unavailable routes.
-  - **`App.js`**: Main app component that integrates all pages and sets up routing.
-  - **`index.js`**: Entry point to the app, responsible for bootstrapping the React application.
-- **`public/`**: Contains static files which are served directly, including the main HTML file.
-- **`assets/`**: Houses static assets like images and fonts.
-- **`styles/`**: Includes CSS or SCSS files for application-wide styling.
+```text
+PawKeeper-LHK-FE/
+├── src/
+│   ├── assets/              # Static assets (images, logos)
+│   │   ├── defaultPet.png
+│   │   ├── defaultUser.png
+│   │   └── logo.png
+│   ├── components/          # Reusable React components
+│   │   ├── Chat/           # Chat-related components
+│   │   │   ├── ActiveChats/
+│   │   │   ├── ChatInvitations/
+│   │   │   ├── ChatWidget/
+│   │   │   ├── CreateRoomModal/
+│   │   │   ├── MessageInput/
+│   │   │   ├── Messages/
+│   │   │   ├── RoomList/
+│   │   │   └── UserList/
+│   │   ├── Common/         # Shared/common components
+│   │   │   ├── Button/
+│   │   │   ├── Card/
+│   │   │   ├── LanguageSwitcher/
+│   │   │   ├── Loading/
+│   │   │   ├── FormStyles.js
+│   │   │   └── index.js
+│   │   ├── Layout/         # Layout components
+│   │   │   ├── Footer/
+│   │   │   ├── MainLayout/
+│   │   │   ├── Navbar/
+│   │   │   ├── PageWrapper/
+│   │   │   └── index.js
+│   │   ├── Map/            # Map-related components
+│   │   │   ├── MapComponent/
+│   │   │   ├── MapControls/
+│   │   │   ├── MapErrorBoundary/
+│   │   │   ├── PinList/
+│   │   │   ├── utils/      # Map utility functions
+│   │   │   └── index.js
+│   │   ├── Pet/            # Pet-related components
+│   │   │   ├── AddPetForm/
+│   │   │   ├── UpdatePetForm/
+│   │   │   └── index.js
+│   │   ├── Sidebar/        # Sidebar components
+│   │   │   ├── components/ # Sidebar sub-components
+│   │   │   ├── hooks/      # Sidebar-specific hooks
+│   │   │   ├── MapSidebar.jsx
+│   │   │   ├── RegularSidebar.jsx
+│   │   │   ├── SidebarContainer.jsx
+│   │   │   └── sidebar.styles.js
+│   │   └── User/           # User-related components
+│   │       ├── PasswordChange/
+│   │       ├── UpdateUserForm/
+│   │       └── index.js
+│   ├── context/            # React Context providers
+│   │   ├── AuthContext.jsx
+│   │   ├── ChatContext.jsx
+│   │   ├── MapContext.jsx
+│   │   ├── PrivateRoute.jsx
+│   │   └── SocketContext.jsx
+│   ├── hooks/              # Custom React hooks
+│   │   └── useMapbox.js
+│   ├── locales/            # Internationalization files
+│   │   ├── en.json
+│   │   ├── pt.json
+│   │   └── uk.json
+│   ├── pages/              # Top-level page components
+│   │   ├── HomePage.jsx
+│   │   ├── LogInPage.jsx
+│   │   ├── NotFoundPage.jsx
+│   │   ├── SignUpPage.jsx
+│   │   └── UserPage.jsx
+│   ├── styles/             # Global CSS styles
+│   │   ├── App.css
+│   │   ├── index.css
+│   │   └── mapbox.css
+│   ├── App.jsx             # Main app component with routing
+│   └── main.jsx            # Application entry point
+├── public/                 # Static public files
+│   └── _redirects          # Netlify redirects configuration
+├── dist/                   # Build output directory
+├── node_modules/           # Dependencies
+├── index.html              # HTML template
+├── vite.config.js          # Vite configuration
+├── package.json            # Project dependencies and scripts
+├── netlify.toml            # Netlify deployment configuration
+└── README.md               # Project documentation
+```
 
-This structured approach enables efficient navigation, making development and enhancements more manageable.
+### Key Directories
+
+- **`src/components/`**: Organized by feature domain (Chat, Map, Pet, User) with shared components in Common and Layout
+- **`src/context/`**: React Context providers for global state management (Auth, Chat, Map, Socket)
+- **`src/hooks/`**: Custom React hooks for reusable logic
+- **`src/locales/`**: Translation files for internationalization (English, Portuguese, Ukrainian)
+- **`src/pages/`**: Top-level page components managed by React Router
+- **`src/styles/`**: Global CSS stylesheets
+
+This structured approach enables efficient navigation and makes development and enhancements more manageable.
